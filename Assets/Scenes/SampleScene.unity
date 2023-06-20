@@ -184,7 +184,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: d495f19f58339324188f1ce4a9616bee, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -243,6 +243,7 @@ GameObject:
   - component: {fileID: 658842036}
   - component: {fileID: 658842040}
   - component: {fileID: 658842041}
+  - component: {fileID: 658842042}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Untagged
@@ -257,7 +258,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 658842035}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 8e380f1ac0d859040a58999fd7eef354, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -330,7 +331,7 @@ Transform:
   m_GameObject: {fileID: 658842035}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 10, y: 4, z: 2.4}
+  m_LocalScale: {x: 4, y: 4, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -348,8 +349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7764db57e19ef7a4ba165ad4e57745d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputKeycodes: {fileID: 0}
-  movement: {fileID: 0}
+  mover: {fileID: 658842041}
 --- !u!114 &658842041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,6 +362,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26bf645b0e54b2b4b880261966b13513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sailStateChangeDelay: 1
+  maxSpeed: 50
+  maxTurnSpeed: 0
+  acceleration: 3.5
+--- !u!54 &658842042
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658842035}
+  serializedVersion: 4
+  m_Mass: 0.01
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -540,8 +571,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: -0.31736138, y: 0.6288781, z: -0.3133885, w: -0.6368531}
+  m_LocalPosition: {x: 70.029915, y: 86.43818, z: 74.93394}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
