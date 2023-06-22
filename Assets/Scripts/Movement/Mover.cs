@@ -105,17 +105,16 @@ namespace PirateGame.Movement{
             if (currentSpeed < targetSpeed){
                 float accelerationFactor = 1f - currentSpeed / maxSpeed;
                 float adjustedAccelerationSpeed = accelerationSpeed * Mathf.Abs(accelerationFactor);
-                currentSpeed += (1f + adjustedAccelerationSpeed) * Time.deltaTime;
+                currentSpeed += (adjustedAccelerationSpeed) * Time.deltaTime;
                 
             }
             if (currentSpeed > targetSpeed){
                 float decelerationFactor = currentSpeed / maxSpeed;
                 float adjustedDecelerationSpeed = decelerationSpeed * Mathf.Abs(decelerationFactor);
-                currentSpeed -= (1f + adjustedDecelerationSpeed) * Time.deltaTime;
+                currentSpeed -= (adjustedDecelerationSpeed) * Time.deltaTime;
             }
-            Mathf.Clamp(currentSpeed, maxSpeed - maxSpeed, maxSpeed);
+            
             transform.position += transform.forward * currentSpeed * Time.deltaTime;
-            Debug.Log(currentSpeed);
         }
 
         public void SailStateIncrease(){
