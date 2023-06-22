@@ -25,8 +25,10 @@ namespace PirateGame.Control{
         private void DetectInput()
         {
             if (Input.GetKey(KeyCode.W)){mover.SailStateIncrease();}// Do something
-            if (Input.GetKey(KeyCode.A)){}// Do something
-            if (Input.GetKey(KeyCode.D)){}// Do something
+            if (Input.GetKeyDown(KeyCode.A)){mover.LeftTurnEnable();}// Do something
+            if (Input.GetKeyDown(KeyCode.D)){mover.RightTurnEnable();}// Do something
+            if (Input.GetKeyUp(KeyCode.A)){mover.LeftTurnDisable();}// Do something
+            if (Input.GetKeyUp(KeyCode.D)){mover.RightTurnDisable();}// Do something
             if (Input.GetKey(KeyCode.S)){mover.SailStateDecrease();}// Do something
         }
 

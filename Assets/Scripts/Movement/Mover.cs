@@ -1,11 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace PirateGame.Movement{
-    [RequireComponent(typeof(Rigidbody))]
     public class Mover : MonoBehaviour
     {
-        // States of control.
+        // States of control for sails.
         private float sailStateModifier;
         private int sailState = 0;
 
@@ -16,12 +16,17 @@ namespace PirateGame.Movement{
 
         // Movement attributes.
         [SerializeField]
-        private float maxSpeed;
+        private float maxSpeed = 10f;
         [SerializeField]
-        private float maxTurnSpeed;
+        private float turnSpeed = 5f;
         [SerializeField]
-        private float acceleration;
+        private float accelerationSpeed = 3.5f;
+        [SerializeField]
+        private float decelerationSpeed = 1f;
+        private float currentSpeed;
+        private float targetSpeed;
         Vector3 velocity, desiredVelocity;
+        private bool leftTurn, rightTurn;
 
         // Sail struct, names and float modifier values stored in a struct and held in an array.
         private struct SailStateStruct{
@@ -64,7 +69,24 @@ namespace PirateGame.Movement{
         public void FixedUpdate(){
             SailStateTimer();
 
+            CalculateRotation();
             CalculateMovement();
+        }
+
+        private void CalculateRotation()
+        {
+            float leftSpeed = -turnSpeed;
+            float rightSpeed = turnSpeed;
+            float turnDirection = 0;
+
+            if (leftTurn == true){
+                turnDirection = leftSpeed;
+            }
+            if (rightTurn == true){
+                turnDirection = rightSpeed;
+            }
+
+            transform.Rotate(new Vector3(0f,turnDirection,0f));
         }
 
         private void SailStateTimer()
@@ -78,26 +100,22 @@ namespace PirateGame.Movement{
 
         private void CalculateMovement()
         {
-            
-            // Set desired speed based on sailstate and input.
-            float sailSpeedImpact = maxSpeed * sailStateModifier;
-            desiredVelocity = new Vector3(0f,0f, sailSpeedImpact);
+            targetSpeed = maxSpeed * sailStateModifier;
 
-            // Velocity = current rb velocity.
-            velocity = rb.velocity;
-
-            // Rate of acceleration.
-            float maxSpeedChange = (acceleration + sailStateModifier) * Time.deltaTime;
-
-            // Moves the velocity values towards the desiredVelocity at the max speed change.
-		    velocity.x =
-			    Mathf.MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
-		    velocity.z =
-			    Mathf.MoveTowards(velocity.z, desiredVelocity.z, maxSpeedChange);
-
-            // Set the current rb velocity to the new velocity.
-            rb.velocity = velocity;
-            Debug.Log(rb.velocity);
+            if (currentSpeed < targetSpeed){
+                float accelerationFactor = 1f - currentSpeed / maxSpeed;
+                float adjustedAccelerationSpeed = accelerationSpeed * Mathf.Abs(accelerationFactor);
+                currentSpeed += (1f + adjustedAccelerationSpeed) * Time.deltaTime;
+                
+            }
+            if (currentSpeed > targetSpeed){
+                float decelerationFactor = currentSpeed / maxSpeed;
+                float adjustedDecelerationSpeed = decelerationSpeed * Mathf.Abs(decelerationFactor);
+                currentSpeed -= (1f + adjustedDecelerationSpeed) * Time.deltaTime;
+            }
+            Mathf.Clamp(currentSpeed, maxSpeed - maxSpeed, maxSpeed);
+            transform.position += transform.forward * currentSpeed * Time.deltaTime;
+            Debug.Log(currentSpeed);
         }
 
         public void SailStateIncrease(){
@@ -114,5 +132,18 @@ namespace PirateGame.Movement{
                 sailStateTimeSinceChanged = 0f;
             }
         }
+        public void LeftTurnEnable(){
+            leftTurn = true;
+        }
+        public void LeftTurnDisable(){
+            leftTurn = false;
+        }
+        public void RightTurnEnable(){
+            rightTurn = true;
+        }
+        public void RightTurnDisable(){
+            rightTurn = false;
+        }
+        
     }
 }
