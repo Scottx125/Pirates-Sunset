@@ -20,12 +20,11 @@ namespace PirateGame.Movement{
         [SerializeField]
         private float turnSpeed = 5f;
         [SerializeField]
-        private float accelerationSpeed = 3.5f;
+        private float initialAccelerationRate = 3.5f, accelerationEasingFactor = 0.5f;
         [SerializeField]
-        private float decelerationSpeed = 1f;
+        private float initialDecelerationRate = 3.5f, decelerationEasingFactor = 0.5f;
         private float currentSpeed;
         private float targetSpeed;
-        Vector3 velocity, desiredVelocity;
         private bool leftTurn, rightTurn;
 
         // Sail struct, names and float modifier values stored in a struct and held in an array.
@@ -101,20 +100,27 @@ namespace PirateGame.Movement{
         private void CalculateMovement()
         {
             targetSpeed = maxSpeed * sailStateModifier;
+            float difference = Mathf.Abs(currentSpeed - targetSpeed);
+            // Calculates movement based off of acceleration/deceleration rate.
+            if (currentSpeed < targetSpeed && difference > 0.01f)
+            {
+                currentSpeed += AccelerationCalc(difference, initialAccelerationRate, accelerationEasingFactor);
+            }
+            else
+            if (currentSpeed > targetSpeed && difference > 0.01f){
+                currentSpeed -= AccelerationCalc(difference, initialDecelerationRate, decelerationEasingFactor);
+            }
+            // Clamp speed to ensure no engative or overspeed.
+            currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
 
-            if (currentSpeed < targetSpeed){
-                float accelerationFactor = 1f - currentSpeed / maxSpeed;
-                float adjustedAccelerationSpeed = accelerationSpeed * Mathf.Abs(accelerationFactor);
-                currentSpeed += (adjustedAccelerationSpeed) * Time.deltaTime;
-                
-            }
-            if (currentSpeed > targetSpeed){
-                float decelerationFactor = currentSpeed / maxSpeed;
-                float adjustedDecelerationSpeed = decelerationSpeed * Mathf.Abs(decelerationFactor);
-                currentSpeed -= (adjustedDecelerationSpeed) * Time.deltaTime;
-            }
-            
+            // Apply Movement.
             transform.position += transform.forward * currentSpeed * Time.deltaTime;
+            Debug.Log(currentSpeed);
+        }
+
+        private float AccelerationCalc(float difference, float rate, float easing)
+        {
+            return rate * (difference * easing) * Time.deltaTime;
         }
 
         public void SailStateIncrease(){

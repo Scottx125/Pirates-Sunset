@@ -364,8 +364,10 @@ MonoBehaviour:
   sailStateChangeDelay: 1
   maxSpeed: 40
   turnSpeed: 1.5
-  accelerationSpeed: 7.5
-  decelerationSpeed: 10
+  initialAccelerationRate: 4
+  accelerationEasingFactor: 0.075
+  initialDecelerationRate: 2
+  decelerationEasingFactor: 0.1
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
