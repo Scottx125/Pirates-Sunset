@@ -20,9 +20,9 @@ namespace PirateGame.Movement{
         [SerializeField]
         private float turnSpeed = 5f;
         [SerializeField]
-        private float initialAccelerationRate = 3.5f, accelerationEasingFactor = 0.5f;
+        private float initialAccelerationRate = 3.5f, accelerationEasingFactor = 0.5f, minimumAcceleration = 0.1f;
         [SerializeField]
-        private float initialDecelerationRate = 3.5f, decelerationEasingFactor = 0.5f;
+        private float initialDecelerationRate = 3.5f, decelerationEasingFactor = 0.5f, minimumDeceleration = 0.1f;
         private float currentSpeed;
         private float targetSpeed;
         private bool leftTurn, rightTurn;
@@ -104,11 +104,11 @@ namespace PirateGame.Movement{
             // Calculates movement based off of acceleration/deceleration rate.
             if (currentSpeed < targetSpeed && difference > 0.01f)
             {
-                currentSpeed += AccelerationCalc(difference, initialAccelerationRate, accelerationEasingFactor);
+                currentSpeed += AccelerationCalc(difference, initialAccelerationRate, accelerationEasingFactor, minimumAcceleration);
             }
             else
             if (currentSpeed > targetSpeed && difference > 0.01f){
-                currentSpeed -= AccelerationCalc(difference, initialDecelerationRate, decelerationEasingFactor);
+                currentSpeed -= AccelerationCalc(difference, initialDecelerationRate, decelerationEasingFactor, minimumDeceleration);
             }
             // Clamp speed to ensure no engative or overspeed.
             currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
@@ -118,9 +118,9 @@ namespace PirateGame.Movement{
             Debug.Log(currentSpeed);
         }
 
-        private float AccelerationCalc(float difference, float rate, float easing)
+        private float AccelerationCalc(float difference, float rate, float easing, float min)
         {
-            return rate * (difference * easing) * Time.deltaTime;
+            return min + rate * (difference * easing) * Time.deltaTime;
         }
 
         public void SailStateIncrease(){

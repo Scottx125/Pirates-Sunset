@@ -366,8 +366,10 @@ MonoBehaviour:
   turnSpeed: 1.5
   initialAccelerationRate: 4
   accelerationEasingFactor: 0.075
+  minimumAcceleration: 0.01
   initialDecelerationRate: 2
   decelerationEasingFactor: 0.1
+  minimumDeceleration: 0.01
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
