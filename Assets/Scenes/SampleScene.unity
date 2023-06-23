@@ -364,10 +364,10 @@ MonoBehaviour:
   sailStateChangeDelay: 1
   maxSpeed: 40
   turnSpeed: 1.5
-  initialAccelerationRate: 4
+  initialAccelerationRate: 2
   accelerationEasingFactor: 0.075
   minimumAcceleration: 0.01
-  initialDecelerationRate: 2
+  initialDecelerationRate: 1
   decelerationEasingFactor: 0.1
   minimumDeceleration: 0.01
 --- !u!1 &705507993

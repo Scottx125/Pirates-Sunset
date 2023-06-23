@@ -27,31 +27,11 @@ namespace PirateGame.Movement{
         private float targetSpeed;
         private bool leftTurn, rightTurn;
 
+
         // Sail struct, names and float modifier values stored in a struct and held in an array.
-        private struct SailStateStruct{
-            private string sailStateName;
-            private float sailStateSpeedModifier;
 
-            public string getSailStateName => sailStateName;
-            public float getSailStateSpeedModifier => sailStateSpeedModifier;
-
-            public SailStateStruct(string sailStateEnum, float sailStateSpeedModifier){
-                this.sailStateName = sailStateEnum;
-                this.sailStateSpeedModifier = sailStateSpeedModifier;
-            }
-        }
-
-        private SailStateStruct[] sailStateArray = new SailStateStruct[5]{
-            new SailStateStruct("Reefed Sail", 0f),
-            new SailStateStruct("Quater Sail", 0.25f),
-            new SailStateStruct("Half Sail", 0.5f),
-            new SailStateStruct("Three Quaters Sail", 0.75f),
-            new SailStateStruct("Full Sail", 1f),
-        };
-
-        // Other Scripts/Componenets
-        Rigidbody rb;
-
+            // Use this to get sail states/speed. Remove the struct and remove array also.
+            // Set up a case system where you cast the enum to a value and then iterate through those values based on an int state.
         private void Awake()
         {
             Setup();
@@ -61,8 +41,6 @@ namespace PirateGame.Movement{
         {
             // Allow the player to fire immediately.
             sailStateTimeSinceChanged = 1f;
-
-            if (rb == null) rb = GetComponent<Rigidbody>();
         }
 
         public void FixedUpdate(){
@@ -124,19 +102,29 @@ namespace PirateGame.Movement{
         }
 
         public void SailStateIncrease(){
-            if (sailState < 4 && sailStateTimeSinceChanged >= sailStateChangeDelay){
+            if (sailState < getSailStateEnumLength() - 1 && sailStateTimeSinceChanged >= sailStateChangeDelay){
                 sailState++;
-                sailStateModifier = sailStateArray[sailState].getSailStateSpeedModifier;
+                sailStateModifier = getSailStateEnumValue();
                 sailStateTimeSinceChanged = 0f;
             }
         }
         public void SailStateDecrease(){
             if (sailState > 0 && sailStateTimeSinceChanged >= sailStateChangeDelay){
                 sailState--;
-                sailStateModifier = sailStateArray[sailState].getSailStateSpeedModifier;
+                sailStateModifier = getSailStateEnumValue();
                 sailStateTimeSinceChanged = 0f;
             }
         }
+
+        private float getSailStateEnumValue(){
+            var value = (someenum)sailState;
+            return (float)value / (Enum.GetValues(typeof(someenum)).Length - 1);
+        }
+
+        private int getSailStateEnumLength(){
+            return Enum.GetValues(typeof(someenum)).Length;
+        }
+
         public void LeftTurnEnable(){
             leftTurn = true;
         }
