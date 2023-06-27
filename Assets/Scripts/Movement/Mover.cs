@@ -1,31 +1,34 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
+using PirateGame.Health;
 
 namespace PirateGame.Movement{
-    public class Mover : MonoBehaviour
+    public class Mover : MonoBehaviour, IObserverShipMovement
     {
         // States of control for sails.
-        private float sailStateModifier;
-        private int sailState = 0;
+        private float _sailStateModifier;
+        private int _sailState = 0;
 
         // State change delay.
         [SerializeField]
-        private float sailStateChangeDelay = 1f;
-        private float sailStateTimeSinceChanged;
+        private float _sailStateChangeDelay = 1f;
+        private float _sailStateTimeSinceChanged;
 
         // Movement attributes.
         [SerializeField]
-        private float maxSpeed = 10f;
+        private float _maxSpeed = 10f;
         [SerializeField]
-        private float turnSpeed = 5f;
+        private float _turnSpeed = 5f;
         [SerializeField]
-        private float initialAccelerationRate = 3.5f, accelerationEasingFactor = 0.5f, minimumAcceleration = 0.1f;
+        private float _initialAccelerationRate = 3.5f, _accelerationEasingFactor = 0.5f, _minimumAcceleration = 0.1f;
         [SerializeField]
-        private float initialDecelerationRate = 3.5f, decelerationEasingFactor = 0.5f, minimumDeceleration = 0.1f;
-        private float currentSpeed;
-        private float targetSpeed;
-        private bool leftTurn, rightTurn;
+        private float _initialDecelerationRate = 3.5f, _decelerationEasingFactor = 0.5f, _minimumDeceleration = 0.1f;
+        private float _hullModifier = 1f;
+        private float _sailModifier = 1f;
+        private float _crewModifier = 1f;
+        private float _currentSpeed;
+        private float _targetSpeed;
+        private bool _leftTurn, _rightTurn;
 
 
         // Sail struct, names and float modifier values stored in a struct and held in an array.
@@ -40,60 +43,66 @@ namespace PirateGame.Movement{
         private void Setup()
         {
             // Allow the player to fire immediately.
-            sailStateTimeSinceChanged = 1f;
+            _sailStateTimeSinceChanged = 1f;
+
+            // Setup Observers.
+            gameObject.GetComponent<Hull>().AddHealthObserver(this);
+            gameObject.GetComponent<Sail>().AddHealthObserver(this);
+            gameObject.GetComponent<Crew>().AddHealthObserver(this);
         }
 
-        public void FixedUpdate(){
+        private void FixedUpdate(){
             SailStateTimer();
 
             CalculateRotation();
             CalculateMovement();
         }
 
+        private void SailStateTimer()
+        {
+            if (_sailStateTimeSinceChanged >= _sailStateChangeDelay / _crewModifier){
+                _sailStateTimeSinceChanged = 1f;
+                return;
+            }
+            _sailStateTimeSinceChanged += Time.deltaTime;
+        }
+
         private void CalculateRotation()
         {
-            float leftSpeed = -turnSpeed;
-            float rightSpeed = turnSpeed;
+            float leftSpeed = -_turnSpeed * _crewModifier;
+            float rightSpeed = _turnSpeed * _crewModifier;
             float turnDirection = 0;
 
-            if (leftTurn == true){
+            if (_leftTurn == true){
                 turnDirection = leftSpeed;
             }
-            if (rightTurn == true){
+            if (_rightTurn == true){
                 turnDirection = rightSpeed;
             }
 
             transform.Rotate(new Vector3(0f,turnDirection,0f));
         }
 
-        private void SailStateTimer()
-        {
-            if (sailStateTimeSinceChanged >= sailStateChangeDelay){
-                sailStateTimeSinceChanged = 1f;
-                return;
-            }
-            sailStateTimeSinceChanged += Time.deltaTime;
-        }
-
         private void CalculateMovement()
         {
-            targetSpeed = maxSpeed * sailStateModifier;
-            float difference = Mathf.Abs(currentSpeed - targetSpeed);
+            _targetSpeed = (_maxSpeed * _sailModifier) * _sailStateModifier;
+            float difference = Mathf.Abs(_currentSpeed - _targetSpeed);
             // Calculates movement based off of acceleration/deceleration rate.
-            if (currentSpeed < targetSpeed && difference > 0.01f)
+            if (_currentSpeed < _targetSpeed && difference > 0.01f)
             {
-                currentSpeed += AccelerationCalc(difference, initialAccelerationRate, accelerationEasingFactor, minimumAcceleration);
+                _currentSpeed += AccelerationCalc(difference, _initialAccelerationRate * _sailModifier, _accelerationEasingFactor, _minimumAcceleration);
             }
             else
-            if (currentSpeed > targetSpeed && difference > 0.01f){
-                currentSpeed -= AccelerationCalc(difference, initialDecelerationRate, decelerationEasingFactor, minimumDeceleration);
+            if (_currentSpeed > _targetSpeed && difference > 0.01f){
+                _currentSpeed -= AccelerationCalc(difference, _initialDecelerationRate * _hullModifier, _decelerationEasingFactor, _minimumDeceleration);
             }
             // Clamp speed to ensure no engative or overspeed.
-            currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
+            _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _maxSpeed * _sailModifier);
 
             // Apply Movement.
-            transform.position += transform.forward * currentSpeed * Time.deltaTime;
-            Debug.Log(currentSpeed);
+            transform.position += transform.forward * _currentSpeed * Time.deltaTime;
+
+            Debug.Log(_currentSpeed);
         }
 
         private float AccelerationCalc(float difference, float rate, float easing, float min)
@@ -102,41 +111,58 @@ namespace PirateGame.Movement{
         }
 
         public void SailStateIncrease(){
-            if (sailState < getSailStateEnumLength() - 1 && sailStateTimeSinceChanged >= sailStateChangeDelay){
-                sailState++;
-                sailStateModifier = getSailStateEnumValue();
-                sailStateTimeSinceChanged = 0f;
+            if (_sailState < getSailStateEnumLength() - 1 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
+                _sailState++;
+                _sailStateModifier = getSailStateEnumValue();
+                _sailStateTimeSinceChanged = 0f;
             }
         }
         public void SailStateDecrease(){
-            if (sailState > 0 && sailStateTimeSinceChanged >= sailStateChangeDelay){
-                sailState--;
-                sailStateModifier = getSailStateEnumValue();
-                sailStateTimeSinceChanged = 0f;
+            if (_sailState > 0 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
+                _sailState--;
+                _sailStateModifier = getSailStateEnumValue();
+                _sailStateTimeSinceChanged = 0f;
             }
         }
 
         private float getSailStateEnumValue(){
-            var value = (someenum)sailState;
-            return (float)value / (Enum.GetValues(typeof(someenum)).Length - 1);
+            var value = (SpeedModifierEnum)_sailState;
+            return (float)value / (Enum.GetValues(typeof(SpeedModifierEnum)).Length - 1);
         }
 
         private int getSailStateEnumLength(){
-            return Enum.GetValues(typeof(someenum)).Length;
+            return Enum.GetValues(typeof(SpeedModifierEnum)).Length;
         }
 
         public void LeftTurnEnable(){
-            leftTurn = true;
+            _leftTurn = true;
         }
         public void LeftTurnDisable(){
-            leftTurn = false;
+            _leftTurn = false;
         }
         public void RightTurnEnable(){
-            rightTurn = true;
+            _rightTurn = true;
         }
         public void RightTurnDisable(){
-            rightTurn = false;
+            _rightTurn = false;
         }
-        
+
+        public void OnDamageNotify(float healthPercentage, AttackTypeEnum type)
+        {
+            if (healthPercentage < .25f){
+                return;
+            }
+            switch (type){
+                case AttackTypeEnum.Round_Shot:
+                    _hullModifier = healthPercentage;
+                break;
+                case AttackTypeEnum.Chain_Shot:
+                    _sailModifier = healthPercentage;
+                break;
+                case AttackTypeEnum.Grape_Shot:
+                    _crewModifier = healthPercentage;
+                break;           
+            }
+        }
     }
 }

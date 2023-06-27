@@ -1,4 +1,4 @@
-public enum someenum{
+public enum SpeedModifierEnum{
     Reefed_Sails = 0,
     Quater_Sails = 1,
     Half_Sails = 2,
