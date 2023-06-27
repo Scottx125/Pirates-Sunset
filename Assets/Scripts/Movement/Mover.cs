@@ -3,7 +3,7 @@ using UnityEngine;
 using PirateGame.Health;
 
 namespace PirateGame.Movement{
-    public class Mover : MonoBehaviour, IObserverShipMovement
+    public class Mover : MonoBehaviour, IOnDamaged
     {
         // States of control for sails.
         private float _sailStateModifier;
@@ -16,16 +16,16 @@ namespace PirateGame.Movement{
 
         // Movement attributes.
         [SerializeField]
-        private float _maxSpeed = 10f;
+        private float _maxSpeed = 10f, _minSpeed = 1f;
         [SerializeField]
-        private float _turnSpeed = 5f;
+        private float _turnSpeed = 5f, _minTurnSpeed = 0.5f;
         [SerializeField]
         private float _initialAccelerationRate = 3.5f, _accelerationEasingFactor = 0.5f, _minimumAcceleration = 0.1f;
         [SerializeField]
         private float _initialDecelerationRate = 3.5f, _decelerationEasingFactor = 0.5f, _minimumDeceleration = 0.1f;
-        private float _hullModifier = 1f;
-        private float _sailModifier = 1f;
-        private float _crewModifier = 1f;
+        private float _hullDamageModifier = 1f;
+        private float _sailDamageModifier = 1f;
+        private float _crewDamageModifier = 1f;
         private float _currentSpeed;
         private float _targetSpeed;
         private bool _leftTurn, _rightTurn;
@@ -44,11 +44,6 @@ namespace PirateGame.Movement{
         {
             // Allow the player to fire immediately.
             _sailStateTimeSinceChanged = 1f;
-
-            // Setup Observers.
-            gameObject.GetComponent<Hull>().AddHealthObserver(this);
-            gameObject.GetComponent<Sail>().AddHealthObserver(this);
-            gameObject.GetComponent<Crew>().AddHealthObserver(this);
         }
 
         private void FixedUpdate(){
@@ -60,7 +55,7 @@ namespace PirateGame.Movement{
 
         private void SailStateTimer()
         {
-            if (_sailStateTimeSinceChanged >= _sailStateChangeDelay / _crewModifier){
+            if (_sailStateTimeSinceChanged >= _sailStateChangeDelay / _crewDamageModifier){
                 _sailStateTimeSinceChanged = 1f;
                 return;
             }
@@ -69,8 +64,8 @@ namespace PirateGame.Movement{
 
         private void CalculateRotation()
         {
-            float leftSpeed = -_turnSpeed * _crewModifier;
-            float rightSpeed = _turnSpeed * _crewModifier;
+            float leftSpeed = -(MinValue(_turnSpeed * _crewDamageModifier, _minTurnSpeed));
+            float rightSpeed = (MinValue(_turnSpeed * _crewDamageModifier, _minTurnSpeed));
             float turnDirection = 0;
 
             if (_leftTurn == true){
@@ -85,29 +80,29 @@ namespace PirateGame.Movement{
 
         private void CalculateMovement()
         {
-            _targetSpeed = (_maxSpeed * _sailModifier) * _sailStateModifier;
+            _targetSpeed = (MinValue(_maxSpeed * _sailDamageModifier, _minSpeed)) * _sailStateModifier;
             float difference = Mathf.Abs(_currentSpeed - _targetSpeed);
             // Calculates movement based off of acceleration/deceleration rate.
             if (_currentSpeed < _targetSpeed && difference > 0.01f)
             {
-                _currentSpeed += AccelerationCalc(difference, _initialAccelerationRate * _sailModifier, _accelerationEasingFactor, _minimumAcceleration);
+                _currentSpeed += AccelerationCalc(difference, _initialAccelerationRate * _sailDamageModifier, _accelerationEasingFactor, _minimumAcceleration);
             }
             else
             if (_currentSpeed > _targetSpeed && difference > 0.01f){
-                _currentSpeed -= AccelerationCalc(difference, _initialDecelerationRate * _hullModifier, _decelerationEasingFactor, _minimumDeceleration);
+                _currentSpeed -= AccelerationCalc(difference, _initialDecelerationRate * _hullDamageModifier, _decelerationEasingFactor, _minimumDeceleration);
             }
             // Clamp speed to ensure no engative or overspeed.
-            _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _maxSpeed * _sailModifier);
+            _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _maxSpeed * _sailDamageModifier);
 
             // Apply Movement.
             transform.position += transform.forward * _currentSpeed * Time.deltaTime;
 
-            Debug.Log(_currentSpeed);
+           // Debug.Log(_currentSpeed);
         }
 
         private float AccelerationCalc(float difference, float rate, float easing, float min)
         {
-            return min + rate * (difference * easing) * Time.deltaTime;
+            return MinValue(rate * (difference * easing), min) * Time.deltaTime;
         }
 
         public void SailStateIncrease(){
@@ -134,6 +129,10 @@ namespace PirateGame.Movement{
             return Enum.GetValues(typeof(SpeedModifierEnum)).Length;
         }
 
+        private float MinValue(float min, float current){
+            return Mathf.Max(min, current);
+        }
+
         public void LeftTurnEnable(){
             _leftTurn = true;
         }
@@ -147,22 +146,20 @@ namespace PirateGame.Movement{
             _rightTurn = false;
         }
 
-        public void OnDamageNotify(float healthPercentage, AttackTypeEnum type)
+        public void OnHullDamage(float modifier)
         {
-            if (healthPercentage < .25f){
-                return;
-            }
-            switch (type){
-                case AttackTypeEnum.Round_Shot:
-                    _hullModifier = healthPercentage;
-                break;
-                case AttackTypeEnum.Chain_Shot:
-                    _sailModifier = healthPercentage;
-                break;
-                case AttackTypeEnum.Grape_Shot:
-                    _crewModifier = healthPercentage;
-                break;           
-            }
+            _hullDamageModifier = modifier;
+            Debug.Log(modifier);
+        }
+
+        public void OnSailDamage(float modifier)
+        {
+            _sailDamageModifier = modifier;
+        }
+
+        public void OnCrewDamage(float modifier)
+        {
+            _crewDamageModifier = modifier;
         }
     }
 }

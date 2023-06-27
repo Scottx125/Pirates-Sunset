@@ -3,41 +3,45 @@ using UnityEngine;
 
 namespace PirateGame.Health{
 
-    public abstract class Health : MonoBehaviour, ISubjectHealth, IDamageable
+    public class Health : MonoBehaviour, IDamageable
     {
-        private List<IObserverShipMovement> _observers = new List<IObserverShipMovement>();
+        private IOnDamaged[] _iOnDamagedComponenets; 
 
-        private int _maxHealth = 100;
-        private int _health;
-        public float toPercent => (float)_health / _maxHealth;
-        public float getHealth => _health;
+        private int _maxHullHealth = 100, _hullHealth;
+        private int _maxSailHealth = 100, _sailHealth;
+        private int _maxCrewHealth = 100, _crewHealth;
+        public float toPercent(int health, int maxHealth) => (float)health / maxHealth;
 
-        public void Start(){
-            _health = _maxHealth;
+        public void Awake(){
+            _hullHealth = _maxHullHealth;
+            _sailHealth = _maxSailHealth;
+            _crewHealth = _maxCrewHealth;
+            _iOnDamagedComponenets = GetComponents<IOnDamaged>();
         }
 
         public void TakeDamage(int damage, AttackTypeEnum type){
-            _health -= damage;
-            NotifyOnDamage(toPercent, type);
+            switch (type){
+                case AttackTypeEnum.Round_Shot:
+                        _hullHealth -= damage;
+                        for(int i = 0; i < _iOnDamagedComponenets.Length; i++){
+                            _iOnDamagedComponenets[i].OnHullDamage(toPercent(_hullHealth, _maxHullHealth));
+                        }
+                break;
+                case AttackTypeEnum.Chain_Shot:
+                        _sailHealth -= damage;
+                        for(int i = 0; i < _iOnDamagedComponenets.Length; i++){
+                            _iOnDamagedComponenets[i].OnSailDamage(toPercent(_sailHealth, _maxSailHealth));
+                        }
+                break;
+                case AttackTypeEnum.Grape_Shot:
+                        _crewHealth -= damage;
+                        for(int i = 0; i < _iOnDamagedComponenets.Length; i++){
+                            _iOnDamagedComponenets[i].OnCrewDamage(toPercent(_crewHealth, _maxCrewHealth));
+                        }
+                break;           
+            }
         }
         
         //public void Heal(int amount);
-
-        public void AddHealthObserver(IObserverShipMovement observer)
-        {
-            _observers.Add(observer);
-        }
-
-         public void RemoveHealthObserver(IObserverShipMovement observer)
-        {
-            _observers.Remove(observer);
-        }
-
-        public void NotifyOnDamage(float percent, AttackTypeEnum type)
-        {
-            foreach (var observer in _observers){
-                observer.OnDamageNotify(percent, type);
-            }
-        }
     }
 }
