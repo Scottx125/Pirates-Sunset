@@ -7,12 +7,12 @@ namespace PirateGame.Health{
     {
         private IDamageable _damageable;
         // References to different damageable componenets.
-        public void Start(){
+        private void Start(){
             _damageable = GetComponent<IDamageable>();
-            OnDamage();
+            BroadcastDamage();
         }
 
-        private void OnDamage()
+        private void BroadcastDamage()
         {
             // Also link to a status manager that adds the status to itself async.
             // If it does damage it'll reference Idamageable and deal dmg based on it's attack type.

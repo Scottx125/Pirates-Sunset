@@ -13,7 +13,7 @@ public class ShipManager : MonoBehaviour
 
     public ShipSO setShipData(ShipSO data) => _shipData = data;
 
-    void Start(){
+    private void Start(){
         // Setup everything relating to the ship.
         if (_shipData == null) return;
         if (_health == null) GetComponent<Health>();
@@ -23,7 +23,7 @@ public class ShipManager : MonoBehaviour
 
         Setup();
     }
-    void Setup(){
+    private void Setup(){
         _health.Setup(_shipData.GetHullHealth, _shipData.GetSailHealth, _shipData.GetCrewHealth);
         _mover.Setup(_shipData.GetMoverDataStruct);
     }

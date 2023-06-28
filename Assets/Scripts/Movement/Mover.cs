@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
-using PirateGame.Health;
 
 namespace PirateGame.Movement{
-    public class Mover : MonoBehaviour, IOnDamaged
+    public class Mover : MonoBehaviour, IUpdateDamagedModifier
     {
         // States of control for sails.
         private float _sailStateModifier;
@@ -24,6 +23,69 @@ namespace PirateGame.Movement{
         private float _currentSpeed;
         private float _targetSpeed;
         private bool _leftTurn, _rightTurn;
+
+        public void Setup(MoverDataStruct moverDataStruct)
+        {
+            // Allow the player to fire immediately.
+            _sailStateTimeSinceChanged = 1f;
+
+            // ShipSetup
+            _sailStateChangeDelay = moverDataStruct.GetSailStateChangeDelay;
+            _maxSpeed = moverDataStruct.GetMaxSpeed;
+            _minSpeed = moverDataStruct.GetMinSpeed;
+            _maxTurnSpeed = moverDataStruct.GetMaxTurnSpeed; 
+            _minTurnSpeed = moverDataStruct.GetMinTurnSpeed;
+            _maxAccelerationRate = moverDataStruct.GetMaxAccelerationRate; 
+            _accelerationEasingFactor = moverDataStruct.GetAccelerationEasingFactor; 
+            _minAcceleration = moverDataStruct.GetMinAccelration;
+            _maxDecelerationRate = moverDataStruct.GetMaxDecelerationRate;
+            _decelerationEasingFactor = moverDataStruct.GetDecelerationEasingFactor; 
+            _minDeceleration = moverDataStruct.GetMinDeceleration;
+        }
+
+        public void SailStateIncrease(){
+            if (_sailState < getSailStateEnumLength() - 1 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
+                _sailState++;
+                _sailStateModifier = getSailStateEnumValue();
+                _sailStateTimeSinceChanged = 0f;
+            }
+        }
+
+        public void SailStateDecrease(){
+            if (_sailState > 0 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
+                _sailState--;
+                _sailStateModifier = getSailStateEnumValue();
+                _sailStateTimeSinceChanged = 0f;
+            }
+        }
+
+        public void LeftTurnEnable(){
+            _leftTurn = true;
+        }
+        public void LeftTurnDisable(){
+            _leftTurn = false;
+        }
+        public void RightTurnEnable(){
+            _rightTurn = true;
+        }
+        public void RightTurnDisable(){
+            _rightTurn = false;
+        }
+
+        public void UpdateHullDamageModifier(float modifier)
+        {
+            _hullDamageModifier = modifier;
+        }
+
+        public void UpdateSailDamageModifier(float modifier)
+        {
+            _sailDamageModifier = modifier;
+        }
+
+        public void UpdateCrewDamageModifier(float modifier)
+        {
+            _crewDamageModifier = modifier;
+        }
 
         private void FixedUpdate(){
             SailStateTimer();
@@ -84,21 +146,6 @@ namespace PirateGame.Movement{
             return MinValue(rate * (difference * easing), min) * Time.deltaTime;
         }
 
-        public void SailStateIncrease(){
-            if (_sailState < getSailStateEnumLength() - 1 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
-                _sailState++;
-                _sailStateModifier = getSailStateEnumValue();
-                _sailStateTimeSinceChanged = 0f;
-            }
-        }
-        public void SailStateDecrease(){
-            if (_sailState > 0 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
-                _sailState--;
-                _sailStateModifier = getSailStateEnumValue();
-                _sailStateTimeSinceChanged = 0f;
-            }
-        }
-
         private float getSailStateEnumValue(){
             var value = (SpeedModifierEnum)_sailState;
             return (float)value / (Enum.GetValues(typeof(SpeedModifierEnum)).Length - 1);
@@ -112,52 +159,5 @@ namespace PirateGame.Movement{
             return Mathf.Max(min, current);
         }
 
-        public void LeftTurnEnable(){
-            _leftTurn = true;
-        }
-        public void LeftTurnDisable(){
-            _leftTurn = false;
-        }
-        public void RightTurnEnable(){
-            _rightTurn = true;
-        }
-        public void RightTurnDisable(){
-            _rightTurn = false;
-        }
-
-        public void OnHullDamage(float modifier)
-        {
-            _hullDamageModifier = modifier;
-            Debug.Log(modifier);
-        }
-
-        public void OnSailDamage(float modifier)
-        {
-            _sailDamageModifier = modifier;
-        }
-
-        public void OnCrewDamage(float modifier)
-        {
-            _crewDamageModifier = modifier;
-        }
-
-        public void Setup(MoverDataStruct moverDataStruct)
-        {
-            // Allow the player to fire immediately.
-            _sailStateTimeSinceChanged = 1f;
-
-            // ShipSetup
-            _sailStateChangeDelay = moverDataStruct.GetSailStateChangeDelay;
-            _maxSpeed = moverDataStruct.GetMaxSpeed;
-            _minSpeed = moverDataStruct.GetMinSpeed;
-            _maxTurnSpeed = moverDataStruct.GetMaxTurnSpeed; 
-            _minTurnSpeed = moverDataStruct.GetMinTurnSpeed;
-            _maxAccelerationRate = moverDataStruct.GetMaxAccelerationRate; 
-            _accelerationEasingFactor = moverDataStruct.GetAccelerationEasingFactor; 
-            _minAcceleration = moverDataStruct.GetMinAccelration;
-            _maxDecelerationRate = moverDataStruct.GetMaxDecelerationRate;
-            _decelerationEasingFactor = moverDataStruct.GetDecelerationEasingFactor; 
-            _minDeceleration = moverDataStruct.GetMinDeceleration;
-        }
     }
 }
