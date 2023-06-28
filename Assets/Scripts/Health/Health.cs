@@ -12,7 +12,11 @@ namespace PirateGame.Health{
         private int _maxCrewHealth = 100, _crewHealth;
         public float toPercent(int health, int maxHealth) => (float)health / maxHealth;
 
-        public void Awake(){
+        public void Setup(int maxHullHealth, int maxSailHealth, int maxCrewHealth){
+            _maxHullHealth = maxHullHealth;
+            _maxSailHealth = maxSailHealth;
+            _maxCrewHealth = maxCrewHealth;
+
             _hullHealth = _maxHullHealth;
             _sailHealth = _maxSailHealth;
             _crewHealth = _maxCrewHealth;
