@@ -15,6 +15,7 @@ namespace PirateGame.Movement{
         // Movement attributes.
         private float _maxSpeed, _minSpeed;
         private float _maxTurnSpeed, _minTurnSpeed;
+        private int _turnSpeedEasePoint;
         private float _maxAccelerationRate, _accelerationEasingFactor, _minAcceleration;
         private float _maxDecelerationRate, _decelerationEasingFactor, _minDeceleration;
         private float _hullDamageModifier = 1f;
@@ -33,6 +34,7 @@ namespace PirateGame.Movement{
             _sailStateChangeDelay = moverDataStruct.GetSailStateChangeDelay;
             _maxSpeed = moverDataStruct.GetMaxSpeed;
             _minSpeed = moverDataStruct.GetMinSpeed;
+            _turnSpeedEasePoint = moverDataStruct.GetTurnSpeedEasePoint;
             _maxTurnSpeed = moverDataStruct.GetMaxTurnSpeed; 
             _minTurnSpeed = moverDataStruct.GetMinTurnSpeed;
             _maxAccelerationRate = moverDataStruct.GetMaxAccelerationRate; 
@@ -45,16 +47,16 @@ namespace PirateGame.Movement{
 
         // Increase/decrease ship sail state.
         public void SailStateIncrease(){
-            if (_sailState < getSailStateEnumLength() - 1 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
+            if (_sailState < getSailStateEnumLength() && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
                 _sailState++;
-                _sailStateModifier = getSailStateEnumValue();
+                _sailStateModifier = getSailStateEnumValue(_sailState);
                 _sailStateTimeSinceChanged = 0f;
             }
         }
         public void SailStateDecrease(){
             if (_sailState > 0 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
                 _sailState--;
-                _sailStateModifier = getSailStateEnumValue();
+                _sailStateModifier = getSailStateEnumValue(_sailState);
                 _sailStateTimeSinceChanged = 0f;
             }
         }
@@ -106,18 +108,24 @@ namespace PirateGame.Movement{
 
         private void CalculateRotation()
         {
-            float leftSpeed = -(MinValue(_maxTurnSpeed * _crewDamageModifier, _minTurnSpeed));
-            float rightSpeed = (MinValue(_maxTurnSpeed * _crewDamageModifier, _minTurnSpeed));
-            float turnDirection = 0;
+            float turnDirectionSpeed = 0;
+
+            // Calculate the ease point based on the _turnSpeedEasePoint and then 
+            // use that to determine the speed at which the turn speed will linearly ramp up or down from.
+            // So that at low speeds the ship turns slower, but at a certain speed it will reach it's maximum turn rate.
+            float easePointValue = _maxSpeed * getSailStateEnumValue(_turnSpeedEasePoint);
+            float easePointDifference = _currentSpeed < easePointValue ? _currentSpeed / easePointValue : 1f;
+
+            float turnSpeed = (MinValue((_maxTurnSpeed * easePointDifference) * _crewDamageModifier, _minTurnSpeed));
 
             if (_leftTurn == true){
-                turnDirection = leftSpeed;
+                turnDirectionSpeed = -turnSpeed;
             }
             if (_rightTurn == true){
-                turnDirection = rightSpeed;
+                turnDirectionSpeed = turnSpeed;
             }
 
-            transform.Rotate(new Vector3(0f,turnDirection,0f));
+            transform.Rotate(new Vector3(0f,turnDirectionSpeed,0f));
         }
 
         private void CalculateMovement()
@@ -125,12 +133,12 @@ namespace PirateGame.Movement{
             _targetSpeed = (MinValue(_maxSpeed * _sailDamageModifier, _minSpeed)) * _sailStateModifier;
             float difference = Mathf.Abs(_currentSpeed - _targetSpeed);
             // Calculates movement based off of acceleration/deceleration rate.
-            if (_currentSpeed < _targetSpeed && difference > 0.01f)
+            if (_currentSpeed < _targetSpeed)
             {
                 _currentSpeed += AccelerationCalc(difference, _maxAccelerationRate * _sailDamageModifier, _accelerationEasingFactor, _minAcceleration);
             }
             else
-            if (_currentSpeed > _targetSpeed && difference > 0.01f){
+            if (_currentSpeed > _targetSpeed){
                 _currentSpeed -= AccelerationCalc(difference, _maxDecelerationRate * _hullDamageModifier, _decelerationEasingFactor, _minDeceleration);
             }
             // Clamp speed to ensure no engative or overspeed.
@@ -138,8 +146,6 @@ namespace PirateGame.Movement{
 
             // Apply Movement.
             transform.position += transform.forward * _currentSpeed * Time.deltaTime;
-
-           // Debug.Log(_currentSpeed);
         }
 
         private float AccelerationCalc(float difference, float rate, float easing, float min)
@@ -148,17 +154,17 @@ namespace PirateGame.Movement{
         }
 
         // Retrieves the sail enum value based on the int state of _sailState.
-        private float getSailStateEnumValue(){
-            var value = (SpeedModifierEnum)_sailState;
-            return (float)value / (Enum.GetValues(typeof(SpeedModifierEnum)).Length - 1);
+        private float getSailStateEnumValue(int speedMod){
+            var value = (SpeedModifierEnum)speedMod;
+            return (float)value / (Enum.GetValues(typeof(SpeedModifierEnum)).Length);
         }
 
         private int getSailStateEnumLength(){
-            return Enum.GetValues(typeof(SpeedModifierEnum)).Length;
+            return Enum.GetValues(typeof(SpeedModifierEnum)).Length - 1;
         }
         
-        private float MinValue(float min, float current){
-            return Mathf.Max(min, current);
+        private float MinValue(float a, float b){
+            return Mathf.Max(a, b);
         }
 
     }

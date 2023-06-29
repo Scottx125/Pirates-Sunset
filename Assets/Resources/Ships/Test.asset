@@ -13,6 +13,19 @@ MonoBehaviour:
   m_Name: Test
   m_EditorClassIdentifier: 
   shipPrefab: {fileID: 0}
-  _hullHealth: 0
-  _crewHealth: 0
-  _sailHealth: 0
+  _hullHealth: 100
+  _crewHealth: 100
+  _sailHealth: 100
+  _moverDataStruct:
+    _sailStateChangeDelay: 1
+    _maxSpeed: 40
+    _minSpeed: 0.1
+    _turnSpeedEasePoint: 1
+    _maxTurnSpeed: 2
+    _minTurnSpeed: 0.3
+    _maxAccelerationRate: 3.5
+    _accelerationEasingFactor: 0.1
+    _minAcceleration: 0.1
+    _maxDecelerationRate: 2
+    _decelerationEasingFactor: 0.1
+    _minDeceleration: 0.2

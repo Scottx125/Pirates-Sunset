@@ -12,7 +12,7 @@ namespace PirateGame.Health{
         private int _maxCrewHealth = 100, _crewHealth;
 
         private float ToPercent(int health, int maxHealth) => (float)health / maxHealth;
-        private float CalculateDamage(ref int health, int damage) => health = Mathf.Max(health - damage, 0);
+        private float CalculateDamage(int health, int damage) => health = Mathf.Max(health - damage, 0);
 
         public void Setup(int maxHullHealth, int maxSailHealth, int maxCrewHealth){
             _maxHullHealth = maxHullHealth;
@@ -29,15 +29,15 @@ namespace PirateGame.Health{
         public void TakeDamage(int damage, AttackTypeEnum type){
             switch (type){
                 case AttackTypeEnum.Round_Shot:
-                    CalculateDamage(ref _hullHealth, damage);
+                    CalculateDamage(_hullHealth, damage);
                     BroadcastHullDamage();
                     break;
                 case AttackTypeEnum.Chain_Shot:
-                    CalculateDamage(ref _sailHealth, damage);
+                    CalculateDamage(_sailHealth, damage);
                     BroadcastSailDamage();
                     break;
                 case AttackTypeEnum.Grape_Shot:
-                    CalculateDamage(ref _crewHealth, damage);
+                    CalculateDamage(_crewHealth, damage);
                     BroadcastCrewDamage();
                     break;
             }

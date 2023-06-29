@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class ShipManager : MonoBehaviour
 {
+    [SerializeField]
     private ShipSO _shipData;
+    
     private Mover _mover;
     private Health _health;
     private DamageManager _damageManager;
@@ -16,10 +18,10 @@ public class ShipManager : MonoBehaviour
     private void Start(){
         // Setup everything relating to the ship.
         if (_shipData == null) return;
-        if (_health == null) GetComponent<Health>();
-        if (_mover == null) GetComponent<Mover>();
-        if (_damageManager == null) GetComponent<DamageManager>();
-        if (_playerController == null) GetComponent<PlayerController>();
+        if (_health == null) _health = GetComponent<Health>();
+        if (_mover == null) _mover = GetComponent<Mover>();
+        if (_damageManager == null) _damageManager = GetComponent<DamageManager>();
+        if (_playerController == null) _playerController = GetComponent<PlayerController>();
 
         Setup();
     }

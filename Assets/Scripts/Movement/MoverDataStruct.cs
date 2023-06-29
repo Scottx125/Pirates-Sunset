@@ -9,6 +9,8 @@ public struct MoverDataStruct
     [SerializeField]
     private float _maxSpeed, _minSpeed;
     [SerializeField]
+    private SpeedModifierEnum _turnSpeedEasePoint;
+    [SerializeField]
     private float _maxTurnSpeed, _minTurnSpeed;
     [SerializeField]
     private float _maxAccelerationRate, _accelerationEasingFactor, _minAcceleration;
@@ -18,6 +20,7 @@ public struct MoverDataStruct
     public float GetSailStateChangeDelay => _sailStateChangeDelay;
     public float GetMaxSpeed => _maxSpeed;
     public float GetMinSpeed => _minSpeed;
+    public int GetTurnSpeedEasePoint => (int)_turnSpeedEasePoint;
     public float GetMaxTurnSpeed => _maxTurnSpeed;
     public float GetMinTurnSpeed => _minTurnSpeed;
     public float GetMaxAccelerationRate => _maxAccelerationRate;

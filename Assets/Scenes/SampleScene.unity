@@ -245,6 +245,7 @@ GameObject:
   - component: {fileID: 658842046}
   - component: {fileID: 658842041}
   - component: {fileID: 658842045}
+  - component: {fileID: 658842047}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Untagged
@@ -363,17 +364,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26bf645b0e54b2b4b880261966b13513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sailStateChangeDelay: 1
-  _maxSpeed: 40
-  _minSpeed: 1
-  _turnSpeed: 5
-  _minTurnSpeed: 0.5
-  _initialAccelerationRate: 3.5
-  _accelerationEasingFactor: 0.5
-  _minimumAcceleration: 0.1
-  _initialDecelerationRate: 3.5
-  _decelerationEasingFactor: 0.5
-  _minimumDeceleration: 0.1
 --- !u!114 &658842045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,6 +388,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d215bf107ec73c540bfc0774443735aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &658842047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658842035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d8e7dc8612706d40a22ef9f92ea1e53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _shipData: {fileID: 11400000, guid: 1f6df471c772fa64e8ff97f641d0fc78, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
