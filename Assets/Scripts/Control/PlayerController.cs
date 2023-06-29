@@ -13,9 +13,12 @@ namespace PirateGame.Control{
         [SerializeField]
         private Mover mover;
 
-        private void Awake()
+        public void Setup()
         {
-            Setup();
+            // Setup the inputkeycode scriptable object if it's not aleady been done.
+
+            // Setup GetComponenets if not already attatched in the inspector.
+            if (mover == null){mover = GetComponent<Mover>();}
         }
 
         private void Update(){
@@ -30,14 +33,6 @@ namespace PirateGame.Control{
             if (Input.GetKeyUp(KeyCode.A)){mover.LeftTurnDisable();}// Do something
             if (Input.GetKeyUp(KeyCode.D)){mover.RightTurnDisable();}// Do something
             if (Input.GetKey(KeyCode.S)){mover.SailStateDecrease();}// Do something
-        }
-
-        private void Setup()
-        {
-            // Setup the inputkeycode scriptable object if it's not aleady been done.
-
-            // Setup GetComponenets if not already attatched in the inspector.
-            if (mover == null){mover = GetComponent<Mover>();}
         }
     }
 }

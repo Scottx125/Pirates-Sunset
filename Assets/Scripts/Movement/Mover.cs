@@ -29,7 +29,7 @@ namespace PirateGame.Movement{
             // Allow the player to fire immediately.
             _sailStateTimeSinceChanged = 1f;
 
-            // ShipSetup
+            // Setup of ship variables.
             _sailStateChangeDelay = moverDataStruct.GetSailStateChangeDelay;
             _maxSpeed = moverDataStruct.GetMaxSpeed;
             _minSpeed = moverDataStruct.GetMinSpeed;
@@ -43,6 +43,7 @@ namespace PirateGame.Movement{
             _minDeceleration = moverDataStruct.GetMinDeceleration;
         }
 
+        // Increase/decrease ship sail state.
         public void SailStateIncrease(){
             if (_sailState < getSailStateEnumLength() - 1 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
                 _sailState++;
@@ -50,7 +51,6 @@ namespace PirateGame.Movement{
                 _sailStateTimeSinceChanged = 0f;
             }
         }
-
         public void SailStateDecrease(){
             if (_sailState > 0 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
                 _sailState--;
@@ -59,6 +59,7 @@ namespace PirateGame.Movement{
             }
         }
 
+        // Turning enabled/disabled methods.
         public void LeftTurnEnable(){
             _leftTurn = true;
         }
@@ -72,16 +73,15 @@ namespace PirateGame.Movement{
             _rightTurn = false;
         }
 
+        // Update the modifiers for ship variables such as speed based on whatever health pool is damaged.
         public void UpdateHullDamageModifier(float modifier)
         {
             _hullDamageModifier = modifier;
         }
-
         public void UpdateSailDamageModifier(float modifier)
         {
             _sailDamageModifier = modifier;
         }
-
         public void UpdateCrewDamageModifier(float modifier)
         {
             _crewDamageModifier = modifier;
@@ -94,6 +94,7 @@ namespace PirateGame.Movement{
             CalculateMovement();
         }
 
+        // Timer controling the delay between changing sail state.
         private void SailStateTimer()
         {
             if (_sailStateTimeSinceChanged >= _sailStateChangeDelay / _crewDamageModifier){
@@ -146,6 +147,7 @@ namespace PirateGame.Movement{
             return MinValue(rate * (difference * easing), min) * Time.deltaTime;
         }
 
+        // Retrieves the sail enum value based on the int state of _sailState.
         private float getSailStateEnumValue(){
             var value = (SpeedModifierEnum)_sailState;
             return (float)value / (Enum.GetValues(typeof(SpeedModifierEnum)).Length - 1);
@@ -154,7 +156,7 @@ namespace PirateGame.Movement{
         private int getSailStateEnumLength(){
             return Enum.GetValues(typeof(SpeedModifierEnum)).Length;
         }
-
+        
         private float MinValue(float min, float current){
             return Mathf.Max(min, current);
         }

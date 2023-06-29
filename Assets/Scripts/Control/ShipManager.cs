@@ -26,5 +26,7 @@ public class ShipManager : MonoBehaviour
     private void Setup(){
         _health.Setup(_shipData.GetHullHealth, _shipData.GetSailHealth, _shipData.GetCrewHealth);
         _mover.Setup(_shipData.GetMoverDataStruct);
+        _damageManager.Setup();
+        _playerController.Setup();
     }
 }
