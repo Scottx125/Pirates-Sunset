@@ -7,8 +7,8 @@ namespace PirateGame.Health{
     {
         private IDamageable _damageable;
         // References to different damageable componenets.
-        public void Setup(){
-            _damageable = GetComponent<IDamageable>();
+        public void Setup(IDamageable damageable){
+            _damageable = damageable;
             BroadcastDamage();
         }
 

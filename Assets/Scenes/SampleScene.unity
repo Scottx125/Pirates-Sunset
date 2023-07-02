@@ -241,11 +241,14 @@ GameObject:
   - component: {fileID: 658842038}
   - component: {fileID: 658842037}
   - component: {fileID: 658842036}
-  - component: {fileID: 658842040}
-  - component: {fileID: 658842046}
-  - component: {fileID: 658842041}
-  - component: {fileID: 658842045}
   - component: {fileID: 658842047}
+  - component: {fileID: 658842046}
+  - component: {fileID: 658842045}
+  - component: {fileID: 658842044}
+  - component: {fileID: 658842043}
+  - component: {fileID: 658842042}
+  - component: {fileID: 658842041}
+  - component: {fileID: 658842040}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Untagged
@@ -348,10 +351,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 658842035}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7764db57e19ef7a4ba165ad4e57745d6, type: 3}
+  m_Script: {fileID: 11500000, guid: 4d8e7dc8612706d40a22ef9f92ea1e53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mover: {fileID: 658842041}
+  _shipData: {fileID: 11400000, guid: 1f6df471c772fa64e8ff97f641d0fc78, type: 2}
+  _movementManager: {fileID: 658842044}
+  _healthManager: {fileID: 658842043}
+  _damageManager: {fileID: 658842042}
+  _inputManager: {fileID: 658842041}
 --- !u!114 &658842041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,10 +368,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 658842035}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26bf645b0e54b2b4b880261966b13513, type: 3}
+  m_Script: {fileID: 11500000, guid: 7764db57e19ef7a4ba165ad4e57745d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &658842045
+  _sail: {fileID: 658842047}
+  _crew: {fileID: 658842045}
+--- !u!114 &658842042
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -376,6 +385,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01720af96e6474449ed0125a0dbaf7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &658842043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658842035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17f5e1d4078a6674e837bc88d9e78789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sail: {fileID: 658842047}
+  _hull: {fileID: 658842046}
+  _crew: {fileID: 658842045}
+--- !u!114 &658842044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658842035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f0ced94571ed8f4ab3008b600dceafc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sail: {fileID: 658842047}
+  _hull: {fileID: 658842046}
+  _crew: {fileID: 658842045}
+--- !u!114 &658842045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658842035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f66478e11585f5c4f913304255c611db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &658842046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,7 +436,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 658842035}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d215bf107ec73c540bfc0774443735aa, type: 3}
+  m_Script: {fileID: 11500000, guid: df65013055d564d4c8c26eac0ac71094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &658842047
@@ -397,10 +448,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 658842035}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d8e7dc8612706d40a22ef9f92ea1e53, type: 3}
+  m_Script: {fileID: 11500000, guid: 750daed2b4ed3d4408dc57b2ef00878f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shipData: {fileID: 11400000, guid: 1f6df471c772fa64e8ff97f641d0fc78, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

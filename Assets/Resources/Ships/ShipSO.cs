@@ -7,14 +7,14 @@ public class ShipSO : ScriptableObject
     private GameObject shipPrefab; 
 
     [SerializeField]
-    private int _hullHealth, _crewHealth, _sailHealth;
+    private int _maxHullHealth, _maxCrewHealth, _maxSailHealth;
    
     [SerializeField]
     private MoverDataStruct _moverDataStruct;
 
-    public int GetHullHealth => _hullHealth;
-    public int GetCrewHealth => _crewHealth;
-    public int GetSailHealth => _sailHealth;
+    public int GetMaxHullHealth => _maxHullHealth;
+    public int GetMaxCrewHealth => _maxCrewHealth;
+    public int GetMaxSailHealth => _maxSailHealth;
 
     public MoverDataStruct GetMoverDataStruct => _moverDataStruct;
 
