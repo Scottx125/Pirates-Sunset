@@ -14,10 +14,12 @@ namespace PirateGame.Control{
         private Sail _sail;
         [SerializeField]
         private Crew _crew;
+        [SerializeField]
+        private CannonManager _cannonManager;
 
         public void Setup()
         {
-            // Setup the inputkeycode scriptable object if it's not aleady been done.
+            // Use a SO and change it, it will save the data automatically.
         }
 
         private void Update(){

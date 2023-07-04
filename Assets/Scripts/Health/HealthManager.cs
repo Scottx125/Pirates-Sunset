@@ -1,8 +1,5 @@
 using UnityEngine;
 namespace PirateGame.Health{
-    [RequireComponent(typeof(Sail))]
-    [RequireComponent(typeof(Hull))]
-    [RequireComponent(typeof(Crew))]
     public class HealthManager : MonoBehaviour, IDamageable
     {
         [SerializeField]

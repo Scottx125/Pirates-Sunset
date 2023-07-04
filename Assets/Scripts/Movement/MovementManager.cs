@@ -1,8 +1,5 @@
 using UnityEngine;
 namespace PirateGame.Movement{
-    [RequireComponent(typeof(Sail))]
-    [RequireComponent(typeof(Hull))]
-    [RequireComponent(typeof(Crew))]
     public class MovementManager : MonoBehaviour
     {
             [SerializeField]

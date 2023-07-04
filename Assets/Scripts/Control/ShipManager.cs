@@ -3,10 +3,6 @@ using PirateGame.Health;
 using PirateGame.Movement;
 using UnityEngine;
 
-[RequireComponent(typeof(MovementManager))]
-[RequireComponent(typeof(HealthManager))]
-[RequireComponent(typeof(DamageManager))]
-[RequireComponent(typeof(InputManager))]
 public class ShipManager : MonoBehaviour
 {
     [SerializeField]
@@ -19,6 +15,8 @@ public class ShipManager : MonoBehaviour
     private DamageManager _damageManager;
     [SerializeField]
     private InputManager _inputManager;
+    [SerializeField]
+    private CannonManager _cannonManager;
 
     public ShipSO setShipData(ShipSO data) => _shipData = data;
 
@@ -32,5 +30,6 @@ public class ShipManager : MonoBehaviour
         _healthManager.Setup(_shipData.GetMaxCrewHealth,_shipData.GetMaxHullHealth,_shipData.GetMaxSailHealth);
         _damageManager.Setup(_healthManager);
         _inputManager.Setup();
+        _cannonManager.Setup();
     }
 }

@@ -244,6 +244,7 @@ GameObject:
   - component: {fileID: 658842047}
   - component: {fileID: 658842046}
   - component: {fileID: 658842045}
+  - component: {fileID: 658842048}
   - component: {fileID: 658842044}
   - component: {fileID: 658842043}
   - component: {fileID: 658842042}
@@ -359,6 +360,7 @@ MonoBehaviour:
   _healthManager: {fileID: 658842043}
   _damageManager: {fileID: 658842042}
   _inputManager: {fileID: 658842041}
+  _cannonManager: {fileID: 0}
 --- !u!114 &658842041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,6 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sail: {fileID: 658842047}
   _crew: {fileID: 658842045}
+  _cannonManager: {fileID: 0}
 --- !u!114 &658842042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,6 +454,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 750daed2b4ed3d4408dc57b2ef00878f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &658842048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658842035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3f4e56585252284fbaf824171092557, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _loadedRefreshTime: 1
+  _cannons: []
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
