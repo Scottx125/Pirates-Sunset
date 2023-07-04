@@ -2,7 +2,7 @@ using PirateGame.Movement;
 using UnityEngine;
 
 namespace PirateGame.Control{
-    public class InputManager : MonoBehaviour
+    public class PlayerInputManager : MonoBehaviour
     {
         // Will be used later.
         private KeyCode increaseSail;
@@ -11,14 +11,14 @@ namespace PirateGame.Control{
         private KeyCode reefSail;
 
         [SerializeField]
-        private Sail _sail;
-        [SerializeField]
-        private Crew _crew;
-        [SerializeField]
         private CannonManager _cannonManager;
+        [SerializeField]
+        private MovementManager _movementManager;
 
-        public void Setup()
+
+        public void Setup(MovementManager movementManager)
         {
+            if (_movementManager == null) _movementManager = movementManager;
             // Use a SO and change it, it will save the data automatically.
         }
 
@@ -28,12 +28,12 @@ namespace PirateGame.Control{
 
         private void MovementInput()
         {
-            if (Input.GetKey(KeyCode.W)){_sail.SailStateIncrease();}
-            if (Input.GetKey(KeyCode.S)){_sail.SailStateDecrease();}
-            if (Input.GetKeyDown(KeyCode.A)){_crew.SetLeftTurn(true);}
-            if (Input.GetKeyUp(KeyCode.A)){_crew.SetLeftTurn(false);}
-            if (Input.GetKeyDown(KeyCode.D)){_crew.SetRightTurn(true);}
-            if (Input.GetKeyUp(KeyCode.D)){_crew.SetRightTurn(false);}
+            if (Input.GetKey(KeyCode.W)){_movementManager.IncreaseSpeed();}
+            if (Input.GetKey(KeyCode.S)){_movementManager.DecreaseSpeed();}
+            if (Input.GetKeyDown(KeyCode.A)){_movementManager.TurnLeft(true);}
+            if (Input.GetKeyUp(KeyCode.A)){_movementManager.TurnLeft(false);}
+            if (Input.GetKeyDown(KeyCode.D)){_movementManager.TurnRight(true);}
+            if (Input.GetKeyUp(KeyCode.D)){_movementManager.TurnRight(false);}
         }
     }
 }
