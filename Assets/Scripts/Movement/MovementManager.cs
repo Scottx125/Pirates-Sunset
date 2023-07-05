@@ -3,28 +3,26 @@ namespace PirateGame.Movement{
     public class MovementManager : MonoBehaviour
     {
             [SerializeField]
-            Sail _sail;
+            RotationCalc _rotation;
             [SerializeField]
-            Hull _hull;
+            MovementCalc _movement;
             [SerializeField]
-            Crew _crew;
+            SailStates _sailStates;
 
             public void Setup(MoverDataStruct movementData){
-                _sail.SetupMovementComponenet(_crew,_hull, movementData);
-                _crew.SetupMovementComponenet(_sail, movementData);
             }
 
             public void IncreaseSpeed(){
-                _sail.SailStateIncrease();
+                _sailStates.SailStateIncrease();
             }
             public void DecreaseSpeed(){
-                _sail.SailStateDecrease();
+                _sailStates.SailStateDecrease();
             }
             public void TurnLeft(bool turnBool){
-                _crew.SetLeftTurn(turnBool);
+                _rotation.SetLeftTurn(turnBool);
             }
             public void TurnRight(bool turnBool){
-                _crew.SetRightTurn(turnBool);
+                _rotation.SetRightTurn(turnBool);
             }
     }
 }

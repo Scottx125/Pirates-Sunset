@@ -1,8 +1,9 @@
-using PirateGame.Health;
-using PirateGame.Helpers;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using PirateGame.Helpers;
 
-public class Crew : Health, ICrewDamageModifier
+public class RotationCalc : MonoBehaviour
 {
     private float _crewDamageModifier = 1f;
 
@@ -10,31 +11,24 @@ public class Crew : Health, ICrewDamageModifier
     private int _turnSpeedEasePoint;
     private bool _leftTurn, _rightTurn;
     private float _maxSpeed;
-
-    private ICurrentSpeed _speed;
+    private float _currentSpeed;
 
     // Turning enabled/disabled methods.
     public void SetLeftTurn(bool state) => _leftTurn = state; 
     public void SetRightTurn(bool state) => _rightTurn = state; 
 
-    public void SetupMovementComponenet(ICurrentSpeed speed, MoverDataStruct movementData)
+    public void SetupMovementComponenet(MoverDataStruct movementData)
     {
-        _speed = speed;
         _maxTurnSpeed = movementData.GetMaxTurnSpeed;
         _minTurnSpeed = movementData.GetMinTurnSpeed;
         _turnSpeedEasePoint = movementData.GetTurnSpeedEasePoint;
         _maxSpeed = movementData.GetMaxSpeed;
     }
 
+    
     private void FixedUpdate()
     {
         CalculateRotation();
-    }
-
-    public override void TakeDamage(int damage)
-    {
-        _currentHealth -= damage;
-        _crewDamageModifier = ToPercent(_currentHealth, _maxHealth);
     }
 
     private void CalculateRotation()
@@ -45,7 +39,7 @@ public class Crew : Health, ICrewDamageModifier
         // use that to determine the speed at which the turn speed will linearly ramp up or down from.
         // So that at low speeds the ship turns slower, but at a certain speed it will reach it's maximum turn rate.
         float easePointValue = _maxSpeed * StaticHelpers.GetSailStateEnumValue(_turnSpeedEasePoint);
-        float easePointDifference = _speed.GetCurrentSpeed() < easePointValue ? _speed.GetCurrentSpeed() / easePointValue : 1f;
+        float easePointDifference = _currentSpeed < easePointValue ? _currentSpeed / easePointValue : 1f;
 
         float turnSpeed = (Mathf.Max((_maxTurnSpeed * easePointDifference) * _crewDamageModifier, _minTurnSpeed));
 
@@ -57,10 +51,5 @@ public class Crew : Health, ICrewDamageModifier
         }
 
         transform.Rotate(new Vector3(0f,turnDirectionSpeed,0f));
-    }
-
-    public float GetCrewDamageModifier()
-    {
-        return _crewDamageModifier;
     }
 }

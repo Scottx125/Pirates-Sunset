@@ -1,3 +1,3 @@
 public interface IDamageable {
-    void TakeDamage(int damage, AttackTypeEnum type);
+    void TakeDamage(int damage);
 }

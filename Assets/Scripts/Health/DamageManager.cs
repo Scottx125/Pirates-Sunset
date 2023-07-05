@@ -14,10 +14,7 @@ namespace PirateGame.Health{
 
         private void BroadcastDamage()
         {
-            // Also link to a status manager that adds the status to itself async.
-            // If it does damage it'll reference Idamageable and deal dmg based on it's attack type.
-            // Or if it's a slow effect it'll reference IMoverStatus.
-            // Or if it's a repair kit it could reference IHealStatus.
+            // Tell the health manager you're taking damage and let it sort out the rest.
            if(_damageable == null) return;
             _damageable.TakeDamage(5, AttackTypeEnum.Round_Shot);
         }

@@ -1,13 +1,16 @@
 using UnityEngine;
+using System.Collections.Generic;
 namespace PirateGame.Health{
-    public class HealthManager : MonoBehaviour, IDamageable
+    public class HealthManager : MonoBehaviour
     {
         [SerializeField]
-        Sail _sail;
+        SailHealth _sail;
         [SerializeField]
-        Hull _hull;
+        HullHealth _hull;
         [SerializeField]
-        Crew _crew;
+        CrewHealth _crew;
+
+        private Dictionary<string, HealthComponent> healthComponenets = new Dictionary<string, HealthComponent>();
 
         public void Setup(int crewMaxHealth, int hullMaxHealth, int sailMaxHealth){
             _crew.SetupHealthComponenet(crewMaxHealth);
