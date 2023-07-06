@@ -25,7 +25,7 @@ public class Cannon : MonoBehaviour
         // load cannon data from SO
     }
 
-    public void Fire(AttackTypeEnum ammoType){
+    public void Fire(DamageType ammoType){
         // Fire after X period of time and prevent firing till reloaded. Might need to be coroutine.
     }
     // FireCoroutine

@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+
 namespace PirateGame.Health{
     public class HealthManager : MonoBehaviour
     {
@@ -10,26 +12,36 @@ namespace PirateGame.Health{
         [SerializeField]
         CrewHealth _crew;
 
-        private Dictionary<string, HealthComponent> healthComponenets = new Dictionary<string, HealthComponent>();
+        private Dictionary<DamageType, HealthComponent> _healthComponenets = new Dictionary<DamageType, HealthComponent>();
 
-        public void Setup(int crewMaxHealth, int hullMaxHealth, int sailMaxHealth){
-            _crew.SetupHealthComponenet(crewMaxHealth);
-            _hull.SetupHealthComponenet(hullMaxHealth);
-            _sail.SetupHealthComponenet(sailMaxHealth);
+        public void Setup(params (HealthComponent healthComponent, int maxHealth)[] healthComponenetData)
+        {
+            foreach(var (healthComponenet, maxHealth) in healthComponenetData){
+                healthComponenet.SetupHealthComponenet(maxHealth);
+                AddHealthComponent(healthComponenet);
+            }
+        }
+
+        private void AddHealthComponent(HealthComponent componenet)
+        {
+            _healthComponenets[componenet.AssociatedDamageType] = componenet;
         }
 
         // Identifys the damage type and the applies the damage.
-        public void TakeDamage(int damage, AttackTypeEnum type){
-            switch (type){
-                case AttackTypeEnum.Round_Shot:
-                    _hull.TakeDamage(damage);
-                    break;
-                case AttackTypeEnum.Chain_Shot:
-                    _sail.TakeDamage(damage);
-                    break;
-                case AttackTypeEnum.Grape_Shot:
-                    _crew.TakeDamage(damage);
-                    break;
+        public void ApplyDamageToComponents(DamageAmount[] damageAmounts)
+        {
+            foreach(DamageAmount damageAmount in damageAmounts){
+                DamageType damageType = damageAmount.GetDamageType;
+                int damage = damageAmount.GetDamage;
+
+                if (_healthComponenets.TryGetValue(damageType, out HealthComponent healthComponent))
+                {
+                    healthComponent.TakeDamage(damage);
+                }
+                else 
+                {
+                    Debug.LogError($"Health componenet for damage type '{damageType}' not found!");
+                }
             }
         }
     }

@@ -12,7 +12,7 @@ public class ShipManager : MonoBehaviour
     [SerializeField]
     private HealthManager _healthManager;
     [SerializeField]
-    private DamageManager _damageManager;
+    private DamageHandler _damageManager;
     [SerializeField]
     private PlayerInputManager _inputManager;
     [SerializeField]
@@ -26,10 +26,6 @@ public class ShipManager : MonoBehaviour
         Setup();
     }
     private void Setup(){
-        _movementManager.Setup(_shipData.GetMoverDataStruct);
-        _healthManager.Setup(_shipData.GetMaxCrewHealth,_shipData.GetMaxHullHealth,_shipData.GetMaxSailHealth);
-        _damageManager.Setup(_healthManager);
-        _inputManager.Setup(_movementManager);
-        _cannonManager.Setup();
+
     }
 }
