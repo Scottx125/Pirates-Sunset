@@ -2,6 +2,7 @@ using PirateGame.Control;
 using PirateGame.Health;
 using PirateGame.Movement;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ShipManager : MonoBehaviour
 {
@@ -11,6 +12,12 @@ public class ShipManager : MonoBehaviour
     private MovementManager _movementManager;
     [SerializeField]
     private HealthManager _healthManager;
+    [SerializeField]
+    private SailHealth _sailHealth;
+    [SerializeField]
+    private HullHealth _hullHealth;
+    [SerializeField]
+    private CrewHealth _crewHealth;
     [SerializeField]
     private DamageHandler _damageManager;
     [SerializeField]
@@ -26,6 +33,8 @@ public class ShipManager : MonoBehaviour
         Setup();
     }
     private void Setup(){
-
+        _healthManager.Setup((_sailHealth,_shipData.GetMaxSailHealth),
+            (_hullHealth,_shipData.GetMaxHullHealth),
+                (_crewHealth,_shipData.GetMaxCrewHealth));
     }
 }

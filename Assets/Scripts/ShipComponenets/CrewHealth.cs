@@ -4,8 +4,6 @@ public class CrewHealth : HealthComponent
 {
     private float _crewHealthDamageModifier;
 
-    public override DamageType AssociatedDamageType => DamageType.Chain_Shot;
-
     public override void TakeDamage(int damage)
     {
         _currentHealth -= damage;

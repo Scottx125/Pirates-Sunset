@@ -1,21 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 namespace PirateGame.Health{
-    public class HealthManager : MonoBehaviour
+    public class HealthManager : MonoBehaviour, IApplyDamage
     {
-        [SerializeField]
-        SailHealth _sail;
-        [SerializeField]
-        HullHealth _hull;
-        [SerializeField]
-        CrewHealth _crew;
-
-        private Dictionary<DamageType, HealthComponent> _healthComponenets = new Dictionary<DamageType, HealthComponent>();
+        private Dictionary<DamageType, List<HealthComponent>> _healthComponenets = new Dictionary<DamageType, List<HealthComponent>>();
 
         public void Setup(params (HealthComponent healthComponent, int maxHealth)[] healthComponenetData)
         {
+            // Get the healthcomponenets and add them to the _healthComponent list after setting them up.
             foreach(var (healthComponenet, maxHealth) in healthComponenetData){
                 healthComponenet.SetupHealthComponenet(maxHealth);
                 AddHealthComponent(healthComponenet);
@@ -24,19 +17,27 @@ namespace PirateGame.Health{
 
         private void AddHealthComponent(HealthComponent componenet)
         {
-            _healthComponenets[componenet.AssociatedDamageType] = componenet;
+            foreach(DamageType damageType in componenet.GetAssociatedDamageTypes){
+                _healthComponenets[damageType].Add(componenet);
+            }
         }
 
         // Identifys the damage type and the applies the damage.
+        // Will first see if the income damage is more than 0.
+        // Then it will make sure the damage type has an associated healthComponenet.
+        // Then it will go through all the healthComponenets for the associated damage and call TakeDamage.
         public void ApplyDamageToComponents(DamageAmount[] damageAmounts)
         {
             foreach(DamageAmount damageAmount in damageAmounts){
                 DamageType damageType = damageAmount.GetDamageType;
                 int damage = damageAmount.GetDamage;
+                if (damage == 0) continue;
 
-                if (_healthComponenets.TryGetValue(damageType, out HealthComponent healthComponent))
+                if (_healthComponenets.TryGetValue(damageType, out List<HealthComponent> healthComponent))
                 {
-                    healthComponent.TakeDamage(damage);
+                    foreach(HealthComponent healthComponenet in _healthComponenets[damageType]){
+                        healthComponenet.TakeDamage(damage);
+                    }
                 }
                 else 
                 {
