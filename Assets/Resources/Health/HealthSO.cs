@@ -4,9 +4,7 @@ using UnityEngine;
 public class HealthSO : ScriptableObject
 {
     [SerializeField]
-    private int _maxHullHealth, _maxCrewHealth, _maxSailHealth;
+    private int _maxHealth;
+    public int MaxHealth => _maxHealth;
 
-    public int GetMaxHullHealth => _maxHullHealth;
-    public int GetMaxCrewHealth => _maxCrewHealth;
-    public int GetMaxSailHealth => _maxSailHealth;
 }

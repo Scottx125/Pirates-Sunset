@@ -12,7 +12,7 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded
     [SerializeField]
     private List<Cannon> _cannons = new List<Cannon>();
 
-    private DamageType currentDamageType = DamageType.Hull;
+    private DamageType currentDamageType = DamageType.Structural;
 
     private int _leftCannonsTotal;
     private int _rightCannonsTotal;

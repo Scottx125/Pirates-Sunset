@@ -1,5 +1,5 @@
 public enum DamageType{
-    Hull,
-    Sail,
-    Crew
+    Structural,
+    Mobility,
+    Corporal
 }
