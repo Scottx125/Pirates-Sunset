@@ -1,7 +1,6 @@
 using UnityEngine;
-using System;
 
-[CreateAssetMenu(fileName = "Damage", menuName = "ScriptableObjects/DamageTypes", order = 1)]
+[CreateAssetMenu(fileName = "Damage", menuName = "ScriptableObjects/DamageTypes", order = 5)]
 public class DamageSO : ScriptableObject
 {
     public DamageAmount[] GetDamageAmounts => _damageAmounts;

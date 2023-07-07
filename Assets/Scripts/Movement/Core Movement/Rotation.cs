@@ -1,23 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using PirateGame.Helpers;
 
-public class RotationCalc : MonoBehaviour
+public class Rotation : MonoBehaviour, ICurrentSpeed
 {
     private float _crewDamageModifier = 1f;
 
     private float _maxTurnSpeed, _minTurnSpeed;
     private int _turnSpeedEasePoint;
-    private bool _leftTurn, _rightTurn;
     private float _maxSpeed;
+    private bool _leftTurn, _rightTurn;
     private float _currentSpeed;
 
     // Turning enabled/disabled methods.
     public void SetLeftTurn(bool state) => _leftTurn = state; 
     public void SetRightTurn(bool state) => _rightTurn = state; 
+    public void SetCrewDamageModifier(float modifier) => _crewDamageModifier = modifier;
+    public void SetCurrentSpeed(float currentSpeed) => _currentSpeed = currentSpeed;
 
-    public void SetupMovementComponenet(MoverDataStruct movementData)
+    public void Setup(MovementSO movementData)
     {
         _maxTurnSpeed = movementData.GetMaxTurnSpeed;
         _minTurnSpeed = movementData.GetMinTurnSpeed;
@@ -25,7 +25,6 @@ public class RotationCalc : MonoBehaviour
         _maxSpeed = movementData.GetMaxSpeed;
     }
 
-    
     private void FixedUpdate()
     {
         CalculateRotation();

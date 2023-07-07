@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using PirateGame.Helpers;
 
@@ -7,19 +5,21 @@ public class SailStates : MonoBehaviour
 {
 
     // States of control for sails.
-    private float _sailStateModifier;
     private int _sailState = 0;
 
     // State change delay.
     private float _sailStateChangeDelay;
     private float _sailStateTimeSinceChanged;
 
+    private ISailStateModifier _sendSailState;
+
     private float _crewDamageModifier = 1;
 
-    public void Setup(MoverDataStruct movementData)
+    public void Setup(MovementSO movementData, ISailStateModifier sailStateReciever = null)
     {
         // Get movement and tell it to change it's _sailstatemodifier to this.
         _sailStateChangeDelay = movementData.GetSailStateChangeDelay;
+        _sendSailState = sailStateReciever;
     }
 
     private void FixedUpdate()
@@ -42,16 +42,24 @@ public class SailStates : MonoBehaviour
     {
         if (_sailState < StaticHelpers.GetSailStateEnumLength() && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
             _sailState++;
-             _sailStateModifier = StaticHelpers.GetSailStateEnumValue(_sailState);
+             ModifySailStateByInterface();
              _sailStateTimeSinceChanged = 0f;
         }
     }
     public void SailStateDecrease()
         {
-        if (_sailState > 0 && _sailStateTimeSinceChanged >= _sailStateChangeDelay){
+        if (_sailState > 0 && _sailStateTimeSinceChanged >= _sailStateChangeDelay)
+        {
             _sailState--;
-            _sailStateModifier = StaticHelpers.GetSailStateEnumValue(_sailState);
+            ModifySailStateByInterface();
             _sailStateTimeSinceChanged = 0f;
+        }
+    }
+
+    private void ModifySailStateByInterface()
+    {
+        if (_sendSailState != null){
+        _sendSailState.SailStateModifier(StaticHelpers.GetSailStateEnumValue(_sailState));
         }
     }
 }

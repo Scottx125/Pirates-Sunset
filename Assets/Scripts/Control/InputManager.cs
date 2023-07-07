@@ -1,4 +1,4 @@
-using PirateGame.Movement;
+using PirateGame.Moving;
 using UnityEngine;
 
 namespace PirateGame.Control{
@@ -9,9 +9,6 @@ namespace PirateGame.Control{
         private KeyCode leftRudder;
         private KeyCode rightRudder;
         private KeyCode reefSail;
-
-        [SerializeField]
-        private CannonManager _cannonManager;
         [SerializeField]
         private MovementManager _movementManager;
 

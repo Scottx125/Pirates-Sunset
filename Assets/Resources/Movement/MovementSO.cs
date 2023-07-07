@@ -1,8 +1,7 @@
-using System;
 using UnityEngine;
 
-[Serializable]
-public struct MoverDataStruct
+[CreateAssetMenu(fileName = "Movement", menuName = "ScriptableObjects/Movement", order = 2)]
+public class MovementSO : ScriptableObject
 {
     [SerializeField]
     private float _sailStateChangeDelay;

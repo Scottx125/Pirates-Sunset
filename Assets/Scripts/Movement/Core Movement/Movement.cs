@@ -1,20 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace PirateGame.Movement{
-    public class MovementCalc : MonoBehaviour
+namespace PirateGame.Moving{
+    public class Movement : MonoBehaviour, ISailStateModifier
     {
         private float _maxSpeed, _minSpeed;
         private float _maxAccelerationRate, _accelerationEasingFactor, _minAcceleration;
         private float _maxDecelerationRate, _decelerationEasingFactor, _minDeceleration;
         private float _currentSpeed;
         private float _targetSpeed;
-
-        private float _sailStateModifier = 0;
+        private float _sailStateModifier;
+        private ICurrentSpeed _sendCurrentSpeed;
+        
         private float _sailDamageModifier = 1f;
         private float _hullDamageModifier = 1f;
 
-        public void Setup(MoverDataStruct movementData)
+        public void SetSailDamageModifier(float modifier) => _sailDamageModifier = modifier;
+        public void SetHullDamageModifier(float modifier) => _hullDamageModifier = modifier;
+        public void SailStateModifier(float modifier) => _sailStateModifier = modifier;
+
+        public void Setup(MovementSO movementData, ICurrentSpeed currentSpeed = null)
         {
             // Setup of variables.
             _maxSpeed = movementData.GetMaxSpeed;
@@ -25,6 +30,7 @@ namespace PirateGame.Movement{
             _maxDecelerationRate = movementData.GetMaxDecelerationRate;
             _decelerationEasingFactor = movementData.GetDecelerationEasingFactor;
             _minDeceleration = movementData.GetMinDeceleration;
+            _sendCurrentSpeed = currentSpeed;
         }
 
         private void FixedUpdate()
@@ -47,6 +53,8 @@ namespace PirateGame.Movement{
             }
             // Clamp speed to ensure no engative or overspeed.
             _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _maxSpeed * _sailDamageModifier);
+            // sends current speed to listener.
+            if (_sendCurrentSpeed != null) _sendCurrentSpeed.SetCurrentSpeed(_currentSpeed);
 
             // Apply Movement.
             transform.position += transform.forward * _currentSpeed * Time.deltaTime;
