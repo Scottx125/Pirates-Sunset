@@ -241,6 +241,9 @@ GameObject:
   - component: {fileID: 658842038}
   - component: {fileID: 658842037}
   - component: {fileID: 658842036}
+  - component: {fileID: 658842056}
+  - component: {fileID: 658842055}
+  - component: {fileID: 658842054}
   - component: {fileID: 658842053}
   - component: {fileID: 658842052}
   - component: {fileID: 658842051}
@@ -384,8 +387,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17f5e1d4078a6674e837bc88d9e78789, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthComponentList:
+  _healthStructList:
   - _healthComponent: {fileID: 658842053}
+    _healthData: {fileID: 11400000, guid: 945a8249d3433ff44bb1339dc55388f7, type: 2}
+  - _healthComponent: {fileID: 658842054}
+    _healthData: {fileID: 11400000, guid: 945a8249d3433ff44bb1339dc55388f7, type: 2}
+  - _healthComponent: {fileID: 658842055}
     _healthData: {fileID: 11400000, guid: 945a8249d3433ff44bb1339dc55388f7, type: 2}
 --- !u!114 &658842044
 MonoBehaviour:
@@ -451,7 +458,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b07b662cf9ddb9479bcf10bb7f2f666, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _associatedDamageTypes: 
+  _associatedDamageTypes: 01000000
+--- !u!114 &658842054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658842035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e6ed6b65b8e3d34e84943d79ba0f1fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _associatedDamageTypes: 02000000
+--- !u!114 &658842055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658842035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7265b5a3ccfc4cb40be241f94535647e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _associatedDamageTypes: 00000000
+--- !u!114 &658842056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658842035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3f4e56585252284fbaf824171092557, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _loadedRefreshTime: 1
+  _cannonData: {fileID: 0}
+  _ammunitionDataList: []
+  _cannonsList: []
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ namespace PirateGame.Health{
             //BroadcastDamage();
         }
 
-        private void BroadcastDamage(DamageAmount[] damageAmounts)
+        private void BroadcastDamage(DamageAmountStruct[] damageAmounts)
         {
             // Tell the health manager you're taking damage and let it sort out the rest.
            if(_applyDamage == null) return;

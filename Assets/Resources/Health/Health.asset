@@ -12,6 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71e17063064c01c46848048c0df12540, type: 3}
   m_Name: Health
   m_EditorClassIdentifier: 
-  _maxHullHealth: 100
-  _maxCrewHealth: 100
-  _maxSailHealth: 100
+  _maxHealth: 100

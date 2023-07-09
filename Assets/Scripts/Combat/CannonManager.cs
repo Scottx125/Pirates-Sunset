@@ -6,51 +6,67 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded
 {
     [SerializeField]
     private float _loadedRefreshTime = 1f;
-
-    // data for cannon from SO.
-
     [SerializeField]
-    private List<Cannon> _cannons = new List<Cannon>();
+    private CannonSO _cannonData;
+    [SerializeField]
+    private List<DamageSO> _ammunitionDataList;
+    [SerializeField]
+    private List<Cannon> _cannonsList;
 
-    private DamageType currentDamageType = DamageType.Structural;
+    private DamageSO _currentAmmunitionLoaded;
+    private int _currentAmmunitionIndex = 0;
 
-    private int _leftCannonsTotal;
-    private int _rightCannonsTotal;
-    private int _leftCannonsReadyToFire;
-    private int _rightCannonsReadyToFire;
+    private Dictionary<CannonPositionEnum, List<Cannon>> _cannonDict = new Dictionary<CannonPositionEnum, List<Cannon>>();
+    private Dictionary<CannonPositionEnum, int> _cannonDictTotalNumber = new Dictionary<CannonPositionEnum, int>();
+    private Dictionary<CannonPositionEnum, int> _cannonDictLoaded = new Dictionary<CannonPositionEnum, int>();
 
     public void Setup(){
-        CannonsCount();
+        if (_cannonsList != null){
+            PopulateCannonDict();
+            PopulateCannonsTotalAndLoaded();
+        }
         // Setup cannons
     }
-
-    private void CannonsCount()
+    // Populated all the cannon totals based on their position.
+    private void PopulateCannonsTotalAndLoaded()
     {
-        foreach(Cannon cannon in _cannons){
-            if (cannon.GetCannonPosition == CannonPositionEnum.Left){
-                _leftCannonsTotal++;
-            }
-            if (cannon.GetCannonPosition == CannonPositionEnum.Right){
-                _rightCannonsTotal++;
+        foreach(CannonPositionEnum position in _cannonDict.Keys){
+            _cannonDictLoaded.Add(position, _cannonDict[position].Count);
+            _cannonDictTotalNumber.Add(position, _cannonDict[position].Count);
+        }
+    }
+    // Populated the main cannon dictionary.
+    private void PopulateCannonDict()
+    {
+        foreach(Cannon cannon in _cannonsList){
+            if (_cannonDict.ContainsKey(cannon.GetCannonPosition)){
+                _cannonDict[cannon.GetCannonPosition].Add(cannon);
+            } else {
+                _cannonDict.Add(cannon.GetCannonPosition, new List<Cannon>());
+                _cannonDict[cannon.GetCannonPosition].Add(cannon);
             }
         }
     }
 
-    public void ChangeAmmoType(){
-        //Iterate through ammo type to pass.
+
+    public void ChangeAmmoType(int indexTraverse){
+        if (_ammunitionDataList != null){
+            Math.Clamp(_currentAmmunitionIndex, 0, _ammunitionDataList.Count -1);
+            _currentAmmunitionLoaded = _ammunitionDataList[_currentAmmunitionIndex];
+        }
     }
 
-    public void FireCannons(CannonPositionEnum direciton){
-        // Iterate through cannon positions and fire.
+    public void FireCannons(CannonPositionEnum position){
+        foreach(Cannon cannon in _cannonDict[position]){
+            if (cannon.GetCannonLoaded == true){
+                // Fire cannon
+                _cannonDictLoaded[position]--;
+            }
+        }
     }
 
     public void CannonLoaded(CannonPositionEnum position)
     {
-        if (position == CannonPositionEnum.Left){
-            _leftCannonsReadyToFire++;
-        }
-        if (position == CannonPositionEnum.Right){
-            _rightCannonsReadyToFire++;
-        }
+        _cannonDictLoaded[position]++;
     }
 }

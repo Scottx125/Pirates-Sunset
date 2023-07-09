@@ -3,8 +3,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Damage", menuName = "ScriptableObjects/DamageTypes", order = 5)]
 public class DamageSO : ScriptableObject
 {
-    public DamageAmount[] GetDamageAmounts => _damageAmounts;
+    public DamageAmountStruct[] GetDamageAmounts => _damageAmounts;
+    public float GetAmmunitionType => _ammunitionName;
 
     [SerializeField]
-    private DamageAmount[] _damageAmounts;
+    private DamageAmountStruct[] _damageAmounts;
+    [SerializeField]
+    private float _ammunitionName;
 }

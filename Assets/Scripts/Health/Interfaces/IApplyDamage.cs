@@ -1,4 +1,4 @@
 public interface IApplyDamage
 {
-    public void ApplyDamageToComponents(DamageAmount[] damageAmounts);
+    public void ApplyDamageToComponents(DamageAmountStruct[] damageAmounts);
 }

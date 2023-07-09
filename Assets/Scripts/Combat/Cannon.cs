@@ -4,12 +4,6 @@ public class Cannon : MonoBehaviour
 {
     [SerializeField]
     private CannonPositionEnum _position;
-    [SerializeField]
-    private GameObject _cannonBall;
-    [SerializeField]
-    private GameObject _chainShot;
-    [SerializeField]
-    private GameObject _grapeShot;
 
     private bool _loaded = true;
 
