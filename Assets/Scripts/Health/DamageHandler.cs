@@ -13,6 +13,14 @@ namespace PirateGame.Health{
             //BroadcastDamage();
         }
 
+        void OnCollisionEnter(Collision other)
+        {
+            // Get the DamageSO's
+            // For each damage object check if it does damage over time.
+            // If it doens't call broadcast.
+            // If it does utilise a coroutine timer and then call Broadcast for each damage tick.
+        }
+
         private void BroadcastDamage(DamageAmountStruct[] damageAmounts)
         {
             // Tell the health manager you're taking damage and let it sort out the rest.

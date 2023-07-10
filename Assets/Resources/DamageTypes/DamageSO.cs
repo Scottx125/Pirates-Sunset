@@ -4,10 +4,11 @@ using UnityEngine;
 public class DamageSO : ScriptableObject
 {
     public DamageAmountStruct[] GetDamageAmounts => _damageAmounts;
-    public float GetAmmunitionType => _ammunitionName;
+    public AmmunitionTypeEnum GetAmmunitionType => _ammunitionType;
 
     [SerializeField]
     private DamageAmountStruct[] _damageAmounts;
+
     [SerializeField]
-    private float _ammunitionName;
+    private AmmunitionTypeEnum _ammunitionType;
 }

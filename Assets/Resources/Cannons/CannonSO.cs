@@ -6,8 +6,11 @@ public class CannonSO : ScriptableObject
     [SerializeField]
     private float _reloadTime;
     [SerializeField]
-    private float _fireDelayTime;
+    private float _maxFireDelayTime;
+    [SerializeField]
+    private float _minFireDelayTime;
 
     public float GetReloadTime => _reloadTime;
-    public float GetFireDelayTime => _fireDelayTime;
+    public float GetMaxFireDelayTime => _maxFireDelayTime;
+    public float GetMinFireDelayTime => _minFireDelayTime;
 }

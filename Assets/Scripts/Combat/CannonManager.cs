@@ -19,13 +19,17 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded
     private Dictionary<CannonPositionEnum, List<Cannon>> _cannonDict = new Dictionary<CannonPositionEnum, List<Cannon>>();
     private Dictionary<CannonPositionEnum, int> _cannonDictTotalNumber = new Dictionary<CannonPositionEnum, int>();
     private Dictionary<CannonPositionEnum, int> _cannonDictLoaded = new Dictionary<CannonPositionEnum, int>();
+    // add and remove based on inventory enabling. After timer runs out remove from list.
+    private Dictionary<AmmunitionTypeEnum, DamageSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, DamageSO>();
 
     public void Setup(){
         if (_cannonsList != null){
+            foreach(Cannon cannon in _cannonsList){
+                cannon.Setup(this, _cannonData);
+            }
             PopulateCannonDict();
             PopulateCannonsTotalAndLoaded();
         }
-        // Setup cannons
     }
     // Populated all the cannon totals based on their position.
     private void PopulateCannonsTotalAndLoaded()
@@ -48,7 +52,6 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded
         }
     }
 
-
     public void ChangeAmmoType(int indexTraverse){
         if (_ammunitionDataList != null){
             Math.Clamp(_currentAmmunitionIndex, 0, _ammunitionDataList.Count -1);
@@ -59,7 +62,11 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded
     public void FireCannons(CannonPositionEnum position){
         foreach(Cannon cannon in _cannonDict[position]){
             if (cannon.GetCannonLoaded == true){
-                // Fire cannon
+
+                if (_boonDamage.ContainsKey(_currentAmmunitionLoaded.GetAmmunitionType)){
+                    StartCoroutine(cannon.Fire(_currentAmmunitionLoaded, _boonDamage[_currentAmmunitionLoaded.GetAmmunitionType]));
+                } else {StartCoroutine(cannon.Fire(_currentAmmunitionLoaded));}
+
                 _cannonDictLoaded[position]--;
             }
         }
