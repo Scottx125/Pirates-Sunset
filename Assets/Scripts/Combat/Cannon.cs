@@ -29,7 +29,6 @@ public class Cannon : MonoBehaviour
             _projectileGameObj[i] = Instantiate(_projectileGameObj[i]);
             _projectileGameObj[i].transform.parent = transform;
             _projectile.Add(_projectileGameObj[i].GetComponent<Projectile>());
-            Debug.Log(_projectile.Count);
             _projectile[i].Setup(transform);
             _projectileGameObj[i].SetActive(false);
         }
