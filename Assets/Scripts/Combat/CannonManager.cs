@@ -5,23 +5,21 @@ using UnityEngine;
 public class CannonManager : MonoBehaviour, ICannonManagerLoaded
 {
     [SerializeField]
-    private float _loadedRefreshTime = 1f;
-    [SerializeField]
     private CannonSO _cannonData;
     [SerializeField]
-    private List<DamageSO> _ammunitionDataList;
+    private List<AmmunitionSO> _ammunitionDataList;
     [SerializeField]
     private List<Cannon> _cannonsList;
 
-    private DamageSO _currentAmmunitionLoaded;
+    private AmmunitionSO _currentAmmunitionLoaded;
     private int _currentAmmunitionIndex = 0;
 
     private Dictionary<CannonPositionEnum, List<Cannon>> _cannonDict = new Dictionary<CannonPositionEnum, List<Cannon>>();
     private Dictionary<CannonPositionEnum, int> _cannonDictTotalNumber = new Dictionary<CannonPositionEnum, int>();
     private Dictionary<CannonPositionEnum, int> _cannonDictLoaded = new Dictionary<CannonPositionEnum, int>();
     // add and remove based on inventory enabling. After timer runs out remove from list.
-    private Dictionary<AmmunitionTypeEnum, DamageSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, DamageSO>();
-
+    private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
+    
     public void Setup(){
         if (_cannonsList != null){
             foreach(Cannon cannon in _cannonsList){
@@ -58,16 +56,18 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded
             _currentAmmunitionLoaded = _ammunitionDataList[_currentAmmunitionIndex];
         }
     }
-
+    // Fire based on position and if cannons are loaded.
     public void FireCannons(CannonPositionEnum position){
-        foreach(Cannon cannon in _cannonDict[position]){
-            if (cannon.GetCannonLoaded == true){
+        if (_cannonDict.ContainsKey(position)){
+            foreach(Cannon cannon in _cannonDict[position]){
+                if (cannon.GetCannonLoaded == true){
 
-                if (_boonDamage.ContainsKey(_currentAmmunitionLoaded.GetAmmunitionType)){
-                    StartCoroutine(cannon.Fire(_currentAmmunitionLoaded, _boonDamage[_currentAmmunitionLoaded.GetAmmunitionType]));
-                } else {StartCoroutine(cannon.Fire(_currentAmmunitionLoaded));}
+                    if (_boonDamage.ContainsKey(_currentAmmunitionLoaded.GetAmmunitionType)){
+                        StartCoroutine(cannon.Fire(_currentAmmunitionLoaded, _boonDamage[_currentAmmunitionLoaded.GetAmmunitionType]));
+                    } else {StartCoroutine(cannon.Fire(_currentAmmunitionLoaded));}
 
-                _cannonDictLoaded[position]--;
+                    _cannonDictLoaded[position]--;
+                }
             }
         }
     }
