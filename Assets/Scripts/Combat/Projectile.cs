@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using PirateGame.Health;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -18,14 +19,11 @@ public class Projectile : MonoBehaviour
     private Vector3 _startPoint;
     private Vector3 _endPoint;
 
-    public AmmunitionSO GetCoreDamage => _coreDamage;
-    public AmmunitionSO GetBonusDamage => _bonusDamage;
-
     public void Setup(Transform parent){
         _startPoint = parent.transform.position;
     }
 
-    public void UpdateProjectile(AmmunitionSO coreDamage, AmmunitionSO bonusDamage = null){
+    public void UpdateProjectile(AmmunitionSO coreDamage, AmmunitionSO bonusDamage){
         // Setup variables info from coreDamage.
         _coreDamage = coreDamage;
         _bonusDamage = bonusDamage;
@@ -35,7 +33,6 @@ public class Projectile : MonoBehaviour
         _angleOffset = _coreDamage.GetAngleOffset;
         _highestPointDistance = _coreDamage.GetHighestPointDistance;
         _highestPointOffset = _coreDamage.GetHighestPointOffset;
-
 
         // Setup start and end points.
         _currentDistance = 0f;
@@ -77,5 +74,27 @@ public class Projectile : MonoBehaviour
         _highestPoint.y += _highestPointOffset;
     }
 
-    // Collision events to disable with terrain, water.
+    void OnTriggerEnter(Collider other)
+    {
+        // Sort ambient impacts.
+        if (other.CompareTag("Sea")){
+            // play splash animation and sound
+            gameObject.SetActive(false);
+        }
+        if (other.CompareTag("Land")){
+            // play splash animation and sound
+            gameObject.SetActive(false);
+        }
+        
+        // If you hit a target.
+        IProcessDamage iProcessDmg = other.GetComponent<IProcessDamage>();
+        if(iProcessDmg == null) return;
+
+        if (_bonusDamage == null){
+            iProcessDmg.RecieveDamage(_coreDamage.GetDamageAmounts);
+        } else {
+            iProcessDmg.RecieveDamage(_coreDamage.GetDamageAmounts, _bonusDamage.GetDamageAmounts);
+        }
+        gameObject.SetActive(false);
+    }
 }

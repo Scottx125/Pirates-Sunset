@@ -1,4 +1,5 @@
 using PirateGame.Health;
+using UnityEngine;
 public class StructuralHealth : HealthComponent
 {
     private IStructuralDamageModifier _sendStructuralDamageModifier;
@@ -13,6 +14,7 @@ public class StructuralHealth : HealthComponent
     public override void TakeDamage(int damage)
     {
         _currentHealth -= damage;
+        Debug.Log(_currentHealth);
         if(_sendStructuralDamageModifier != null) _sendStructuralDamageModifier.StructuralDamageModifier(ToPercent(_currentHealth, _maxHealth));
     }
 

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damageAmounts:
   - _damageType: 0
-    _damage: 3
+    _damage: 5
     _overTimeBool: 0
     _time: 0
     _repeatAmount: 0

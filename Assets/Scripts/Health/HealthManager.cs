@@ -49,18 +49,17 @@ namespace PirateGame.Health{
 
         // Then it will go through every HealthObject in that damage type and tell the HealthComponenet
         // to take damage.
-        public void ApplyDamageToComponents(DamageAmountStruct[] damageAmounts)
+        public void ApplyDamageToComponents(DamageAmountStruct damageAmount)
         {
-            foreach(DamageAmountStruct damageAmount in damageAmounts){
-                DamageTypeEnum damageType = damageAmount.GetDamageType;
-                int damage = damageAmount.GetDamage;
-                if (damage == 0) continue;
+            Debug.Log("test");
+            DamageTypeEnum damageType = damageAmount.GetDamageType;
+            int damage = damageAmount.GetDamage;
+            if (damage == 0) return;
 
-                if (_healthComponenetsDict.ContainsKey(damageType))
-                {
-                    foreach(HealthComponent healthComponenet in _healthComponenetsDict[damageType]){
-                        healthComponenet.TakeDamage(damage);
-                    }
+            if (_healthComponenetsDict.ContainsKey(damageType))
+            {
+                foreach(HealthComponent healthComponenet in _healthComponenetsDict[damageType]){
+                    healthComponenet.TakeDamage(damage);
                 }
             }
         }
