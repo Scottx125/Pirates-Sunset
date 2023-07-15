@@ -7,7 +7,7 @@ namespace PirateGame.Moving{
         [SerializeField]
         Movement _movement;
         [SerializeField]
-        SailStates _sailStates;
+        MobilityStates _mobilityStates;
         [SerializeField]
         Rotation _rotation;
 
@@ -18,17 +18,17 @@ namespace PirateGame.Moving{
         }
         public void Setup(){
             _movement.Setup(_movementData, _rotation);
-            _sailStates.Setup(_movementData, _movement);
+            _mobilityStates.Setup(_movementData, _movement);
             _rotation.Setup(_movementData);
 
             _isSetup = true;
         }
 
         public void IncreaseSpeed(){
-            _sailStates.SailStateIncrease();
+            _mobilityStates.MobilityStateIncrease();
         }
         public void DecreaseSpeed(){
-            _sailStates.SailStateDecrease();
+            _mobilityStates.MobilityStateDecrease();
         }
         public void TurnLeft(bool turnBool){
             _rotation.SetLeftTurn(turnBool);
@@ -37,19 +37,19 @@ namespace PirateGame.Moving{
             _rotation.SetRightTurn(turnBool);
         }
 
-        public void CrewDamageModifier(float modifier)
+        public void CorporealDamageModifier(float modifier)
         {
-            _rotation.SetCrewDamageModifier(modifier);
+            _rotation.SetCorporealDamageModifier(modifier);
         }
 
-        public void HullDamageModifier(float modifier)
+        public void StructuralDamageModifier(float modifier)
         {
-            _movement.SetHullDamageModifier(modifier);
+            _movement.SetStructuralDamageModifier(modifier);
         }
 
-        public void SailDamageModifier(float modifier)
+        public void MobilityDamageModifier(float modifier)
         {
-            _movement.SetSailDamageModifier(modifier);
+            _movement.SetMobilityDamageModifier(modifier);
         }
     }
 }

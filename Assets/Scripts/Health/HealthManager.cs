@@ -10,7 +10,7 @@ namespace PirateGame.Health{
 
         private bool _isSetup;
 
-        private Dictionary<DamageType, List<HealthComponent>> _healthComponenetsDict = new Dictionary<DamageType, List<HealthComponent>>();
+        private Dictionary<DamageTypeEnum, List<HealthComponent>> _healthComponenetsDict = new Dictionary<DamageTypeEnum, List<HealthComponent>>();
 
         private void Start()
         {
@@ -24,7 +24,7 @@ namespace PirateGame.Health{
             // If it doesn't, create that Dict obj and then add the HealthComponent.
            foreach (HealthDataStruct healthStruct in _healthStructList){
                 healthStruct.HealthComponent.SetupHealthComponenet(healthStruct.HealthData.MaxHealth);
-                foreach (DamageType damageType in healthStruct.HealthComponent.GetAssociatedDamageTypes){
+                foreach (DamageTypeEnum damageType in healthStruct.HealthComponent.GetAssociatedDamageTypes){
                     if (_healthComponenetsDict.ContainsKey(damageType)){
                         _healthComponenetsDict[damageType].Add(healthStruct.HealthComponent);
                     }else{
@@ -38,7 +38,7 @@ namespace PirateGame.Health{
 
         private void AddHealthComponent(HealthComponent componenet)
         {
-            foreach(DamageType damageType in componenet.GetAssociatedDamageTypes){
+            foreach(DamageTypeEnum damageType in componenet.GetAssociatedDamageTypes){
                 _healthComponenetsDict[damageType].Add(componenet);
             }
         }
@@ -52,7 +52,7 @@ namespace PirateGame.Health{
         public void ApplyDamageToComponents(DamageAmountStruct[] damageAmounts)
         {
             foreach(DamageAmountStruct damageAmount in damageAmounts){
-                DamageType damageType = damageAmount.GetDamageType;
+                DamageTypeEnum damageType = damageAmount.GetDamageType;
                 int damage = damageAmount.GetDamage;
                 if (damage == 0) continue;
 

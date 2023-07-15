@@ -2,22 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace PirateGame.Moving{
-    public class Movement : MonoBehaviour, ISailStateModifier
+    public class Movement : MonoBehaviour, IMobilityStateModifier
     {
         private float _maxSpeed, _minSpeed;
         private float _maxAccelerationRate, _accelerationEasingFactor, _minAcceleration;
         private float _maxDecelerationRate, _decelerationEasingFactor, _minDeceleration;
         private float _currentSpeed;
         private float _targetSpeed;
-        private float _sailStateModifier;
+        private float _mobilityStateModifier;
         private ICurrentSpeed _sendCurrentSpeed;
         
-        private float _sailDamageModifier = 1f;
-        private float _hullDamageModifier = 1f;
+        private float _mobilityDamageModifier = 1f;
+        private float _structuralDamageModifier = 1f;
 
-        public void SetSailDamageModifier(float modifier) => _sailDamageModifier = modifier;
-        public void SetHullDamageModifier(float modifier) => _hullDamageModifier = modifier;
-        public void SailStateModifier(float modifier) => _sailStateModifier = modifier;
+        public void SetMobilityDamageModifier(float modifier) => _mobilityDamageModifier = modifier;
+        public void SetStructuralDamageModifier(float modifier) => _structuralDamageModifier = modifier;
+        public void MobilityStateModifier(float modifier) => _mobilityStateModifier = modifier;
 
         public void Setup(MovementSO movementData, ICurrentSpeed currentSpeed = null)
         {
@@ -40,19 +40,19 @@ namespace PirateGame.Moving{
 
         private void CalculateMovement()
         {
-            _targetSpeed = (Mathf.Max(_maxSpeed * _sailDamageModifier, _minSpeed)) * _sailStateModifier;
+            _targetSpeed = (Mathf.Max(_maxSpeed * _mobilityDamageModifier, _minSpeed)) * _mobilityStateModifier;
             float difference = Mathf.Abs(_currentSpeed - _targetSpeed);
             // Calculates movement based off of acceleration/deceleration rate.
             if (_currentSpeed < _targetSpeed)
             {
-                _currentSpeed += AccelerationCalc(difference, _maxAccelerationRate * _sailDamageModifier, _accelerationEasingFactor, _minAcceleration);
+                _currentSpeed += AccelerationCalc(difference, _maxAccelerationRate * _mobilityDamageModifier, _accelerationEasingFactor, _minAcceleration);
             }
             else
             if (_currentSpeed > _targetSpeed){
-                _currentSpeed -= AccelerationCalc(difference, _maxDecelerationRate * _hullDamageModifier, _decelerationEasingFactor, _minDeceleration);
+                _currentSpeed -= AccelerationCalc(difference, _maxDecelerationRate * _structuralDamageModifier, _decelerationEasingFactor, _minDeceleration);
             }
             // Clamp speed to ensure no engative or overspeed.
-            _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _maxSpeed * _sailDamageModifier);
+            _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _maxSpeed * _mobilityDamageModifier);
             // sends current speed to listener.
             if (_sendCurrentSpeed != null) _sendCurrentSpeed.SetCurrentSpeed(_currentSpeed);
 

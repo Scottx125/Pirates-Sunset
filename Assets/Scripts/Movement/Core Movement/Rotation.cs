@@ -3,7 +3,7 @@ using PirateGame.Helpers;
 
 public class Rotation : MonoBehaviour, ICurrentSpeed
 {
-    private float _crewDamageModifier = 1f;
+    private float _corporealDamageModifier = 1f;
 
     private float _maxTurnSpeed, _minTurnSpeed;
     private int _turnSpeedEasePoint;
@@ -14,7 +14,7 @@ public class Rotation : MonoBehaviour, ICurrentSpeed
     // Turning enabled/disabled methods.
     public void SetLeftTurn(bool state) => _leftTurn = state; 
     public void SetRightTurn(bool state) => _rightTurn = state; 
-    public void SetCrewDamageModifier(float modifier) => _crewDamageModifier = modifier;
+    public void SetCorporealDamageModifier(float modifier) => _corporealDamageModifier = modifier;
     public void SetCurrentSpeed(float currentSpeed) => _currentSpeed = currentSpeed;
 
     public void Setup(MovementSO movementData)
@@ -37,10 +37,10 @@ public class Rotation : MonoBehaviour, ICurrentSpeed
         // Calculate the ease point based on the _turnSpeedEasePoint and then 
         // use that to determine the speed at which the turn speed will linearly ramp up or down from.
         // So that at low speeds the ship turns slower, but at a certain speed it will reach it's maximum turn rate.
-        float easePointValue = _maxSpeed * StaticHelpers.GetSailStateEnumValue(_turnSpeedEasePoint);
+        float easePointValue = _maxSpeed * StaticHelpers.GetMobilityStateEnumValue(_turnSpeedEasePoint);
         float easePointDifference = _currentSpeed < easePointValue ? _currentSpeed / easePointValue : 1f;
 
-        float turnSpeed = (Mathf.Max((_maxTurnSpeed * easePointDifference) * _crewDamageModifier, _minTurnSpeed));
+        float turnSpeed = (Mathf.Max((_maxTurnSpeed * easePointDifference) * _corporealDamageModifier, _minTurnSpeed));
 
         if (_leftTurn){
             turnDirectionSpeed = -turnSpeed;

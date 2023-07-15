@@ -1,3 +1,3 @@
-public interface IDamageModifiers : IHullDamageModifier, ISailDamageModifier, ICrewDamageModifier
+public interface IDamageModifiers : IStructuralDamageModifier, IMobilityDamageModifier, ICorporealDamageModifier
 {
 }

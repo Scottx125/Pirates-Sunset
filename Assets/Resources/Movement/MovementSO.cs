@@ -16,7 +16,7 @@ public class MovementSO : ScriptableObject
     [SerializeField]
     private float _maxDecelerationRate, _decelerationEasingFactor, _minDeceleration;
 
-    public float GetSailStateChangeDelay => _sailStateChangeDelay;
+    public float GetMobilityStateChangeDelay => _sailStateChangeDelay;
     public float GetMaxSpeed => _maxSpeed;
     public float GetMinSpeed => _minSpeed;
     public int GetTurnSpeedEasePoint => (int)_turnSpeedEasePoint;

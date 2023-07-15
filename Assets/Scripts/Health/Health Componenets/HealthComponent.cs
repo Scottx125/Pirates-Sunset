@@ -9,9 +9,9 @@ namespace PirateGame.Health{
 
         protected int _currentHealth;
         [SerializeField]
-        private List<DamageType> _associatedDamageTypes = new List<DamageType>();
+        private List<DamageTypeEnum> _associatedDamageTypes = new List<DamageTypeEnum>();
 
-        public IReadOnlyList<DamageType> GetAssociatedDamageTypes => _associatedDamageTypes;
+        public IReadOnlyList<DamageTypeEnum> GetAssociatedDamageTypes => _associatedDamageTypes;
         protected float ToPercent(int health, int maxHealth) => (float)health / maxHealth;
         private float CalculateDamage(int health, int damage) => health = Mathf.Max(health - damage, 0);
 

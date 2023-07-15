@@ -15,6 +15,8 @@ public class ShipManager : MonoBehaviour
     private PlayerInputManager _inputManager;
     [SerializeField]
     private CannonManager _cannonManager;
+    [SerializeField]
+    private CameraController _cameraController;
 
     private void Awake(){
         Setup();
@@ -23,7 +25,7 @@ public class ShipManager : MonoBehaviour
         if (_movementManager != null) _movementManager.Setup();
         if (_healthManager != null) _healthManager.Setup(_movementManager);
         if (_damageManager != null) _damageManager.Setup(_healthManager);
-        if (_inputManager != null) _inputManager.Setup(_movementManager);
+        if (_inputManager != null) _inputManager.Setup(_movementManager, _cameraController);
         if (_cannonManager != null) _cannonManager.Setup();
     }
 }
