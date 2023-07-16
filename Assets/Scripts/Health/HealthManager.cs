@@ -36,13 +36,6 @@ namespace PirateGame.Health{
            _isSetup = true;
         }
 
-        private void AddHealthComponent(HealthComponent componenet)
-        {
-            foreach(DamageTypeEnum damageType in componenet.GetAssociatedDamageTypes){
-                _healthComponenetsDict[damageType].Add(componenet);
-            }
-        }
-
         // Identifys the damage type and the applies the damage.
         // Will first see if the income damage is more than 0.
         // Then it will make sure the damage type exists.
@@ -51,7 +44,6 @@ namespace PirateGame.Health{
         // to take damage.
         public void ApplyDamageToComponents(DamageAmountStruct damageAmount)
         {
-            Debug.Log("test");
             DamageTypeEnum damageType = damageAmount.GetDamageType;
             int damage = damageAmount.GetDamage;
             if (damage == 0) return;

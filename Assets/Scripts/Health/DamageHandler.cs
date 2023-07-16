@@ -10,7 +10,7 @@ namespace PirateGame.Health{
         public void Setup(IApplyDamage applyDamage){
             _applyDamage = applyDamage;
         }
-
+        // Check if we've reiceved just normal damage or both normal and bonus.
         public void RecieveDamage(DamageAmountStruct[] damageAmounts, DamageAmountStruct[] bonusDamageAmounts = null)
         {
             // Tell the health manager you're taking damage and let it sort out the rest.
@@ -19,16 +19,17 @@ namespace PirateGame.Health{
            if(bonusDamageAmounts == null) return;
            ProcessDamage(bonusDamageAmounts);
         }
-
+        // Process all the damage recieved.
         private void ProcessDamage(params DamageAmountStruct[] damageAmounts)
-        {Debug.Log("test");
+        {
             foreach(DamageAmountStruct damage in damageAmounts){
                 if (damage.GetOverTimeBool){
                     StartCoroutine(DamageTick(damage));
                 } else {_applyDamage.ApplyDamageToComponents(damage);}
             }
         }
-
+        // Tick damage is here and calls the HealthManager to apply damage every few seconds based
+        // on the tick damage data.
         private IEnumerator DamageTick(DamageAmountStruct tickDamage){
             float time = tickDamage.GetTime;
             int repeatNum = tickDamage.GetRepeatAmount;

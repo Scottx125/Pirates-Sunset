@@ -8,7 +8,9 @@ namespace PirateGame.Control{
         [SerializeField]
         private MovementManager _movementManager;
         [SerializeField]
-        private CameraController _cameraController;
+        private ICameraInterfaces _cameraInterfaces;
+        [SerializeField]
+        private IFireCannons _fireCannons;
 
         // Will be used later.
         private KeyCode increaseSail;
@@ -16,47 +18,58 @@ namespace PirateGame.Control{
         private KeyCode rightRudder;
         private KeyCode reefSail;
 
-        private bool _clickEnabled;
+        private bool _mouseVisible;
 
 
-        public void Setup(MovementManager movementManager, CameraController cameraController)
+        public void Setup(MovementManager movementManager, ICameraInterfaces cameraInterfaces, IFireCannons fireCannons)
         {
             if (_movementManager == null) _movementManager = movementManager;
-            if (_cameraController == null) _cameraController = cameraController;
+            if (_cameraInterfaces == null) _cameraInterfaces = cameraInterfaces;
+            if (_fireCannons == null) _fireCannons = fireCannons;
 
             // Use a SO and change it, it will save the data automatically.
         }
 
         private void Update(){
             MovementInput();
-            EnableLeftClicking();
+            SetMouseVisability();
+            CameraState();
+            Fire();
         }
-
-        private void EnableLeftClicking()
+        // Fire if mouse is not enabled.
+        private void Fire()
         {
-            if (Input.GetMouseButtonDown(1)){
-                _clickEnabled = !_clickEnabled;
+            if (_mouseVisible) return;
+            if (_fireCannons == null) return;
+            if (Input.GetMouseButtonDown(0)){
+                CannonPositionEnum? posEnum = _cameraInterfaces.CalculateFiringPosition();
+                if (posEnum == null) return;
+                Debug.Log(posEnum.Value);
             }
 
-            if (_clickEnabled){
+        }
+        // Enable/disable camera movement based on mouse visability.
+        private void CameraState()
+        {
+            if (_cameraInterfaces == null) return;
+            _cameraInterfaces.IsEnabled(_mouseVisible);
+        }
+        // Set mouse visability.
+        private void SetMouseVisability()
+        {
+            if (Input.GetMouseButtonDown(1)){
+                _mouseVisible = !_mouseVisible;
+            }
+
+            if (_mouseVisible){
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.Confined;
             } else {
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
-                CameraInput();
             }
         }
-
-        private void CameraInput()
-        {
-            float xInput = Input.GetAxis("Mouse X");
-            float yInput = Input.GetAxis("Mouse Y");
-            if (_cameraController != null){
-                _cameraController.CameraRotation(xInput, yInput);
-            }
-        }
-
+        // Trigger movement.
         private void MovementInput()
         {
             if (Input.GetKey(KeyCode.W)){_movementManager.IncreaseSpeed();}

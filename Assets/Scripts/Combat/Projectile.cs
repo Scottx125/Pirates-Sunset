@@ -37,7 +37,7 @@ public class Projectile : MonoBehaviour
         // Setup start and end points.
         _currentDistance = 0f;
         _startPoint = transform.parent.position;
-        _endPoint = _startPoint + (transform.parent.forward * _maxRange);
+        _endPoint = new Vector3(_startPoint.x, 0f, _startPoint.z) + (transform.parent.forward * _maxRange);
         _endPoint += new Vector3(Random.Range(-_angleOffset,_angleOffset),0f,Random.Range(-_rangeOffset,_rangeOffset));
     }
     public IEnumerator CalculateFlight(){
@@ -87,6 +87,7 @@ public class Projectile : MonoBehaviour
         }
         
         // If you hit a target.
+        // Might change this if it causes performance issues.
         IProcessDamage iProcessDmg = other.GetComponent<IProcessDamage>();
         if(iProcessDmg == null) return;
 

@@ -25,7 +25,7 @@ public class EntityManager : MonoBehaviour
         if (_movementManager != null) _movementManager.Setup();
         if (_healthManager != null) _healthManager.Setup(_movementManager);
         if (_damageHandler != null) _damageHandler.Setup(_healthManager);
-        if (_inputManager != null) _inputManager.Setup(_movementManager, _cameraController);
+        if (_inputManager != null) _inputManager.Setup(_movementManager, _cameraController, _cannonManager);
         if (_cannonManager != null) _cannonManager.Setup();
     }
 }

@@ -1,5 +1,7 @@
 public enum CannonPositionEnum{
     Left,
-    Right
+    Right,
+    Forward,
+    Behind
 }
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CannonManager : MonoBehaviour, ICannonManagerLoaded
+public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons
 {
     [SerializeField]
     private CannonSO _cannonData;

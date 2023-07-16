@@ -16,8 +16,8 @@ MonoBehaviour:
   _maxSpeed: 40
   _minSpeed: 0.3
   _turnSpeedEasePoint: 1
-  _maxTurnSpeed: 3
-  _minTurnSpeed: 0.3
+  _maxTurnSpeed: 1
+  _minTurnSpeed: 0.1
   _maxAccelerationRate: 3
   _accelerationEasingFactor: 0.7
   _minAcceleration: 0.3
