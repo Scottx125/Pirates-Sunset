@@ -66,7 +66,8 @@ public class Projectile : MonoBehaviour
         Vector3 highPointToEnd = Vector3.Lerp(highestPoint, endPoint, percentDistCovered);
         return Vector3.Lerp(startToHighPoint, highPointToEnd, percentDistCovered);
     }
-
+    
+    // Calculate highest point within the QuadraticLerp.
     private void CalculateHighestPoint()
     {
         float normalizedDistance = _highestPointDistance / _maxRange;
@@ -74,6 +75,7 @@ public class Projectile : MonoBehaviour
         _highestPoint.y += _highestPointOffset;
     }
 
+    // Extract logic out to explain what it does.
     void OnTriggerEnter(Collider other)
     {
         // Sort ambient impacts.
@@ -88,6 +90,7 @@ public class Projectile : MonoBehaviour
         
         // If you hit a target.
         // Might change this if it causes performance issues.
+        // Maybe use a queue system if any performance issues.
         IProcessDamage iProcessDmg = other.GetComponent<IProcessDamage>();
         if(iProcessDmg == null) return;
 

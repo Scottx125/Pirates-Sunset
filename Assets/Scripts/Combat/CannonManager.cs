@@ -19,9 +19,7 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons
     private Dictionary<CannonPositionEnum, int> _cannonDictLoaded = new Dictionary<CannonPositionEnum, int>();
     // add and remove based on inventory enabling. After timer runs out remove from list.
     private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
-    private void Update() {
-        FireCannons(CannonPositionEnum.Right);
-    }
+
     public void Setup(){
         _currentAmmunitionLoaded = _ammunitionDataList[0];
         if (_cannonsList != null){

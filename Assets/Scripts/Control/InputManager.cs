@@ -44,6 +44,7 @@ namespace PirateGame.Control{
             if (Input.GetMouseButtonDown(0)){
                 CannonPositionEnum? posEnum = _cameraInterfaces.CalculateFiringPosition();
                 if (posEnum == null) return;
+                _fireCannons.FireCannons(posEnum.Value);
                 Debug.Log(posEnum.Value);
             }
 
