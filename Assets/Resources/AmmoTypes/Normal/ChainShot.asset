@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feeb991e8656377438b5fc73e7662dea, type: 3}
+  m_Name: ChainShot
+  m_EditorClassIdentifier: 
+  _damageAmounts:
+  - _damageType: 1
+    _damage: 5
+    _overTimeBool: 0
+    _time: 0
+    _repeatAmount: 0
+  _ammunitionType: 1
+  _maxRange: 0
+  _highestPointDistance: 0
+  _highestPointOffset: 0
+  _rangeOffset: 0
+  _angleOffset: 0
+  _speed: 0

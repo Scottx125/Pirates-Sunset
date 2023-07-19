@@ -1,6 +1,6 @@
 using UnityEngine;
 namespace PirateGame.Moving{
-    public class MovementManager : MonoBehaviour, IDamageModifiers
+    public class MovementManager : MonoBehaviour, ICorporealDamageModifier, IStructuralDamageModifier, IMobilityDamageModifier
     {
         [SerializeField]
         MovementSO _movementData;

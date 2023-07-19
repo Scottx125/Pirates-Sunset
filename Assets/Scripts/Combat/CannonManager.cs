@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons
+public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, ICorporealDamageModifier
 {
     [SerializeField]
     private CannonSO _cannonData;
@@ -62,7 +62,6 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons
         if (_cannonDict.ContainsKey(position)){
             foreach(Cannon cannon in _cannonDict[position]){
                 if (cannon.GetCannonLoaded == true){
-
                     if (_boonDamage.ContainsKey(_currentAmmunitionLoaded.GetAmmunitionType)){
                         StartCoroutine(cannon.Fire(_currentAmmunitionLoaded, _boonDamage[_currentAmmunitionLoaded.GetAmmunitionType]));
                     } else {StartCoroutine(cannon.Fire(_currentAmmunitionLoaded));}
@@ -76,5 +75,12 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons
     public void CannonLoaded(CannonPositionEnum position)
     {
         _cannonDictLoaded[position]++;
+    }
+
+    public void CorporealDamageModifier(float modifier)
+    {
+        foreach (Cannon cannon in _cannonsList){
+            cannon.ModifyReloadTime(modifier);
+        }
     }
 }

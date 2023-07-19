@@ -17,13 +17,14 @@ namespace PirateGame.Health{
             if (!_isSetup) Setup();
         }
 
-        public void Setup(IDamageModifiers _setDamageModifiers = null)
+        public void Setup(ICorporealDamageModifier[] corporealDamageModifiers = null, IStructuralDamageModifier[] structuralDamageModifiers = null,
+        IMobilityDamageModifier[] mobilityDamageModifiers = null)
         {   
             // Get the objects from the HealthList and set them up with their max health.
             // If the damagetype exists just add the HealthComponent.
             // If it doesn't, create that Dict obj and then add the HealthComponent.
            foreach (HealthDataStruct healthStruct in _healthStructList){
-                healthStruct.HealthComponent.SetupHealthComponenet(healthStruct.HealthData.MaxHealth);
+                healthStruct.HealthComponent.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
                 foreach (DamageTypeEnum damageType in healthStruct.HealthComponent.GetAssociatedDamageTypes){
                     if (_healthComponenetsDict.ContainsKey(damageType)){
                         _healthComponenetsDict[damageType].Add(healthStruct.HealthComponent);

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1412ea9791e874e95aadb102af709d, type: 3}
   m_Name: Cannon
   m_EditorClassIdentifier: 
-  _reloadTime: 2
+  _minReloadTime: 2
+  _maxReloadTime: 4
   _maxFireDelayTime: 2
   _minFireDelayTime: 0.5

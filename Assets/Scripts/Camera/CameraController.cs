@@ -4,6 +4,14 @@ using Cinemachine;
 public class CameraController : MonoBehaviour, ICameraInterfaces
 {
     [SerializeField]
+    private Material _transparentMaterial;
+    [SerializeField]
+    private GameObject _transparentDistanceObj;
+    [SerializeField]
+    private float _maxDistanceForTransparency = 20f;
+    [SerializeField]
+    private float _minDistanceForTransparency = 20f;
+    [SerializeField]
     private CinemachineFreeLook _freeLookCam;
     [SerializeField]
     private float _forwardRange = 40f;
@@ -13,11 +21,29 @@ public class CameraController : MonoBehaviour, ICameraInterfaces
     private float _rightRange = 140f;
     [SerializeField]
     private float _behindRange = 40f;
+    
+    private Color _transparency;
 
     void Start()
     {
         if (_freeLookCam == null) GetComponent<CinemachineFreeLook>();
     }
+
+    void Update()
+    {
+        SailTransparency();
+    }
+
+    // Uses camera range from a preset target to set the alpha of the sails.
+    private void SailTransparency()
+    {
+        if (_transparentMaterial == null || _transparentDistanceObj == null) return;
+        float distance = Vector3.Distance(_freeLookCam.transform.position, _transparentDistanceObj.transform.position);
+        _transparency = _transparentMaterial.color;
+        _transparency.a = 1f - Mathf.Clamp01((distance - _minDistanceForTransparency) / (_maxDistanceForTransparency - _minDistanceForTransparency));
+        _transparentMaterial.color = _transparency;
+    }
+
     // Checks if mouse is enabled.
     public void IsEnabled(bool state)
     {
