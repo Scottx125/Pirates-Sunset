@@ -23,12 +23,12 @@ namespace PirateGame.Moving{
 
             _isSetup = true;
         }
-
-        public void IncreaseSpeed(){
-            _mobilityStates.MobilityStateIncrease();
-        }
-        public void DecreaseSpeed(){
-            _mobilityStates.MobilityStateDecrease();
+        public void ChangeSpeed(int? customState, bool increaseSpeed)
+        {
+            if (increaseSpeed)
+            {
+                _mobilityStates.MobilityStateIncrease(customState);
+            } else { _mobilityStates.MobilityStateDecrease(customState); }
         }
         public void TurnLeft(bool turnBool){
             _rotation.SetLeftTurn(turnBool);

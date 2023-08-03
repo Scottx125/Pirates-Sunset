@@ -42,7 +42,7 @@ public class MoveToTargetState : State
     }
     public override State RunCurrentState(State? previousState)
     {
-        // If main != null and ship == null && outside of range move closer.
+        // If we have a main target but no ship target then move to main target.
         if (_mainTarget != null && _shipTarget == null)
         {
             // Move towards target
@@ -59,7 +59,8 @@ public class MoveToTargetState : State
             {
                 //attack
             }
-        } else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _chaseRange)
+        } // If the ship is a target but is out of range chase.
+        else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _chaseRange)
         {
             // Initiate chase
             if (_chasing == false)
@@ -73,16 +74,18 @@ public class MoveToTargetState : State
                 _shipTarget = null;
                 _chasing = false;
             }
-
         }
         return this;
     }
 
     private void MoveToTarget(Transform pos)
     {
+        // Repath if timer has elapsed.
         PathToTarget(pos);
-        // Max sail towards target position.
-
+        // Determine a speed,
+        _inputManager.MovementInput(4, true);
+        // Determine the direction of the next way point.
+        _inputManager.Rotation();
     }
 
     private void PathToTarget(Transform target)
@@ -90,6 +93,7 @@ public class MoveToTargetState : State
         if (_elapsedPathTime >= _pathUpdateDelay)
         {
             NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, _path);
+            _currentWaypointIndex = 0;
             _elapsedPathTime = 0f;
         }
     }

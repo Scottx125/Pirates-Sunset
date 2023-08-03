@@ -38,19 +38,39 @@ public class MobilityStates : MonoBehaviour
     }
 
     // Increase/decrease ship sail state.
-    public void MobilityStateIncrease()
+    public void MobilityStateIncrease(int? customState)
     {
+        if (customState != null)
+        {
+            CustomSpeedState(customState);
+            return;
+        }
         if (_mobilityState < StaticHelpers.GetMobilityStateEnumLength() && _mobilityStateTimeSinceChanged >= _mobilityStateChangeDelay){
             _mobilityState++;
              ModifyMobilityStateByInterface();
              _mobilityStateTimeSinceChanged = 0f;
         }
     }
-    public void MobilityStateDecrease()
+    public void MobilityStateDecrease(int? customState)
+    {
+        if (customState != null)
         {
+            CustomSpeedState(customState);
+            return;
+        }
         if (_mobilityState > 0 && _mobilityStateTimeSinceChanged >= _mobilityStateChangeDelay)
         {
             _mobilityState--;
+            ModifyMobilityStateByInterface();
+            _mobilityStateTimeSinceChanged = 0f;
+        }
+    }
+
+    private void CustomSpeedState(int? customState)
+    {
+        if ((int)customState < StaticHelpers.GetMobilityStateEnumLength())
+        {
+            _mobilityState = (int)customState;
             ModifyMobilityStateByInterface();
             _mobilityStateTimeSinceChanged = 0f;
         }

@@ -73,8 +73,8 @@ namespace PirateGame.Control{
         // Trigger movement.
         private void MovementInput()
         {
-            if (Input.GetKey(KeyCode.W)){_movementManager.IncreaseSpeed();}
-            if (Input.GetKey(KeyCode.S)){_movementManager.DecreaseSpeed();}
+            if (Input.GetKey(KeyCode.W)){_movementManager.ChangeSpeed(null, true);}
+            if (Input.GetKey(KeyCode.S)){_movementManager.ChangeSpeed(null, false);}
             if (Input.GetKeyDown(KeyCode.A)){_movementManager.TurnLeft(true);}
             if (Input.GetKeyUp(KeyCode.A)){_movementManager.TurnLeft(false);}
             if (Input.GetKeyDown(KeyCode.D)){_movementManager.TurnRight(true);}
