@@ -22,12 +22,13 @@ public class StateManager : MonoBehaviour
     // When the current state is done call the next state.
     private void RunStateMachine(){
         State nextState = _currentState?.RunCurrentState(_previousState);
-        if (nextState != null){
+        if (nextState != null && nextState != _currentState){
             SwitchToNextState(nextState);
         }
     }
     // Switch current state to next state.
     private void SwitchToNextState(State nextState){
+        _previousState = _currentState;
         _currentState = nextState;
     }
 }

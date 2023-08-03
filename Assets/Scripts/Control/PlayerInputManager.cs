@@ -42,10 +42,10 @@ namespace PirateGame.Control{
             if (_mouseVisible) return;
             if (_fireCannons == null) return;
             if (Input.GetMouseButtonDown(0)){
+                // Calculate the position of the camera and fire in the direction it's looking in.
                 CannonPositionEnum? posEnum = _cameraInterfaces.CalculateFiringPosition();
                 if (posEnum == null) return;
                 _fireCannons.FireCannons(posEnum.Value);
-                Debug.Log(posEnum.Value);
             }
 
         }
