@@ -36,7 +36,6 @@ public class AIInputManager : MonoBehaviour
         {
             // crossproduct to determine if the angle is left or right of the forward vector.
             Vector3 crossProduct = Vector3.Cross(transform.forward, directionToWayPoint);
-
             // Turn left or right.
             if (crossProduct.y < 0)
             {

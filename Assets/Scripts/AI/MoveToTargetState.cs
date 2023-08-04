@@ -26,6 +26,7 @@ public class MoveToTargetState : State
     private bool _chasing;
     private bool _calculatedPath;
     private int _currentWaypointIndex = 0;
+    private Coroutine _calculatingPath;
 
     // Add firing state here.
     public void Setup(Transform mainTarget, AIInputManager inputManager)
@@ -81,6 +82,7 @@ public class MoveToTargetState : State
 
     private void ChaseShipBehaviour()
     {
+        // PUT IN CHECK FOR COROUTINE TO SEE IF WE CAN RECALCULATE YET
         if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) <= _chaseRange)
         {
             _calculatedPath = false;
@@ -125,16 +127,26 @@ public class MoveToTargetState : State
         if (_elapsedPathTime >= _pathUpdateDelay || target == _mainTarget)
         {
             _waypoints.Clear();
-            bool isdone = NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, _path);
-            foreach (Vector3 waypoint in _path.corners)
-            {
-                _waypoints.Add(waypoint);
-            }
-            _currentWaypointIndex = 0;
-            _elapsedPathTime = 0f;
+            NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, _path);
+            _calculatingPath = StartCoroutine(CalculatePath());
         }
     }
-
+    private IEnumerator CalculatePath()
+    {
+        yield return new WaitUntil(()=>_path.status == NavMeshPathStatus.PathComplete || _path.status == NavMeshPathStatus.PathInvalid);
+        if (_path.status == NavMeshPathStatus.PathInvalid)
+        {
+            Debug.Log("Path failed.");
+            yield break;
+        }
+        foreach (Vector3 waypoint in _path.corners)
+        {
+            _waypoints.Add(waypoint);
+        }
+        _currentWaypointIndex = 0;
+        _elapsedPathTime = 0f;
+        _calculatingPath = null;
+    }
     private void OnTriggerEnter(Collider other)
     {
         _calculatedPath = false;
