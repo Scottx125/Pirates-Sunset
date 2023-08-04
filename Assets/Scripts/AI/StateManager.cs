@@ -7,11 +7,19 @@ public class StateManager : MonoBehaviour
     // Current state to be processed.
     [SerializeField]
     private State _currentState;
-    private State _previousState;
+    [SerializeField]
+    private Transform _mainTarget;
+    [SerializeField]
+    private AIInputManager _inputManager;
 
-    public void Setup()
+    private State _previousState;
+    private MoveToTargetState _moveToTargetState;
+
+    private void Start()
     {
         // Initialise all the states. We don't need a reference to them after the setup.
+        _moveToTargetState = GetComponent<MoveToTargetState>();
+        _moveToTargetState.Setup(_mainTarget, _inputManager);
     }
 
     private void Update()

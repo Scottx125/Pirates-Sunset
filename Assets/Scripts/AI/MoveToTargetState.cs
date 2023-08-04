@@ -16,6 +16,7 @@ public class MoveToTargetState : State
     private float _followTime = 10f;
 
     // Current target (this is the base not the player)
+    private List<Vector3> _waypoints = new List<Vector3>();
     private Transform _mainTarget;
     private Transform _shipTarget;
     private AIInputManager _inputManager;
@@ -23,6 +24,7 @@ public class MoveToTargetState : State
     private float _elapsedPathTime;
     private float _elapsedChaseTime;
     private bool _chasing;
+    private bool _calculatedPath;
     private int _currentWaypointIndex = 0;
 
     // Add firing state here.
@@ -33,27 +35,58 @@ public class MoveToTargetState : State
         _elapsedPathTime = 0f;
         _elapsedChaseTime = 0f;
         _chasing = false;
-        PathToTarget(mainTarget);
+        _calculatedPath = false;
+        _path = new NavMeshPath();
     }
     private void Update()
     {
         _elapsedPathTime += Time.deltaTime;
         _elapsedChaseTime += Time.deltaTime;
+
+        NextWaypoint();
     }
+
+    private void NextWaypoint()
+    {
+        if (_waypoints.Count > 0 && _currentWaypointIndex < _waypoints.Count)
+        {
+            if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex]) < .5f)
+            {
+                _currentWaypointIndex++;
+            }
+        }
+    }
+
     public override State RunCurrentState(State? previousState)
     {
         // If we have a main target but no ship target then move to main target.
+        MoveToMainTargetBehaviour();
+        // Move to Ship.
+        ChaseShipBehaviour();
+        return this;
+    }
+
+    private void MoveToMainTargetBehaviour()
+    {
         if (_mainTarget != null && _shipTarget == null)
         {
+            if (_calculatedPath == false)
+            {
+                PathToTarget(_mainTarget);
+                _calculatedPath = true;
+            }
             // Move towards target
-            MoveToTarget(_mainTarget);
-
-            return this;
+            MoveToTarget();
         }
-        // Move to Ship.
+    }
+
+    private void ChaseShipBehaviour()
+    {
         if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) <= _chaseRange)
         {
-            MoveToTarget(_shipTarget);
+            _calculatedPath = false;
+            PathToTarget(_shipTarget);
+            MoveToTarget();
             // If in range initiate attack.
             if (Vector3.Distance(transform.position, _shipTarget.position) <= _attackRange)
             {
@@ -62,6 +95,7 @@ public class MoveToTargetState : State
         } // If the ship is a target but is out of range chase.
         else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _chaseRange)
         {
+            _calculatedPath = false;
             // Initiate chase
             if (_chasing == false)
             {
@@ -75,27 +109,36 @@ public class MoveToTargetState : State
                 _chasing = false;
             }
         }
-        return this;
     }
 
-    private void MoveToTarget(Transform pos)
+    private void MoveToTarget()
     {
-        // Repath if timer has elapsed.
-        PathToTarget(pos);
+        if (_waypoints.Count == 0) return;
         // Determine a speed,
         _inputManager.MovementInput(4, true);
         // Determine the direction of the next way point.
-        _inputManager.Rotation();
+        _inputManager.Rotation(_waypoints[_currentWaypointIndex]);
     }
 
     private void PathToTarget(Transform target)
     {
-        if (_elapsedPathTime >= _pathUpdateDelay)
+        if (_elapsedPathTime >= _pathUpdateDelay || target == _mainTarget)
         {
+            _waypoints.Clear();
             NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, _path);
+            foreach (Vector3 waypoint in _path.corners)
+            {
+                _waypoints.Add(waypoint);
+            }
             _currentWaypointIndex = 0;
             _elapsedPathTime = 0f;
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        _calculatedPath = false;
+        _shipTarget = other.transform;
     }
 }
 

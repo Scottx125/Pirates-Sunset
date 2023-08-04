@@ -6,6 +6,7 @@ public class IdleState : State
 {
     [SerializeField]
     private State _nextState;
+    [SerializeField]
     private Transform _mainTarget;
 
     public void Setup()

@@ -6,6 +6,8 @@ using UnityEngine;
 public class EntityManager : MonoBehaviour
 {
     [SerializeField]
+    private bool _isAI;
+    [SerializeField]
     private MovementManager _movementManager;
     [SerializeField]
     private HealthManager _healthManager;
@@ -17,6 +19,9 @@ public class EntityManager : MonoBehaviour
     private CannonManager _cannonManager;
     [SerializeField]
     private CameraController _cameraController;
+    [SerializeField]
+    private AIInputManager _aiInputManager;
+
 
     private void Awake(){
         Setup();
@@ -31,7 +36,8 @@ public class EntityManager : MonoBehaviour
             _healthManager.Setup(corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
         }
         if (_damageHandler != null) _damageHandler.Setup(_healthManager);
-        if (_inputManager != null) _inputManager.Setup(_movementManager, _cameraController, _cannonManager);
+        if (_inputManager != null && !_isAI) _inputManager.Setup(_movementManager, _cameraController, _cannonManager);
+        if (_aiInputManager != null && _isAI) _aiInputManager.Setup(_movementManager, _cannonManager);
         
     }
 }

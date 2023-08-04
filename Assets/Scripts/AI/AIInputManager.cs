@@ -5,9 +5,7 @@ using PirateGame.Moving;
 
 public class AIInputManager : MonoBehaviour
 {
-    [SerializeField]
     private MovementManager _movementManager;
-    [SerializeField]
     private IFireCannons _fireCannons;
 
     public void Setup(MovementManager movementManager, IFireCannons fireCannons)
@@ -27,8 +25,35 @@ public class AIInputManager : MonoBehaviour
         _movementManager.ChangeSpeed(customState, increaseSpeed);
     }
 
-    public void Rotation()
+    public void Rotation(Vector3 currentWaypoint)
     {
-        // Rotate left or right.
+        // Calc direciton to waypoint
+        Vector3 directionToWayPoint = currentWaypoint - transform.position;
+        // Calc angle between forward vector and the direction.
+        float angleToWayPoint = Vector3.Angle(transform.forward, directionToWayPoint);
+        // If the angle is large enough to warrent turning.
+        if (angleToWayPoint > 5f)
+        {
+            // crossproduct to determine if the angle is left or right of the forward vector.
+            Vector3 crossProduct = Vector3.Cross(transform.forward, directionToWayPoint);
+
+            // Turn left or right.
+            if (crossProduct.y < 0)
+            {
+                _movementManager.TurnLeft(true);
+                _movementManager.TurnRight(false);
+            } else
+            {
+                _movementManager.TurnLeft(false);
+                _movementManager.TurnRight(true);
+            }
+        } else
+        {
+            // If the angle is too small don't bother turning at all.
+            _movementManager.TurnLeft(false);
+            _movementManager.TurnRight(false);
+        }
+        
     }
+    
 }
