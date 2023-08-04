@@ -42,13 +42,11 @@ public class MoveToTargetState : State
     {
         _elapsedPathTime += Time.deltaTime;
         _elapsedChaseTime += Time.deltaTime;
-
-        NextWaypoint();
     }
 
     private void NextWaypoint()
     {
-        if (_waypoints.Count > 0 && _currentWaypointIndex < _waypoints.Count)
+        if (_waypoints.Count > 0 && _currentWaypointIndex < _waypoints.Count - 1)
         {
             if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex]) < .5f)
             {
@@ -59,6 +57,7 @@ public class MoveToTargetState : State
 
     public override State RunCurrentState(State? previousState)
     {
+        NextWaypoint();
         // If we have a main target but no ship target then move to main target.
         MoveToMainTargetBehaviour();
         // Move to Ship.
@@ -120,12 +119,13 @@ public class MoveToTargetState : State
         _inputManager.Rotation(_waypoints[_currentWaypointIndex]);
     }
 
+    // Calculate new path
     private void PathToTarget(Transform target)
     {
         if (_elapsedPathTime >= _pathUpdateDelay || target == _mainTarget)
         {
             _waypoints.Clear();
-            NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, _path);
+            bool isdone = NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, _path);
             foreach (Vector3 waypoint in _path.corners)
             {
                 _waypoints.Add(waypoint);

@@ -68,7 +68,7 @@ public class MobilityStates : MonoBehaviour
 
     private void CustomSpeedState(int? customState)
     {
-        if ((int)customState < StaticHelpers.GetMobilityStateEnumLength())
+        if (customState <= StaticHelpers.GetMobilityStateEnumLength())
         {
             _mobilityState = (int)customState;
             ModifyMobilityStateByInterface();
