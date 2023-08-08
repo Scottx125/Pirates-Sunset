@@ -31,7 +31,6 @@ public class MoveToTargetState : State
     private int _currentWaypointIndex = 0;
     private Coroutine _calculatingPath;
 
-    // Add firing state here.
     #nullable enable
     public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, SphereCollider sphereCollider)
     {
@@ -47,7 +46,7 @@ public class MoveToTargetState : State
         _path = new NavMeshPath();
     }
     #nullable disable
-    private void Update()
+    private void IterateTimers()
     {
         _elapsedPathTime += Time.deltaTime;
         _elapsedChaseTime += Time.deltaTime;
@@ -64,8 +63,9 @@ public class MoveToTargetState : State
         }
     }
     #nullable enable
-    public override State RunCurrentState(State? previousState)
+    public override State RunCurrentState()
     {
+        IterateTimers();
         NextWaypoint();
         // Idle if we have no main target.
         MoveToIdlePositionBehaviour();

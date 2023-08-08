@@ -13,17 +13,27 @@ public class StateManager : MonoBehaviour
     private Transform _idlePosition;
     [SerializeField]
     private AIInputManager _inputManager;
+    [SerializeField]
+    CannonManager _cannonManager;
 
-    private State _previousState;
     private MoveToTargetState _moveToTargetState;
+    private AttackState _attackState;
     private SphereCollider _sphereCollider;
 
-    private void Start()
+    public void Setup(CannonManager cannonManager, AIInputManager inputManager)
     {
         // Initialise all the states. We don't need a reference to them after the setup.
         _moveToTargetState = GetComponent<MoveToTargetState>();
+        _attackState = GetComponent<AttackState>();
         _sphereCollider = GetComponent<SphereCollider>();
-        _moveToTargetState.Setup(_mainTarget, _idlePosition, _inputManager, _sphereCollider);
+        _cannonManager = cannonManager;
+        _inputManager = inputManager;
+        if (_moveToTargetState != null){
+            _moveToTargetState.Setup(_mainTarget, _idlePosition, _inputManager, _sphereCollider);
+        }
+        if (_attackState != null){
+            _attackState.Setup(_inputManager, _cannonManager);
+        }
     }
 
     private void Update()
@@ -33,14 +43,13 @@ public class StateManager : MonoBehaviour
     // Get the next state from the current state.
     // When the current state is done call the next state.
     private void RunStateMachine(){
-        State nextState = _currentState?.RunCurrentState(_previousState);
+        State nextState = _currentState?.RunCurrentState();
         if (nextState != null && nextState != _currentState){
             SwitchToNextState(nextState);
         }
     }
     // Switch current state to next state.
     private void SwitchToNextState(State nextState){
-        _previousState = _currentState;
         _currentState = nextState;
     }
 }

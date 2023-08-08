@@ -14,7 +14,7 @@ public class AIInputManager : MonoBehaviour
         if (_fireCannons == null) _fireCannons = fireCannons;
     }
 
-    public void Fire(CannonPositionEnum direction)
+    public void Fire(CannonPositionEnum direction, AmmunitionTypeEnum ammoType)
     {
         // Get direction to fire and fire (this will be direction closest to current target which will be passed in)
     }

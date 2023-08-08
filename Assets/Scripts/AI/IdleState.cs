@@ -13,7 +13,7 @@ public class IdleState : State
     {
         
     }
-    public override State RunCurrentState(State? previousState)
+    public override State RunCurrentState()
     {
         if (_enemyInRange){
             _enemyInRange = false;

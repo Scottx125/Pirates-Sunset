@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, ICorporealDamageModifier
+public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, ICorporealDamageModifier, IChangeAmmo, IAmmunitionData
 {
     [SerializeField]
     private CannonSO _cannonData;
@@ -12,24 +12,33 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
     private List<Cannon> _cannonsList;
 
     private AmmunitionSO _currentAmmunitionLoaded;
-    private int _currentAmmunitionIndex = 0;
+    private int _ammoEnumInt = 0;
 
     private Dictionary<CannonPositionEnum, List<Cannon>> _cannonDict = new Dictionary<CannonPositionEnum, List<Cannon>>();
     private Dictionary<CannonPositionEnum, int> _cannonDictTotalNumber = new Dictionary<CannonPositionEnum, int>();
     private Dictionary<CannonPositionEnum, int> _cannonDictLoaded = new Dictionary<CannonPositionEnum, int>();
     // add and remove based on inventory enabling. After timer runs out remove from list.
+    private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _ammunitionDict = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
     private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
 
     public void Setup(){
-        _currentAmmunitionLoaded = _ammunitionDataList[0];
         if (_cannonsList != null){
             foreach(Cannon cannon in _cannonsList){
                 cannon.Setup(this, _cannonData);
             }
+            AssembleAmmoDict();
             PopulateCannonDict();
             PopulateCannonsTotalAndLoaded();
         }
     }
+
+    private void AssembleAmmoDict()
+    {
+        foreach(AmmunitionSO so in _ammunitionDataList){
+            _ammunitionDict.Add(so.GetAmmunitionType, so);
+        }
+    }
+
     // Populated all the cannon totals based on their position.
     private void PopulateCannonsTotalAndLoaded()
     {
@@ -51,10 +60,24 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
         }
     }
 
-    public void ChangeAmmoType(int indexTraverse){
-        if (_ammunitionDataList != null){
-            Math.Clamp(_currentAmmunitionIndex, 0, _ammunitionDataList.Count -1);
-            _currentAmmunitionLoaded = _ammunitionDataList[_currentAmmunitionIndex];
+    public AmmunitionSO AmmunitionData(AmmunitionTypeEnum index){
+        return _ammunitionDict[index];
+    }
+
+    public void ChangeAmmoType(AmmunitionTypeEnum? ammoToLoad, int? iterate){
+        // Load ammo by it's passed EnumType
+        if (ammoToLoad != null){
+            _currentAmmunitionLoaded = _ammunitionDict[(AmmunitionTypeEnum)ammoToLoad];
+            _ammoEnumInt = (int)ammoToLoad;
+            return;
+        }
+        // Load ammo based on scroll wheel input.
+        if (iterate != null){
+            _ammoEnumInt += (int)iterate;
+            Mathf.Clamp(_ammoEnumInt, 0, Enum.GetValues(typeof(AmmunitionTypeEnum)).Length - 1);
+            AmmunitionTypeEnum ammoToLoadByInt = (AmmunitionTypeEnum)Enum.ToObject(typeof(AmmunitionTypeEnum), _ammoEnumInt);
+            _currentAmmunitionLoaded = _ammunitionDict[ammoToLoadByInt];
+            return;
         }
     }
     // Fire based on position and if cannons are loaded.

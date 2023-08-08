@@ -21,6 +21,8 @@ public class EntityManager : MonoBehaviour
     private CameraController _cameraController;
     [SerializeField]
     private AIInputManager _aiInputManager;
+    [SerializeField]
+    private StateManager _stateManager;
 
 
     private void Awake(){
@@ -38,6 +40,7 @@ public class EntityManager : MonoBehaviour
         if (_damageHandler != null) _damageHandler.Setup(_healthManager);
         if (_inputManager != null && !_isAI) _inputManager.Setup(_movementManager, _cameraController, _cannonManager);
         if (_aiInputManager != null && _isAI) _aiInputManager.Setup(_movementManager, _cannonManager);
+        if (_stateManager != null && _isAI) _stateManager.Setup(_cannonManager, _aiInputManager);
         
     }
 }
