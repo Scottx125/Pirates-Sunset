@@ -7,6 +7,8 @@ using UnityEngine.AI;
 public class MoveToTargetState : State
 {
     [SerializeField]
+    private State _nextState;
+    [SerializeField]
     private float _pathUpdateDelay = .5f;
     [SerializeField]
     private float _chaseRange = 250f;
@@ -19,26 +21,32 @@ public class MoveToTargetState : State
     private List<Vector3> _waypoints = new List<Vector3>();
     private Transform _mainTarget;
     private Transform _shipTarget;
+    private Transform _idleTransform;
     private AIInputManager _inputManager;
+    private SphereCollider _sphereCollider;
     private NavMeshPath _path;
     private float _elapsedPathTime;
     private float _elapsedChaseTime;
     private bool _chasing;
-    private bool _calculatedPath;
     private int _currentWaypointIndex = 0;
     private Coroutine _calculatingPath;
 
     // Add firing state here.
-    public void Setup(Transform mainTarget, AIInputManager inputManager)
+    #nullable enable
+    public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, SphereCollider sphereCollider)
     {
         _mainTarget = mainTarget;
         _inputManager = inputManager;
+        _idleTransform = idleTransform;
+        _sphereCollider = sphereCollider;
+        if (_sphereCollider == null) return;
+        _sphereCollider.radius = _chaseRange;
         _elapsedPathTime = 0f;
         _elapsedChaseTime = 0f;
         _chasing = false;
-        _calculatedPath = false;
         _path = new NavMeshPath();
     }
+    #nullable disable
     private void Update()
     {
         _elapsedPathTime += Time.deltaTime;
@@ -55,48 +63,53 @@ public class MoveToTargetState : State
             }
         }
     }
-
+    #nullable enable
     public override State RunCurrentState(State? previousState)
     {
         NextWaypoint();
+        // Idle if we have no main target.
+        MoveToIdlePositionBehaviour();
         // If we have a main target but no ship target then move to main target.
         MoveToMainTargetBehaviour();
         // Move to Ship.
         ChaseShipBehaviour();
         return this;
     }
+    #nullable disable
+    private void MoveToIdlePositionBehaviour()
+    {
+        if (_idleTransform != null && _mainTarget == null && _shipTarget == null){
+            if (Vector3.Distance(transform.position, _idleTransform.position) <= 10f){
+                MovementCalculationInput(0, false);
+            } else {
+                PathToTarget(_idleTransform);
+                MovementCalculationInput(4, true);
+            }
+        }
+    }
 
     private void MoveToMainTargetBehaviour()
     {
         if (_mainTarget != null && _shipTarget == null)
         {
-            if (_calculatedPath == false)
-            {
-                PathToTarget(_mainTarget);
-                _calculatedPath = true;
-            }
-            // Move towards target
-            MoveToTarget();
+            PathToTarget(_mainTarget);
+            MovementCalculationInput(4, true);
+            Attack(_mainTarget);
         }
     }
 
     private void ChaseShipBehaviour()
     {
-        // PUT IN CHECK FOR COROUTINE TO SEE IF WE CAN RECALCULATE YET
         if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) <= _chaseRange)
         {
-            _calculatedPath = false;
             PathToTarget(_shipTarget);
-            MoveToTarget();
+            MovementCalculationInput(4, true);
             // If in range initiate attack.
-            if (Vector3.Distance(transform.position, _shipTarget.position) <= _attackRange)
-            {
-                //attack
-            }
+            Attack(_shipTarget);
         } // If the ship is a target but is out of range chase.
+        // We don't need any pathtotarget here as the ship will continue on it's present course.
         else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _chaseRange)
         {
-            _calculatedPath = false;
             // Initiate chase
             if (_chasing == false)
             {
@@ -112,11 +125,26 @@ public class MoveToTargetState : State
         }
     }
 
-    private void MoveToTarget()
+    private State Attack(Transform target)
+    {
+        // Check if we are in range to attack, if we are return the nextstate.
+        if (Vector3.Distance(transform.position, target.position) <= _attackRange)
+        {
+            //attack
+            if (_nextState != null)
+            {
+                return _nextState;
+            }
+            
+        }
+        return this;
+    }
+
+    private void MovementCalculationInput(int speed, bool accelerating)
     {
         if (_waypoints.Count == 0) return;
         // Determine a speed,
-        _inputManager.MovementInput(4, true);
+        _inputManager.MovementInput(speed, accelerating);
         // Determine the direction of the next way point.
         _inputManager.Rotation(_waypoints[_currentWaypointIndex]);
     }
@@ -124,7 +152,7 @@ public class MoveToTargetState : State
     // Calculate new path
     private void PathToTarget(Transform target)
     {
-        if (_elapsedPathTime >= _pathUpdateDelay || target == _mainTarget)
+        if (_elapsedPathTime >= _pathUpdateDelay && _calculatingPath == null)
         {
             _waypoints.Clear();
             NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, _path);
@@ -133,12 +161,15 @@ public class MoveToTargetState : State
     }
     private IEnumerator CalculatePath()
     {
+        // Check to see if the path is complete or invalud and then continue.
         yield return new WaitUntil(()=>_path.status == NavMeshPathStatus.PathComplete || _path.status == NavMeshPathStatus.PathInvalid);
+        // If the path failed return.
         if (_path.status == NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("Path failed.");
             yield break;
         }
+        // If it created a path, add the current path to the waypoints list.
         foreach (Vector3 waypoint in _path.corners)
         {
             _waypoints.Add(waypoint);
@@ -147,9 +178,10 @@ public class MoveToTargetState : State
         _elapsedPathTime = 0f;
         _calculatingPath = null;
     }
+
     private void OnTriggerEnter(Collider other)
     {
-        _calculatedPath = false;
+        // Update the ship target if it's in range.
         _shipTarget = other.transform;
     }
 }

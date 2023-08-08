@@ -10,16 +10,20 @@ public class StateManager : MonoBehaviour
     [SerializeField]
     private Transform _mainTarget;
     [SerializeField]
+    private Transform _idlePosition;
+    [SerializeField]
     private AIInputManager _inputManager;
 
     private State _previousState;
     private MoveToTargetState _moveToTargetState;
+    private SphereCollider _sphereCollider;
 
     private void Start()
     {
         // Initialise all the states. We don't need a reference to them after the setup.
         _moveToTargetState = GetComponent<MoveToTargetState>();
-        _moveToTargetState.Setup(_mainTarget, _inputManager);
+        _sphereCollider = GetComponent<SphereCollider>();
+        _moveToTargetState.Setup(_mainTarget, _idlePosition, _inputManager, _sphereCollider);
     }
 
     private void Update()

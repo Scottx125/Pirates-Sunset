@@ -6,8 +6,8 @@ public class IdleState : State
 {
     [SerializeField]
     private State _nextState;
-    [SerializeField]
-    private Transform _mainTarget;
+
+    private bool _enemyInRange;
 
     public void Setup()
     {
@@ -15,13 +15,17 @@ public class IdleState : State
     }
     public override State RunCurrentState(State? previousState)
     {
-        if (_mainTarget != null)
-        {
+        if (_enemyInRange){
+            _enemyInRange = false;
             return _nextState;
-        }
-        else
-        {
+        } else {
             return this;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Enemy"){
+            _enemyInRange = true;
         }
     }
 }
