@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class StateManager : MonoBehaviour
 {
+    public IAmmunitionData GetAmmunitionDataRequiree => _attackState;
+
     // Current state to be processed.
     [SerializeField]
     private State _currentState;
@@ -13,26 +15,23 @@ public class StateManager : MonoBehaviour
     private Transform _idlePosition;
     [SerializeField]
     private AIInputManager _inputManager;
-    [SerializeField]
-    CannonManager _cannonManager;
 
     private MoveToTargetState _moveToTargetState;
     private AttackState _attackState;
     private SphereCollider _sphereCollider;
 
-    public void Setup(CannonManager cannonManager, AIInputManager inputManager)
+    public void Setup(AIInputManager inputManager)
     {
         // Initialise all the states. We don't need a reference to them after the setup.
         _moveToTargetState = GetComponent<MoveToTargetState>();
         _attackState = GetComponent<AttackState>();
         _sphereCollider = GetComponent<SphereCollider>();
-        _cannonManager = cannonManager;
         _inputManager = inputManager;
         if (_moveToTargetState != null){
             _moveToTargetState.Setup(_mainTarget, _idlePosition, _inputManager, _sphereCollider);
         }
         if (_attackState != null){
-            _attackState.Setup(_inputManager, _cannonManager);
+            _attackState.Setup(_inputManager);
         }
     }
 

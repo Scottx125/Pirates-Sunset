@@ -17,6 +17,7 @@ public class AIInputManager : MonoBehaviour
     public void Fire(CannonPositionEnum direction, AmmunitionTypeEnum ammoType)
     {
         // Get direction to fire and fire (this will be direction closest to current target which will be passed in)
+        // Also get the type of ammo to fire.
     }
 
     // Input a nullable custom state to specify a new speed OR indicate if you want the speed to increase or decrease.

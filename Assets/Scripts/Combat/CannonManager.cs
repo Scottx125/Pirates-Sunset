@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, ICorporealDamageModifier, IChangeAmmo, IAmmunitionData
+public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, ICorporealDamageModifier, IChangeAmmo
 {
     [SerializeField]
     private CannonSO _cannonData;
@@ -20,18 +20,21 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
     // add and remove based on inventory enabling. After timer runs out remove from list.
     private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _ammunitionDict = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
     private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
-
-    public void Setup(){
+    #nullable enable
+    public void Setup(IAmmunitionData? requiresAmmoData){
         if (_cannonsList != null){
             foreach(Cannon cannon in _cannonsList){
                 cannon.Setup(this, _cannonData);
             }
             AssembleAmmoDict();
+            if (requiresAmmoData != null) SendAmmoData(requiresAmmoData);
             PopulateCannonDict();
             PopulateCannonsTotalAndLoaded();
+        } else {
+            Debug.Log("Error, no cannons have been set up!");
         }
     }
-
+    #nullable disable
     private void AssembleAmmoDict()
     {
         foreach(AmmunitionSO so in _ammunitionDataList){
@@ -59,24 +62,29 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
             }
         }
     }
-
-    public AmmunitionSO AmmunitionData(AmmunitionTypeEnum index){
-        return _ammunitionDict[index];
+    // Sends the cannon dict off to the object that needs it (AI).
+    private void SendAmmoData(IAmmunitionData data){
+        data.AmmunitionData(_ammunitionDict);
     }
 
     public void ChangeAmmoType(AmmunitionTypeEnum? ammoToLoad, int? iterate){
         // Load ammo by it's passed EnumType
-        if (ammoToLoad != null){
+        if (ammoToLoad != null && _ammunitionDict.ContainsKey((AmmunitionTypeEnum)ammoToLoad)){
             _currentAmmunitionLoaded = _ammunitionDict[(AmmunitionTypeEnum)ammoToLoad];
             _ammoEnumInt = (int)ammoToLoad;
             return;
         }
         // Load ammo based on scroll wheel input.
         if (iterate != null){
+            // Iterate and then clamp.
             _ammoEnumInt += (int)iterate;
             Mathf.Clamp(_ammoEnumInt, 0, Enum.GetValues(typeof(AmmunitionTypeEnum)).Length - 1);
-            AmmunitionTypeEnum ammoToLoadByInt = (AmmunitionTypeEnum)Enum.ToObject(typeof(AmmunitionTypeEnum), _ammoEnumInt);
-            _currentAmmunitionLoaded = _ammunitionDict[ammoToLoadByInt];
+            // Get the enum based on the value iterated.
+            AmmunitionTypeEnum ammoToLoadIntToEnum = (AmmunitionTypeEnum)Enum.ToObject(typeof(AmmunitionTypeEnum), _ammoEnumInt);
+            // If the enum is in the dict set the new ammo type.
+            if (_ammunitionDict.ContainsKey(ammoToLoadIntToEnum)){
+                _currentAmmunitionLoaded = _ammunitionDict[ammoToLoadIntToEnum];
+            }
             return;
         }
     }

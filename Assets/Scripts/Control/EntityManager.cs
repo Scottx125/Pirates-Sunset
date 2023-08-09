@@ -30,17 +30,19 @@ public class EntityManager : MonoBehaviour
     }
     private void Setup(){
         if (_movementManager != null) _movementManager.Setup();
-        if (_cannonManager != null) _cannonManager.Setup();
-        if (_healthManager != null){
+        if (_cannonManager != null && !_isAI) _cannonManager.Setup(null);
+        if (_cannonManager != null && _isAI) _cannonManager.Setup(_stateManager.GetAmmunitionDataRequiree);
+        if (_aiInputManager != null && _isAI) _aiInputManager.Setup(_movementManager, _cannonManager);
+        if (_healthManager != null)
+        {
             ICorporealDamageModifier[] corporealDamageModifiers = {_movementManager, _cannonManager};
             IStructuralDamageModifier[] structuralDamageModifiers = {_movementManager};
             IMobilityDamageModifier[] mobilityDamageModifiers = {_movementManager};
             _healthManager.Setup(corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
         }
+        if (_stateManager != null && _isAI) _stateManager.Setup(_aiInputManager);
         if (_damageHandler != null) _damageHandler.Setup(_healthManager);
         if (_inputManager != null && !_isAI) _inputManager.Setup(_movementManager, _cameraController, _cannonManager);
-        if (_aiInputManager != null && _isAI) _aiInputManager.Setup(_movementManager, _cannonManager);
-        if (_stateManager != null && _isAI) _stateManager.Setup(_cannonManager, _aiInputManager);
         
     }
 }

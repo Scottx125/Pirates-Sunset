@@ -1,4 +1,6 @@
+using System.Collections.Generic;
+
 public interface IAmmunitionData
 {
-    public AmmunitionSO AmmunitionData(AmmunitionTypeEnum index);
+    public void AmmunitionData(Dictionary<AmmunitionTypeEnum, AmmunitionSO> ammoDict);
 }

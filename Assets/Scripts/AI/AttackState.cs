@@ -2,20 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackState : State
+public class AttackState : State, IAmmunitionData
 {
     [SerializeField]
     private State _nextState;
 
     private Transform _currentTarget;
     private AIInputManager _inputManager;
-    private IAmmunitionData _ammunitionData;
+    private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _ammunitionDict;
     // Setup close, medium and far ranges based on ammo range.
 
-    public void Setup(AIInputManager inputManager, IAmmunitionData ammoData)
+    public void Setup(AIInputManager inputManager)
     {
         _inputManager = inputManager;
-        _ammunitionData = ammoData;
     }
 
     public override State RunCurrentState()
@@ -31,5 +30,14 @@ public class AttackState : State
     {
         // Update the ship target if it's in range.
         _currentTarget = other.transform;
+    }
+
+    public void AmmunitionData(Dictionary<AmmunitionTypeEnum, AmmunitionSO> ammoDict)
+    {
+        // Once the cannnon manager is set up. Send a copy of the ammo dict here so
+        // the AI knows what ammo is loaded.
+        // This whilst using more memory reduces coupling between the cannon manager and
+        // AI.
+        _ammunitionDict = ammoDict;
     }
 }
