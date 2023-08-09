@@ -4091,7 +4091,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.04120564, y: 0.000000034651112, z: -0.0000000014290349, w: 0.9991507}
+  m_LocalRotation: {x: 0.04120564, y: -0.000000034651112, z: 0.0000000014290349, w: 0.9991507}
   m_LocalPosition: {x: 0, y: 5, z: 17.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4835,6 +4835,7 @@ MonoBehaviour:
   _cannonManager: {fileID: 0}
   _cameraController: {fileID: 0}
   _aiInputManager: {fileID: 1096464403}
+  _stateManager: {fileID: 2023146977}
 --- !u!114 &1096464403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10629,6 +10630,7 @@ GameObject:
   - component: {fileID: 2023146974}
   - component: {fileID: 2023146977}
   - component: {fileID: 2023146976}
+  - component: {fileID: 2023146979}
   - component: {fileID: 2023146978}
   m_Layer: 0
   m_Name: TargetDummy Nav
@@ -10677,7 +10679,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _nextState: {fileID: 0}
-  _pathUpdateDelay: 0.5
   _chaseRange: 250
   _attackRange: 150
   _followTime: 10
@@ -10697,6 +10698,7 @@ MonoBehaviour:
   _mainTarget: {fileID: 1541904465}
   _idlePosition: {fileID: 0}
   _inputManager: {fileID: 1096464403}
+  _pathfinder: {fileID: 2023146979}
 --- !u!135 &2023146978
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -10718,6 +10720,19 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 250
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2023146979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023146973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9886b2ddb8963064da3a09bd9884447a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pathUpdateDelay: 0.5
 --- !u!1001 &2046239587
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11053,11 +11068,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000032012828
+      value: -0.000000032012835
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000021341886
+      value: -0.000000021341892
       objectReference: {fileID: 0}
     - target: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_Name
@@ -11065,11 +11080,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4297755269925661833, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000017325553
+      value: -0.000000017325556
       objectReference: {fileID: 0}
     - target: {fileID: 4297755269925661833, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -7.145174e-10
+      value: 7.145175e-10
       objectReference: {fileID: 0}
     - target: {fileID: 6377209842706916836, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11113,11 +11128,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504919976806997559, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.00000002248122
+      value: -0.000000022481217
       objectReference: {fileID: 0}
     - target: {fileID: 7504919976806997559, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000009312027
+      value: -0.000000009312025
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

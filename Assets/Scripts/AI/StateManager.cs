@@ -15,6 +15,8 @@ public class StateManager : MonoBehaviour
     private Transform _idlePosition;
     [SerializeField]
     private AIInputManager _inputManager;
+    [SerializeField]
+    private Pathfinder _pathfinder;
 
     private MoveToTargetState _moveToTargetState;
     private AttackState _attackState;
@@ -28,10 +30,13 @@ public class StateManager : MonoBehaviour
         _sphereCollider = GetComponent<SphereCollider>();
         _inputManager = inputManager;
         if (_moveToTargetState != null){
-            _moveToTargetState.Setup(_mainTarget, _idlePosition, _inputManager, _sphereCollider);
+            _moveToTargetState.Setup(_mainTarget, _idlePosition, _inputManager, _sphereCollider, _pathfinder);
         }
         if (_attackState != null){
             _attackState.Setup(_inputManager);
+        }
+        if (_pathfinder != null){
+            _pathfinder.Setup();
         }
     }
 
