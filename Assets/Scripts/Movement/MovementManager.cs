@@ -3,25 +3,18 @@ namespace PirateGame.Moving{
     public class MovementManager : MonoBehaviour, ICorporealDamageModifier, IStructuralDamageModifier, IMobilityDamageModifier
     {
         [SerializeField]
-        MovementSO _movementData;
-        [SerializeField]
         Movement _movement;
         [SerializeField]
         MobilityStates _mobilityStates;
         [SerializeField]
         Rotation _rotation;
 
-        private bool _isSetup;
-
-        private void Start(){
-            if (!_isSetup) Setup();
-        }
-        public void Setup(){
+        MovementSO _movementData;
+        public void Setup(MovementSO movementData){
+            _movementData = movementData;
             _movement.Setup(_movementData, _rotation);
             _mobilityStates.Setup(_movementData, _movement);
             _rotation.Setup(_movementData);
-
-            _isSetup = true;
         }
         public void ChangeSpeed(int? customState, bool increaseSpeed)
         {

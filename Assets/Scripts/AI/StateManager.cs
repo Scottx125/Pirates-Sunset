@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateManager : MonoBehaviour
+public class StateManager : MonoBehaviour, IAmmunitionData
 {
-    public IAmmunitionData GetAmmunitionDataRequiree => _attackState;
-
     // Current state to be processed.
     [SerializeField]
     private State _currentState;
@@ -14,29 +12,46 @@ public class StateManager : MonoBehaviour
     [SerializeField]
     private Transform _idlePosition;
     [SerializeField]
-    private AIInputManager _inputManager;
-    [SerializeField]
     private Pathfinder _pathfinder;
 
     private MoveToTargetState _moveToTargetState;
-    private AttackState _attackState;
+    private ShipAttackShipState _shipAttackShipState;
+    private ShipAttackBaseState _shipAttackBaseState;
     private SphereCollider _sphereCollider;
+    private float _maxAttackRange = 0;
+    // Ammo stuff
+    private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _ammunitionDict;
 
-    public void Setup(AIInputManager inputManager)
+
+    public void Setup(AIInputManager inputManager, MovementSO movementData)
     {
         // Initialise all the states. We don't need a reference to them after the setup.
         _moveToTargetState = GetComponent<MoveToTargetState>();
-        _attackState = GetComponent<AttackState>();
+        _shipAttackShipState = GetComponent<ShipAttackShipState>();
+        _shipAttackBaseState = GetComponent<ShipAttackBaseState>();
         _sphereCollider = GetComponent<SphereCollider>();
-        _inputManager = inputManager;
         if (_moveToTargetState != null){
-            _moveToTargetState.Setup(_mainTarget, _idlePosition, _inputManager, _sphereCollider, _pathfinder);
+            _moveToTargetState.Setup(_mainTarget, _idlePosition, inputManager, _sphereCollider, _pathfinder, _maxAttackRange, movementData);
         }
-        if (_attackState != null){
-            _attackState.Setup(_inputManager);
+        if (_shipAttackShipState != null){
+            _shipAttackShipState.Setup(inputManager);
+        }
+        if (_shipAttackBaseState != null){
+            _shipAttackBaseState.Setup(_mainTarget, inputManager);
         }
         if (_pathfinder != null){
             _pathfinder.Setup();
+        }
+    }
+
+    public void AmmunitionData(Dictionary<AmmunitionTypeEnum, AmmunitionSO> ammoDict)
+    {
+        _ammunitionDict = ammoDict;
+        // Get the max range of our current ammo, this is our engagement range.
+        foreach (var ammoDictData in _ammunitionDict){
+            if (ammoDictData.Value.GetMaxRange > _maxAttackRange){
+                _maxAttackRange = ammoDictData.Value.GetMaxRange;
+            }
         }
     }
 

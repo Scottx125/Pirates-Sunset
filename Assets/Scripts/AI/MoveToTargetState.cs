@@ -7,13 +7,13 @@ using UnityEngine.AI;
 public class MoveToTargetState : State
 {
     [SerializeField]
-    private State _nextState;
+    private State _attackShip;
     [SerializeField]
-    private float _chaseRange = 250f;
+    private State _attackBase;
     [SerializeField]
-    private float _attackRange = 150f;
+    private float _followTime = 5f;
     [SerializeField]
-    private float _followTime = 10f;
+    private float _maxAngleToReduceSpeed = 67.5f;
 
     // Current target (this is the base not the player)
     
@@ -26,32 +26,34 @@ public class MoveToTargetState : State
     private Pathfinder _pathfinder;
     private float _elapsedChaseTime;
     private bool _chasing;
+    private float _maxAttackRange;
+    private MovementSO _movementData;
     
     
 
     #nullable enable
-    public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, SphereCollider sphereCollider, Pathfinder pathfinder)
+    public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, SphereCollider sphereCollider, Pathfinder pathfinder, float maxAttackRange, MovementSO movementData)
     {
         _mainTarget = mainTarget;
         _inputManager = inputManager;
         _idleTransform = idleTransform;
         _sphereCollider = sphereCollider;
+        _maxAttackRange = maxAttackRange;
         _pathfinder = pathfinder;
+        _movementData = movementData;
         if (_sphereCollider == null) return;
-        _sphereCollider.radius = _chaseRange;
+        _sphereCollider.radius = _maxAttackRange;
         _elapsedChaseTime = 0f;
         _chasing = false;
     }
     #nullable disable
-    private void IterateTimers()
+    private void Update()
     {
         _elapsedChaseTime += Time.deltaTime;
     }
 
     public override State RunCurrentState()
     {
-        IterateTimers();
-        // Idle if we have no main target.
         MoveToIdlePositionBehaviour();
         // If we have a main target but no ship target then move to main target.
         MoveToMainTargetBehaviour();
@@ -84,16 +86,15 @@ public class MoveToTargetState : State
 
     private void ChaseShipBehaviour()
     {
-        if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) <= _chaseRange)
+        if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) <= _maxAttackRange)
         {
-            _currentWaypoint = _pathfinder.PathToTarget(_shipTarget);
-            MovementCalculationInput(4, true);
-            // If in range initiate attack.
             Attack(_shipTarget);
         } // If the ship is a target but is out of range chase.
-        // We don't need any pathtotarget here as the ship will continue on it's present course.
-        else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _chaseRange)
+        else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _maxAttackRange)
         {
+            // Try to get back into range.
+            _currentWaypoint = _pathfinder.PathToTarget(_shipTarget);
+            MovementCalculationInput(4, true);
             // Initiate chase
             if (_chasing == false)
             {
@@ -112,14 +113,17 @@ public class MoveToTargetState : State
     private State Attack(Transform target)
     {
         // Check if we are in range to attack, if we are return the nextstate.
-        if (Vector3.Distance(transform.position, target.position) <= _attackRange)
+        if (Vector3.Distance(transform.position, target.position) <= _maxAttackRange)
         {
             //attack
-            if (_nextState != null)
+            if (_attackBase != null && target == _attackBase)
             {
-                return _nextState;
+                return _attackBase;
             }
-            
+            if (_attackShip != null && target == _attackShip)
+            {
+                return _attackShip;
+            }
         }
         return this;
     }
@@ -127,8 +131,18 @@ public class MoveToTargetState : State
     private void MovementCalculationInput(int speed, bool accelerating)
     {
         if (_currentWaypoint == null) return;
-        // Determine a speed,
-        _inputManager.MovementInput(speed, accelerating);
+         // Calc direciton to waypoint
+        Vector3 directionToWayPoint = (Vector3)_currentWaypoint - transform.position;
+        // Calc angle between forward vector and the direction.
+        float angleToWayPoint = Vector3.Angle(transform.forward, directionToWayPoint);
+
+        // Determine a speed based on how great the angle is away from the waypoint.
+        if (angleToWayPoint > _maxAngleToReduceSpeed){
+            _inputManager.MovementInput(_movementData.GetTurnSpeedEasePoint, accelerating);
+        } else {
+            _inputManager.MovementInput(speed, accelerating);
+        }
+       
         // Determine the direction of the next way point.
         _inputManager.Rotation((Vector3)_currentWaypoint);
     }
@@ -140,5 +154,3 @@ public class MoveToTargetState : State
     }
 }
 
-// In this state we want to simply get the base location and move towards a certain range (cannon fire range).
-// Then we will switch to the fire state.

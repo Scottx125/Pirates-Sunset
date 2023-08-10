@@ -4829,6 +4829,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isAI: 1
   _movementManager: {fileID: 1096464407}
+  _movementData: {fileID: 11400000, guid: df3f8cb0b889c4549aef2b696a336fb7, type: 2}
   _healthManager: {fileID: 1096464401}
   _damageHandler: {fileID: 1096464399}
   _inputManager: {fileID: 0}
@@ -4896,7 +4897,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f0ced94571ed8f4ab3008b600dceafc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementData: {fileID: 11400000, guid: df3f8cb0b889c4549aef2b696a336fb7, type: 2}
   _movement: {fileID: 1096464405}
   _mobilityStates: {fileID: 1096464404}
   _rotation: {fileID: 1096464406}
@@ -10678,10 +10678,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af2d54d37e384a4fb80cb65be9e82c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _nextState: {fileID: 0}
-  _chaseRange: 250
-  _attackRange: 150
+  _attackShip: {fileID: 0}
+  _attackBase: {fileID: 0}
   _followTime: 10
+  _maxAngleToReduceSpeed: 67.5
 --- !u!114 &2023146977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10697,7 +10697,6 @@ MonoBehaviour:
   _currentState: {fileID: 2023146976}
   _mainTarget: {fileID: 1541904465}
   _idlePosition: {fileID: 0}
-  _inputManager: {fileID: 1096464403}
   _pathfinder: {fileID: 2023146979}
 --- !u!135 &2023146978
 SphereCollider:
@@ -11068,11 +11067,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000032012835
+      value: 0.000000032012824
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000021341892
+      value: 0.000000021341883
       objectReference: {fileID: 0}
     - target: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_Name
@@ -11134,6 +11133,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.000000009312025
       objectReference: {fileID: 0}
+    - target: {fileID: 8333797614704921114, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
+      propertyPath: _movementData
+      value: 
+      objectReference: {fileID: 11400000, guid: df3f8cb0b889c4549aef2b696a336fb7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

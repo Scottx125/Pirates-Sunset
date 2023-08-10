@@ -10,6 +10,8 @@ public class EntityManager : MonoBehaviour
     [SerializeField]
     private MovementManager _movementManager;
     [SerializeField]
+    MovementSO _movementData;
+    [SerializeField]
     private HealthManager _healthManager;
     [SerializeField]
     private DamageHandler _damageHandler;
@@ -29,9 +31,9 @@ public class EntityManager : MonoBehaviour
         Setup();
     }
     private void Setup(){
-        if (_movementManager != null) _movementManager.Setup();
+        if (_movementManager != null) _movementManager.Setup(_movementData);
         if (_cannonManager != null && !_isAI) _cannonManager.Setup(null);
-        if (_cannonManager != null && _isAI) _cannonManager.Setup(_stateManager.GetAmmunitionDataRequiree);
+        if (_cannonManager != null && _isAI) _cannonManager.Setup(_stateManager);
         if (_aiInputManager != null && _isAI) _aiInputManager.Setup(_movementManager, _cannonManager);
         if (_healthManager != null)
         {
@@ -40,7 +42,7 @@ public class EntityManager : MonoBehaviour
             IMobilityDamageModifier[] mobilityDamageModifiers = {_movementManager};
             _healthManager.Setup(corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
         }
-        if (_stateManager != null && _isAI) _stateManager.Setup(_aiInputManager);
+        if (_stateManager != null && _isAI) _stateManager.Setup(_aiInputManager, _movementData);
         if (_damageHandler != null) _damageHandler.Setup(_healthManager);
         if (_inputManager != null && !_isAI) _inputManager.Setup(_movementManager, _cameraController, _cannonManager);
         
