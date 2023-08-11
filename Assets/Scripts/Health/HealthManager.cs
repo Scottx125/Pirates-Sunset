@@ -8,23 +8,29 @@ namespace PirateGame.Health{
         [SerializeField]
         List<HealthDataStruct> _healthStructList;
 
-        private bool _isSetup;
-
         private Dictionary<DamageTypeEnum, List<HealthComponent>> _healthComponenetsDict = new Dictionary<DamageTypeEnum, List<HealthComponent>>();
-
-        private void Start()
-        {
-            if (!_isSetup) Setup();
-        }
-
-        public void Setup(ICorporealDamageModifier[] corporealDamageModifiers = null, IStructuralDamageModifier[] structuralDamageModifiers = null,
-        IMobilityDamageModifier[] mobilityDamageModifiers = null)
+        
+        public void Setup(ICorporealDamageModifier[] corporealDamageModifiers, IStructuralDamageModifier[] structuralDamageModifiers,
+        IMobilityDamageModifier[] mobilityDamageModifiers)
         {   
             // Get the objects from the HealthList and set them up with their max health.
             // If the damagetype exists just add the HealthComponent.
             // If it doesn't, create that Dict obj and then add the HealthComponent.
            foreach (HealthDataStruct healthStruct in _healthStructList){
-                healthStruct.HealthComponent.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
+                switch (healthStruct.HealthComponent){
+                    case CorporealHealth corp:
+                    corp.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, corporealDamageModifiers);
+                    break;
+                    case StructuralHealth struc:
+                        struc.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, structuralDamageModifiers);
+                    break;
+                    case MobilityHealth mob:
+                        mob.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, mobilityDamageModifiers);
+                    break;
+                    default:
+                    // Bleh
+                    break;
+                }
                 foreach (DamageTypeEnum damageType in healthStruct.HealthComponent.GetAssociatedDamageTypes){
                     if (_healthComponenetsDict.ContainsKey(damageType)){
                         _healthComponenetsDict[damageType].Add(healthStruct.HealthComponent);
@@ -34,7 +40,6 @@ namespace PirateGame.Health{
                     }
                 }
            }
-           _isSetup = true;
         }
 
         // Identifys the damage type and the applies the damage.

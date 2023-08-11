@@ -1,14 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using PirateGame.Health;
 using UnityEngine;
 
-public class ShipAttackShipState : State
+public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporealDamageModifier, IMobilityDamageModifier
 {
     [SerializeField]
     private State _nextState;
 
     private Transform _currentTarget;
     private AIInputManager _inputManager;
+    private HealthComponent[] componenets;
     
     // Setup close, medium and far ranges based on ammo range.
 
@@ -34,9 +37,34 @@ public class ShipAttackShipState : State
     // The ship will attempt to keep below 25% of it's max range.
     // The ship will aim to attack whatever it's range every x Seconds. 
 
+    public void CorporealDamageModifier(float modifier)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void MobilityDamageModifier(float modifier)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void StructuralDamageModifier(float modifier)
+    {
+        throw new System.NotImplementedException();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         // Update the ship target if it's in range.
         _currentTarget = other.transform;
+        ExposeTargetHealth();
+    }
+
+    private void ExposeTargetHealth()
+    {
+        // Search the target for it's health componenets and pass itself into them.
+        componenets = _currentTarget.GetComponentsInChildren<HealthComponent>();
+        foreach(HealthComponent componenet in componenets){
+            componenet.AddReciever(this.name, this);
+        }
     }
 }
