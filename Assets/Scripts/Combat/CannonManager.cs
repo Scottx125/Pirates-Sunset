@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, ICorporealDamageModifier, IChangeAmmo
@@ -19,17 +20,26 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
     private Dictionary<CannonPositionEnum, int> _cannonDictLoaded = new Dictionary<CannonPositionEnum, int>();
     // add and remove based on inventory enabling. After timer runs out remove from list.
     private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _ammunitionDict = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
-    private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
+    //private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
     #nullable enable
     public void Setup(IAmmunitionData? requiresAmmoData){
+        // Set everything up
         if (_cannonsList != null){
+            // Set cannons up
             foreach(Cannon cannon in _cannonsList){
                 cannon.Setup(this, _cannonData);
             }
+            // set ammo and cannon dicts up.
             AssembleAmmoDict();
+            if (_ammunitionDict.Count != Enum.GetValues(typeof(AmmunitionTypeEnum)).Length)
+            {
+                Debug.LogError("Ammo on {0} is not filled properly!", this);
+            }
             if (requiresAmmoData != null) SendAmmoData(requiresAmmoData);
             PopulateCannonDict();
             PopulateCannonsTotalAndLoaded();
+            // Ensure we've got the first ammo type loaded.
+            _currentAmmunitionLoaded = _ammunitionDict.First().Value;
         } else {
             Debug.Log("Error, no cannons have been set up!");
         }
@@ -93,10 +103,10 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
         if (_cannonDict.ContainsKey(position)){
             foreach(Cannon cannon in _cannonDict[position]){
                 if (cannon.GetCannonLoaded == true){
-                    if (_boonDamage.ContainsKey(_currentAmmunitionLoaded.GetAmmunitionType)){
-                        StartCoroutine(cannon.Fire(_currentAmmunitionLoaded, _boonDamage[_currentAmmunitionLoaded.GetAmmunitionType]));
-                    } else {StartCoroutine(cannon.Fire(_currentAmmunitionLoaded));}
-
+                    //if (_boonDamage.ContainsKey(_currentAmmunitionLoaded.GetAmmunitionType)){
+                    //    StartCoroutine(cannon.Fire(_currentAmmunitionLoaded, _boonDamage[_currentAmmunitionLoaded.GetAmmunitionType]));
+                    //} else {}
+                    StartCoroutine(cannon.Fire(_currentAmmunitionLoaded));
                     _cannonDictLoaded[position]--;
                 }
             }

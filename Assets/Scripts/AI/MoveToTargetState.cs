@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.AI;
@@ -56,15 +57,17 @@ public class MoveToTargetState : State
 
     public override State RunCurrentState()
     {
-        MoveToIdlePositionBehaviour();
-        // If we have a main target but no ship target then move to main target.
-        MoveToMainTargetBehaviour();
+        State state;
+        state = MoveToIdlePositionBehaviour();
         // Move to Ship.
-        ChaseShipBehaviour();
-        return this;
+        state = ChaseShipBehaviour();
+        // If we have a main target but no ship target then move to main target.
+        state = MoveToMainTargetBehaviour();
+        
+        return state;
     }
 
-    private void MoveToIdlePositionBehaviour()
+    private State MoveToIdlePositionBehaviour()
     {
         if (_idleTransform != null && _mainTarget == null && _shipTarget == null){
             if (Vector3.Distance(transform.position, _idleTransform.position) <= 10f){
@@ -74,23 +77,25 @@ public class MoveToTargetState : State
                 MovementCalculationInput(SpeedModifierEnum.Full_Sails);
             }
         }
+        return this;
     }
 
-    private void MoveToMainTargetBehaviour()
+    private State MoveToMainTargetBehaviour()
     {
         if (_mainTarget != null && _shipTarget == null)
         {
             _currentWaypoint = _pathfinder.PathToTarget(_mainTarget);
             MovementCalculationInput(SpeedModifierEnum.Full_Sails);
-            Attack(_mainTarget);
+            return Attack(_mainTarget);
         }
+        return this;
     }
 
-    private void ChaseShipBehaviour()
+    private State ChaseShipBehaviour()
     {
         if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) <= _maxAttackRange)
         {
-            Attack(_shipTarget);
+            return Attack(_shipTarget);
         } // If the ship is a target but is out of range chase.
         else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _maxAttackRange)
         {
@@ -110,6 +115,7 @@ public class MoveToTargetState : State
                 _chasing = false;
             }
         }
+        return this;
     }
 
     private State Attack(Transform target)
@@ -118,14 +124,13 @@ public class MoveToTargetState : State
         if (Vector3.Distance(transform.position, target.position) <= _maxAttackRange)
         {
             //attack
-            if (_attackBase != null && target == _attackBase)
+            if (_attackBase != null && target.name == _mainTarget.name)
             {
                 return _attackBase;
             }
-            if (_attackShip != null && target == _attackShip)
+            if (_attackShip != null && target.name == _shipTarget.name)
             {
                 return _attackShip;
-
             }
         }
         return this;
@@ -147,7 +152,7 @@ public class MoveToTargetState : State
         }
        
         // Determine the direction of the next way point and the smallest angle to deviat from that angle.
-        _inputManager.Rotation((Vector3)_currentWaypoint, 5f);
+        _inputManager.Rotation((Vector3)_currentWaypoint, transform.forward);
     }
 
     private void OnTriggerEnter(Collider other)

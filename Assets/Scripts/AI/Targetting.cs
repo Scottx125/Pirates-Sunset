@@ -6,6 +6,9 @@ public class Targetting : MonoBehaviour
 {
     Transform _lastPosition;
     public Vector3 Target(Transform target, float projectileSpeed){
+        if (_lastPosition == null){
+            _lastPosition = target;
+        }
         // If the last position isn't that of the current target.
         // Send the current targets current position.
         if (target.name != _lastPosition.name){

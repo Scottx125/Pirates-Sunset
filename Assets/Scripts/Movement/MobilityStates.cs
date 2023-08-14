@@ -40,7 +40,7 @@ public class MobilityStates : MonoBehaviour
     // Increase/decrease ship sail state.
     public void ChangeMobilityState(SpeedModifierEnum? speed, bool? increaseSpeed)
     {
-        if (_mobilityState < StaticHelpers.GetMobilityStateEnumLength() && _mobilityStateTimeSinceChanged >= _mobilityStateChangeDelay){
+        if (_mobilityStateTimeSinceChanged >= _mobilityStateChangeDelay){
             // Bool increase
             if (increaseSpeed != null){
                 if ((bool)increaseSpeed){
@@ -49,8 +49,6 @@ public class MobilityStates : MonoBehaviour
             }
             // State Increase
             if (speed != null){
-                if (_mobilityState == (int)speed)return;
-
                 if (_mobilityState < (int)speed){
                 _mobilityState++;
                 }
@@ -58,7 +56,7 @@ public class MobilityStates : MonoBehaviour
                 _mobilityState--;
                 }
             }
-            Mathf.Clamp(_mobilityState, 0f, StaticHelpers.GetMobilityStateEnumLength() - 1);
+            Mathf.Clamp(_mobilityState, 0f, StaticHelpers.GetMobilityStateEnumLength());
              ModifyMobilityStateByInterface();
              _mobilityStateTimeSinceChanged = 0f;
         }

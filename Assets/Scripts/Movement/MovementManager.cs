@@ -18,7 +18,7 @@ namespace PirateGame.Moving{
         }
         public void ChangeSpeed(SpeedModifierEnum? speed, bool? increaseSpeed)
         {
-            _mobilityStates.ChangeMobilityState((SpeedModifierEnum)speed, (bool)increaseSpeed);
+            _mobilityStates.ChangeMobilityState(speed, increaseSpeed);
         }
         public void TurnLeft(bool turnBool){
             _rotation.SetLeftTurn(turnBool);

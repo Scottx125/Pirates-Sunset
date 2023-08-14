@@ -8,13 +8,8 @@ public class ShipAttackBaseState : State
 {
     [SerializeField]
     private State _attackShip;
-    [SerializeField]
-    private float _maxAngleToReduceSpeed = 67.5f;
-    [SerializeField][Range(0.1f, 1f)]
-    private float _minAttackRangeModifier = 0.75f;
 
     private string _targetable;
-    private Vector3? _currentWaypoint;
     private Transform _shipTarget;
     private Transform _mainTarget;
     private AIInputManager _inputManager;
@@ -37,7 +32,7 @@ public class ShipAttackBaseState : State
     {
         DetectShip();
         AttackBase();
-        throw new System.NotImplementedException();
+        return this;
     }
 
     private State DetectShip()
@@ -52,38 +47,39 @@ public class ShipAttackBaseState : State
     private void AttackBase()
     {
         if (_attackShip == null && _mainTarget != null && Vector3.Distance(transform.position, _mainTarget.position) < _maxAttackRange &&
-        Vector3.Distance(transform.position, _mainTarget.position) > _maxAttackRange * _minAttackRangeModifier){
+        Vector3.Distance(transform.position, _mainTarget.position) > 0f)
+        {
             // We're in range. Turn to face the target and attack.
-            MovementCalculationInput(SpeedModifierEnum.Reefed_Sails);
+            _inputManager.MovementInput(SpeedModifierEnum.Reefed_Sails);
             // Calculate target firing position.
             Vector3 targetToShoot = _targetting.Target(_mainTarget, _ammo.GetSpeed);
-            // Rotate towards target.
-            _inputManager.Rotation(targetToShoot, 90f);
-
-            float angleToShootAt = Vector3.Angle(transform.forward, targetToShoot);
-            if (angleToShootAt == 90f){
-                Debug.Log("FIREEEEEE");
+            // Rotate towards target based on whichever side is closest.
+            (Vector3 directionToShoot, CannonPositionEnum cannonsToFire) = DirectionToTurn(targetToShoot);
+            // Calc direciton to waypoint
+            Vector3 directionToWayPoint = targetToShoot - transform.position;
+            // Calc angle between forward vector and the direction.
+            float angleToShoot = Vector3.Angle(directionToShoot, directionToWayPoint);
+            if (angleToShoot <= 2.5f)
+            {
+                Debug.Log(cannonsToFire);
             }
         }
     }
 
-    private void MovementCalculationInput(SpeedModifierEnum speed)
+    private (Vector3, CannonPositionEnum) DirectionToTurn(Vector3 targetToShoot)
     {
-        if (_currentWaypoint == null) return;
-         // Calc direciton to waypoint
-        Vector3 directionToWayPoint = (Vector3)_currentWaypoint - transform.position;
-        // Calc angle between forward vector and the direction.
-        float angleToWayPoint = Vector3.Angle(transform.forward, directionToWayPoint);
-
-        // Determine a speed based on how great the angle is away from the waypoint.
-        if (angleToWayPoint > _maxAngleToReduceSpeed){
-            _inputManager.MovementInput(_movementData.GetTurnSpeedEasePoint);
-        } else {
-            _inputManager.MovementInput(speed);
+        Vector3 directionToTarget = targetToShoot - transform.position;
+        Vector3 cross = Vector3.Cross(transform.forward, directionToTarget);
+        if (cross.y >= 0f)
+        {
+            _inputManager.Rotation(targetToShoot, transform.right);
+            return (transform.right, CannonPositionEnum.Right);
         }
-       
-        // Determine the direction of the next way point and the smallest angle to deviat from that angle.
-        _inputManager.Rotation((Vector3)_currentWaypoint, 5f);
+        else
+        {
+            _inputManager.Rotation(targetToShoot, -transform.right);
+            return (-transform.right, CannonPositionEnum.Left);
+        }
     }
 
     private void OnTriggerEnter(Collider other)

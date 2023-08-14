@@ -26,17 +26,17 @@ public class AIInputManager : MonoBehaviour
         _movementManager.ChangeSpeed(speed, null);
     }
 
-    public void Rotation(Vector3 currentWaypoint, float targetRelativeAngle)
+    public void Rotation(Vector3 currentWaypoint, Vector3 directionToFace)
     {
         // Calc direciton to waypoint
         Vector3 directionToWayPoint = currentWaypoint - transform.position;
         // Calc angle between forward vector and the direction.
-        float angleToWayPoint = Vector3.Angle(transform.forward, directionToWayPoint);
+        float angleToWayPoint = Vector3.Angle(directionToFace, directionToWayPoint);
         // If the angle is large enough to warrent turning.
-        if (angleToWayPoint > targetRelativeAngle)
+        if (angleToWayPoint > .25f)
         {
             // crossproduct to determine if the angle is left or right of the forward vector.
-            Vector3 crossProduct = Vector3.Cross(transform.forward, directionToWayPoint);
+            Vector3 crossProduct = Vector3.Cross(directionToFace, directionToWayPoint);
             // Turn left or right.
             if (crossProduct.y < 0)
             {

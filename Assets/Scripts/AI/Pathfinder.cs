@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Pathfinder : MonoBehaviour
 {
@@ -9,14 +10,14 @@ public class Pathfinder : MonoBehaviour
 
     private List<Vector3> _waypoints = new List<Vector3>();
     private Coroutine _calculatingPath;
-    private UnityEngine.AI.NavMeshPath _path;
+    private NavMeshPath _path;
     private float _elapsedPathTime;
     private int _currentWaypointIndex = 0;
 
 
     public void Setup()
     {
-        _path = new UnityEngine.AI.NavMeshPath();
+        _path = new NavMeshPath();
         _elapsedPathTime = 0f;
     }
 
@@ -25,7 +26,7 @@ public class Pathfinder : MonoBehaviour
         if (_elapsedPathTime >= _pathUpdateDelay && _calculatingPath == null)
         {
             _waypoints.Clear();
-            UnityEngine.AI.NavMesh.CalculatePath(transform.position, target.position, UnityEngine.AI.NavMesh.AllAreas, _path);
+            NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, _path);
             _calculatingPath = StartCoroutine(CalculatePath());
         }
         if (_waypoints.Count > 0){

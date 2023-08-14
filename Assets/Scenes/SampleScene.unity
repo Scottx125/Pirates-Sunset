@@ -4681,6 +4681,7 @@ GameObject:
   - component: {fileID: 1096464405}
   - component: {fileID: 1096464404}
   - component: {fileID: 1096464403}
+  - component: {fileID: 1096464408}
   m_Layer: 0
   m_Name: Target Dummy
   m_TagString: Untagged
@@ -4768,7 +4769,7 @@ Transform:
   m_GameObject: {fileID: 1096464394}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 987.7, y: 3.9133334, z: 21.10192}
+  m_LocalPosition: {x: 829.1, y: 3.9133334, z: -161}
   m_LocalScale: {x: 2.41, y: 7.71, z: 12.75}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4833,7 +4834,7 @@ MonoBehaviour:
   _healthManager: {fileID: 1096464401}
   _damageHandler: {fileID: 1096464399}
   _inputManager: {fileID: 0}
-  _cannonManager: {fileID: 0}
+  _cannonManager: {fileID: 1096464408}
   _cameraController: {fileID: 0}
   _aiInputManager: {fileID: 1096464403}
   _stateManager: {fileID: 2023146977}
@@ -4900,6 +4901,24 @@ MonoBehaviour:
   _movement: {fileID: 1096464405}
   _mobilityStates: {fileID: 1096464404}
   _rotation: {fileID: 1096464406}
+--- !u!114 &1096464408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096464394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3f4e56585252284fbaf824171092557, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cannonData: {fileID: 0}
+  _ammunitionDataList:
+  - {fileID: 11400000, guid: 16b7095c2ab5cf649895608ad0c5b42e, type: 2}
+  - {fileID: 11400000, guid: 6a92d436b8aca58449cc0bbac23e55f0, type: 2}
+  - {fileID: 11400000, guid: 0aacb5ce7b0752c4abecb0ea8c139744, type: 2}
+  _cannonsList: []
 --- !u!1001 &1106361040
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10761,7 +10780,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _attackShip: {fileID: 0}
-  _maxAngleToReduceSpeed: 67.5
   _minAttackRangeModifier: 0.75
 --- !u!1001 &2046239587
 PrefabInstance:
@@ -11098,11 +11116,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000032012828
+      value: 0.000000032012824
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000021341886
+      value: 0.000000021341883
       objectReference: {fileID: 0}
     - target: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_Name
