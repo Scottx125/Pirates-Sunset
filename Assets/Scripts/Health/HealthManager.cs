@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PirateGame.Health{
 
@@ -40,6 +41,16 @@ namespace PirateGame.Health{
                     }
                 }
            }
+        }
+
+        // Get the current HealthComponenets and return them to any potential enemy so they can add themselves as listeners.
+        public List<HealthComponent> GetHealthComponents(){
+            List<HealthComponent> healthComponenets = new List<HealthComponent>();
+            foreach(var health in _healthComponenetsDict.Values){
+                healthComponenets.AddRange(health);
+            }
+            healthComponenets.Distinct();
+            return healthComponenets;
         }
 
         // Identifys the damage type and the applies the damage.

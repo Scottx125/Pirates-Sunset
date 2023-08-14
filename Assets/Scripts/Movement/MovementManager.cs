@@ -16,12 +16,9 @@ namespace PirateGame.Moving{
             _mobilityStates.Setup(_movementData, _movement);
             _rotation.Setup(_movementData);
         }
-        public void ChangeSpeed(int? customState, bool increaseSpeed)
+        public void ChangeSpeed(SpeedModifierEnum? speed, bool? increaseSpeed)
         {
-            if (increaseSpeed)
-            {
-                _mobilityStates.MobilityStateIncrease(customState);
-            } else { _mobilityStates.MobilityStateDecrease(customState); }
+            _mobilityStates.ChangeMobilityState((SpeedModifierEnum)speed, (bool)increaseSpeed);
         }
         public void TurnLeft(bool turnBool){
             _rotation.SetLeftTurn(turnBool);

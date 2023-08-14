@@ -38,41 +38,29 @@ public class MobilityStates : MonoBehaviour
     }
 
     // Increase/decrease ship sail state.
-    public void MobilityStateIncrease(int? customState)
+    public void ChangeMobilityState(SpeedModifierEnum? speed, bool? increaseSpeed)
     {
-        if (customState != null)
-        {
-            CustomSpeedState(customState);
-            return;
-        }
         if (_mobilityState < StaticHelpers.GetMobilityStateEnumLength() && _mobilityStateTimeSinceChanged >= _mobilityStateChangeDelay){
-            _mobilityState++;
+            // Bool increase
+            if (increaseSpeed != null){
+                if ((bool)increaseSpeed){
+                    _mobilityState++;
+                } else {_mobilityState--;}
+            }
+            // State Increase
+            if (speed != null){
+                if (_mobilityState == (int)speed)return;
+
+                if (_mobilityState < (int)speed){
+                _mobilityState++;
+                }
+                if (_mobilityState > (int)speed){
+                _mobilityState--;
+                }
+            }
+            Mathf.Clamp(_mobilityState, 0f, StaticHelpers.GetMobilityStateEnumLength() - 1);
              ModifyMobilityStateByInterface();
              _mobilityStateTimeSinceChanged = 0f;
-        }
-    }
-    public void MobilityStateDecrease(int? customState)
-    {
-        if (customState != null)
-        {
-            CustomSpeedState(customState);
-            return;
-        }
-        if (_mobilityState > 0 && _mobilityStateTimeSinceChanged >= _mobilityStateChangeDelay)
-        {
-            _mobilityState--;
-            ModifyMobilityStateByInterface();
-            _mobilityStateTimeSinceChanged = 0f;
-        }
-    }
-
-    private void CustomSpeedState(int? customState)
-    {
-        if (customState <= StaticHelpers.GetMobilityStateEnumLength())
-        {
-            _mobilityState = (int)customState;
-            ModifyMobilityStateByInterface();
-            _mobilityStateTimeSinceChanged = 0f;
         }
     }
 

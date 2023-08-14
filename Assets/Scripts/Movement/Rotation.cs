@@ -21,7 +21,7 @@ public class Rotation : MonoBehaviour, ICurrentSpeed
     {
         _maxTurnSpeed = movementData.GetMaxTurnSpeed;
         _minTurnSpeed = movementData.GetMinTurnSpeed;
-        _turnSpeedEasePoint = movementData.GetTurnSpeedEasePoint;
+        _turnSpeedEasePoint = (int)movementData.GetTurnSpeedEasePoint;
         _maxSpeed = movementData.GetMaxSpeed;
     }
 

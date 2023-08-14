@@ -62,7 +62,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     private void ExposeTargetHealth()
     {
         // Search the target for it's health componenets and pass itself into them.
-        componenets = _currentTarget.GetComponentsInChildren<HealthComponent>();
+        componenets = _currentTarget.transform.root.GetComponent<HealthManager>().GetHealthComponents().ToArray();
         foreach(HealthComponent componenet in componenets){
             componenet.AddReciever(this.name, this);
         }

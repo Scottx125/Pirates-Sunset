@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Land
   - Sea
+  - Enemy
+  - Pirates
   layers:
   - Default
   - TransparentFX

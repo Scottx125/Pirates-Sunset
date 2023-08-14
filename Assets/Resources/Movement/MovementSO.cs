@@ -19,7 +19,7 @@ public class MovementSO : ScriptableObject
     public float GetMobilityStateChangeDelay => _sailStateChangeDelay;
     public float GetMaxSpeed => _maxSpeed;
     public float GetMinSpeed => _minSpeed;
-    public int GetTurnSpeedEasePoint => (int)_turnSpeedEasePoint;
+    public SpeedModifierEnum GetTurnSpeedEasePoint => _turnSpeedEasePoint;
     public float GetMaxTurnSpeed => _maxTurnSpeed;
     public float GetMinTurnSpeed => _minTurnSpeed;
     public float GetMaxAccelerationRate => _maxAccelerationRate;

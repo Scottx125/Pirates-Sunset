@@ -21,19 +21,19 @@ public class AIInputManager : MonoBehaviour
     }
 
     // Input a nullable custom state to specify a new speed OR indicate if you want the speed to increase or decrease.
-    public void MovementInput(int? customState, bool increaseSpeed)
+    public void MovementInput(SpeedModifierEnum speed)
     {
-        _movementManager.ChangeSpeed(customState, increaseSpeed);
+        _movementManager.ChangeSpeed(speed, null);
     }
 
-    public void Rotation(Vector3 currentWaypoint)
+    public void Rotation(Vector3 currentWaypoint, float targetRelativeAngle)
     {
         // Calc direciton to waypoint
         Vector3 directionToWayPoint = currentWaypoint - transform.position;
         // Calc angle between forward vector and the direction.
         float angleToWayPoint = Vector3.Angle(transform.forward, directionToWayPoint);
         // If the angle is large enough to warrent turning.
-        if (angleToWayPoint > 5f)
+        if (angleToWayPoint > targetRelativeAngle)
         {
             // crossproduct to determine if the angle is left or right of the forward vector.
             Vector3 crossProduct = Vector3.Cross(transform.forward, directionToWayPoint);

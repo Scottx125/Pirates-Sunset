@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,7 +17,7 @@ public class MoveToTargetState : State
     private float _maxAngleToReduceSpeed = 67.5f;
 
     // Current target (this is the base not the player)
-    
+    private string _targetable;
     private Transform _mainTarget;
     private Transform _shipTarget;
     private Transform _idleTransform;
@@ -32,7 +33,7 @@ public class MoveToTargetState : State
     
 
     #nullable enable
-    public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, SphereCollider sphereCollider, Pathfinder pathfinder, float maxAttackRange, MovementSO movementData)
+    public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, SphereCollider sphereCollider, Pathfinder pathfinder, float maxAttackRange, MovementSO movementData, string targetable)
     {
         _mainTarget = mainTarget;
         _inputManager = inputManager;
@@ -44,6 +45,7 @@ public class MoveToTargetState : State
         if (_sphereCollider == null) return;
         _sphereCollider.radius = _maxAttackRange;
         _elapsedChaseTime = 0f;
+        _targetable = targetable;
         _chasing = false;
     }
     #nullable disable
@@ -66,10 +68,10 @@ public class MoveToTargetState : State
     {
         if (_idleTransform != null && _mainTarget == null && _shipTarget == null){
             if (Vector3.Distance(transform.position, _idleTransform.position) <= 10f){
-                MovementCalculationInput(0, false);
+                MovementCalculationInput(SpeedModifierEnum.Reefed_Sails);
             } else {
                 _currentWaypoint = _pathfinder.PathToTarget(_idleTransform);
-                MovementCalculationInput(4, true);
+                MovementCalculationInput(SpeedModifierEnum.Full_Sails);
             }
         }
     }
@@ -79,7 +81,7 @@ public class MoveToTargetState : State
         if (_mainTarget != null && _shipTarget == null)
         {
             _currentWaypoint = _pathfinder.PathToTarget(_mainTarget);
-            MovementCalculationInput(4, true);
+            MovementCalculationInput(SpeedModifierEnum.Full_Sails);
             Attack(_mainTarget);
         }
     }
@@ -94,7 +96,7 @@ public class MoveToTargetState : State
         {
             // Try to get back into range.
             _currentWaypoint = _pathfinder.PathToTarget(_shipTarget);
-            MovementCalculationInput(4, true);
+            MovementCalculationInput(SpeedModifierEnum.Full_Sails);
             // Initiate chase
             if (_chasing == false)
             {
@@ -123,12 +125,13 @@ public class MoveToTargetState : State
             if (_attackShip != null && target == _attackShip)
             {
                 return _attackShip;
+
             }
         }
         return this;
     }
 
-    private void MovementCalculationInput(int speed, bool accelerating)
+    private void MovementCalculationInput(SpeedModifierEnum speed)
     {
         if (_currentWaypoint == null) return;
          // Calc direciton to waypoint
@@ -138,19 +141,21 @@ public class MoveToTargetState : State
 
         // Determine a speed based on how great the angle is away from the waypoint.
         if (angleToWayPoint > _maxAngleToReduceSpeed){
-            _inputManager.MovementInput(_movementData.GetTurnSpeedEasePoint, accelerating);
+            _inputManager.MovementInput(_movementData.GetTurnSpeedEasePoint);
         } else {
-            _inputManager.MovementInput(speed, accelerating);
+            _inputManager.MovementInput(speed);
         }
        
-        // Determine the direction of the next way point.
-        _inputManager.Rotation((Vector3)_currentWaypoint);
+        // Determine the direction of the next way point and the smallest angle to deviat from that angle.
+        _inputManager.Rotation((Vector3)_currentWaypoint, 5f);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         // Update the ship target if it's in range.
-        _shipTarget = other.transform;
+        if (other.tag == _targetable){
+            _shipTarget = other.transform;
+        }
     }
 }
 

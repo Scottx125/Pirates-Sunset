@@ -3,6 +3,7 @@ using PirateGame.Health;
 
 public class CorporealHealth : HealthComponent
 {
+    // For this current entitiy.
     private ICorporealDamageModifier[] _corpoeralModifiers;
     // List of enemy states that want to recieve info.
     private Dictionary<string, ICorporealDamageModifier> _recieversDict = new Dictionary<string, ICorporealDamageModifier>();
