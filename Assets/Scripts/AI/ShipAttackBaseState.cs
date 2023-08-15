@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.UIElements;
 using UnityEngine;
+using PirateGame.Helpers;
+using System.Collections.Generic;
 
 public class ShipAttackBaseState : State
 {
@@ -14,17 +12,15 @@ public class ShipAttackBaseState : State
     private Transform _mainTarget;
     private AIInputManager _inputManager;
     private float _maxAttackRange = 0f;
-    private MovementSO _movementData;
     private Targetting _targetting;
-    private AmmunitionSO _ammo;
-    public void Setup(Transform mainTarget ,AIInputManager inputManager, float maxAttackRange, MovementSO movementData, Targetting targetting, AmmunitionSO ammo, string targetable)
+    private AmmunitionSO _topStructuralDamageAmmo;
+    public void Setup(Transform mainTarget ,AIInputManager inputManager, Targetting targetting, List<AmmunitionSO> ammoList, string targetable)
     {
         _mainTarget = mainTarget;
         _inputManager = inputManager;
-        _maxAttackRange = maxAttackRange;
-        _movementData = movementData;
+        _topStructuralDamageAmmo = AIHelpers.GetTopDamageOfType(ammoList, DamageTypeEnum.Structural);
+        _maxAttackRange = _topStructuralDamageAmmo.GetMaxRange;
         _targetting = targetting;
-        _ammo = ammo;
         _targetable = targetable;
     }
 
@@ -52,23 +48,22 @@ public class ShipAttackBaseState : State
             // We're in range. Turn to face the target and attack.
             _inputManager.MovementInput(SpeedModifierEnum.Reefed_Sails);
             // Calculate target firing position.
-            Vector3 targetToShoot = _targetting.Target(_mainTarget, _ammo.GetSpeed);
+            Vector3 targetToShoot = _targetting.Target(_mainTarget, _topStructuralDamageAmmo.GetSpeed);
+            // Calc direciton to target
+            Vector3 directionToTarget = AIHelpers.DirectionToObjective(targetToShoot, transform.position);
             // Rotate towards target based on whichever side is closest.
-            (Vector3 directionToShoot, CannonPositionEnum cannonsToFire) = DirectionToTurn(targetToShoot);
-            // Calc direciton to waypoint
-            Vector3 directionToWayPoint = targetToShoot - transform.position;
+            (Vector3 directionToShoot, CannonPositionEnum cannonsToFire) = DirectionToTurn(targetToShoot, directionToTarget);
             // Calc angle between forward vector and the direction.
-            float angleToShoot = Vector3.Angle(directionToShoot, directionToWayPoint);
+            float angleToShoot = Vector3.Angle(directionToShoot, directionToTarget);
             if (angleToShoot <= 2.5f)
             {
-                Debug.Log(cannonsToFire);
+                _inputManager.Fire(cannonsToFire, _topStructuralDamageAmmo.GetAmmunitionType);
             }
         }
     }
 
-    private (Vector3, CannonPositionEnum) DirectionToTurn(Vector3 targetToShoot)
+    private (Vector3, CannonPositionEnum) DirectionToTurn(Vector3 targetToShoot, Vector3 directionToTarget)
     {
-        Vector3 directionToTarget = targetToShoot - transform.position;
         Vector3 cross = Vector3.Cross(transform.forward, directionToTarget);
         if (cross.y >= 0f)
         {

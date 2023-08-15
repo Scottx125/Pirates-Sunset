@@ -77,17 +77,24 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
         data.AmmunitionData(_ammunitionDict);
     }
 
-    public void ChangeAmmoType(AmmunitionTypeEnum? ammoToLoad, int? iterate){
+    public void ChangeAmmoType(AmmunitionTypeEnum? ammoToLoad, bool? iterate){
         // Load ammo by it's passed EnumType
         if (ammoToLoad != null && _ammunitionDict.ContainsKey((AmmunitionTypeEnum)ammoToLoad)){
             _currentAmmunitionLoaded = _ammunitionDict[(AmmunitionTypeEnum)ammoToLoad];
             _ammoEnumInt = (int)ammoToLoad;
             return;
         }
+        
         // Load ammo based on scroll wheel input.
         if (iterate != null){
             // Iterate and then clamp.
-            _ammoEnumInt += (int)iterate;
+            if ((bool)iterate)
+            {
+                _ammoEnumInt += 1;
+            } else
+            {
+                _ammoEnumInt -= 1;
+            }
             Mathf.Clamp(_ammoEnumInt, 0, Enum.GetValues(typeof(AmmunitionTypeEnum)).Length - 1);
             // Get the enum based on the value iterated.
             AmmunitionTypeEnum ammoToLoadIntToEnum = (AmmunitionTypeEnum)Enum.ToObject(typeof(AmmunitionTypeEnum), _ammoEnumInt);

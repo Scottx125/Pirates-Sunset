@@ -5,6 +5,9 @@ using UnityEngine;
 public class Targetting : MonoBehaviour
 {
     Transform _lastPosition;
+    ///<summary>
+    ///Returns a Vector3 position, predicting the impact location of your projectile based on it's speed and the targets position.
+    ///</summary>
     public Vector3 Target(Transform target, float projectileSpeed){
         if (_lastPosition == null){
             _lastPosition = target;

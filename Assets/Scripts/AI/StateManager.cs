@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.UIElements;
 using UnityEngine;
 
@@ -24,9 +25,8 @@ public class StateManager : MonoBehaviour, IAmmunitionData
     private ShipAttackShipState _shipAttackShipState;
     private ShipAttackBaseState _shipAttackBaseState;
     private SphereCollider _sphereCollider;
-    private float _maxAttackRange = 0;
     // Ammo stuff
-    private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _ammunitionDict;
+    private List<AmmunitionSO> _ammunitionList;
 
 
     public void Setup(AIInputManager inputManager, MovementSO movementData)
@@ -37,30 +37,25 @@ public class StateManager : MonoBehaviour, IAmmunitionData
         _shipAttackBaseState = GetComponent<ShipAttackBaseState>();
         _sphereCollider = GetComponent<SphereCollider>();
         if (_moveToTargetState != null){
-            _moveToTargetState.Setup(_mainTarget, _idlePosition, inputManager, _sphereCollider, _pathfinder, _maxAttackRange, movementData, _targetable);
+            _moveToTargetState.Setup(_mainTarget, _idlePosition, inputManager, _sphereCollider, _pathfinder, movementData, _targetable, _ammunitionList);
         }
         if (_shipAttackShipState != null){
             _shipAttackShipState.Setup(inputManager);
         }
         if (_shipAttackBaseState != null){
-            _shipAttackBaseState.Setup(_mainTarget, inputManager, _maxAttackRange, movementData, _targetting, _ammunitionDict[AmmunitionTypeEnum.Round_Shot], _targetable);
+            _shipAttackBaseState.Setup(_mainTarget, inputManager, _targetting, _ammunitionList, _targetable);
         }
         if (_pathfinder != null){
             _pathfinder.Setup();
         }
     }
 
+    // Is setup by cannonmanager.
     public void AmmunitionData(Dictionary<AmmunitionTypeEnum, AmmunitionSO> ammoDict)
     {
-        _ammunitionDict = ammoDict;
-        if (_ammunitionDict.Count != Enum.GetValues(typeof(AmmunitionTypeEnum)).Length){
+        _ammunitionList = ammoDict.Values.ToList();
+        if (_ammunitionList.Count != Enum.GetValues(typeof(AmmunitionTypeEnum)).Length){
             Debug.LogError("ammoDictionary in StateManager does not equal the number of AmmoEnumTypes!");
-        }
-        // Get the max range of our current ammo, this is our engagement range.
-        foreach (var ammoDictData in _ammunitionDict){
-            if (ammoDictData.Value.GetMaxRange > _maxAttackRange){
-                _maxAttackRange = ammoDictData.Value.GetMaxRange;
-            }
         }
     }
 

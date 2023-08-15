@@ -1,4 +1,4 @@
 public interface IChangeAmmo
 {
-    public void ChangeAmmoType(AmmunitionTypeEnum? ammoToLoad, int? iterate);
+    public void ChangeAmmoType(AmmunitionTypeEnum? ammoToLoad, bool? iterate);
 }

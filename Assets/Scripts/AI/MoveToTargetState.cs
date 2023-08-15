@@ -5,6 +5,8 @@ using Unity.VisualScripting;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.AI;
+using PirateGame.Helpers;
+using System.Linq;
 
 public class MoveToTargetState : State
 {
@@ -34,13 +36,13 @@ public class MoveToTargetState : State
     
 
     #nullable enable
-    public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, SphereCollider sphereCollider, Pathfinder pathfinder, float maxAttackRange, MovementSO movementData, string targetable)
+    public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, SphereCollider sphereCollider, 
+        Pathfinder pathfinder, MovementSO movementData, string targetable, List<AmmunitionSO> ammoList)
     {
         _mainTarget = mainTarget;
         _inputManager = inputManager;
         _idleTransform = idleTransform;
         _sphereCollider = sphereCollider;
-        _maxAttackRange = maxAttackRange;
         _pathfinder = pathfinder;
         _movementData = movementData;
         if (_sphereCollider == null) return;
@@ -48,8 +50,10 @@ public class MoveToTargetState : State
         _elapsedChaseTime = 0f;
         _targetable = targetable;
         _chasing = false;
+        _maxAttackRange = AIHelpers.GetAmmunitionRangesInOrder(ammoList).Last().GetMaxRange;
     }
-    #nullable disable
+
+#nullable disable
     private void Update()
     {
         _elapsedChaseTime += Time.deltaTime;
