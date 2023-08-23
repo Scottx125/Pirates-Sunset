@@ -27,6 +27,7 @@ namespace PirateGame.Helpers
         ///</summary>
         public static AmmunitionSO GetTopDamageOfType(List<AmmunitionSO> ammoList, DamageTypeEnum damageType)
         {
+            // IF i'VE GOT TIME COME BACK TO THIS AND SIMPLIFY THE FOREACH LOOPS, MAYBE TO A DICT NOOB.
             AmmunitionSO bestAmmo = null;
             // For every ammo in the list.
             foreach (AmmunitionSO ammo in ammoList)

@@ -7,6 +7,8 @@ public class Pathfinder : MonoBehaviour
 {
     [SerializeField]
     private float _pathUpdateDelay = .5f;
+    [SerializeField]
+    private float _marchOffset = 5f;
 
     private List<Vector3> _waypoints = new List<Vector3>();
     private Coroutine _calculatingPath;
@@ -21,13 +23,12 @@ public class Pathfinder : MonoBehaviour
         _elapsedPathTime = 0f;
     }
 
-    public Vector3? PathToTarget(Transform target)
+    public Vector3? PathToTarget(Transform target, Transform? desiredPosition)
     {
         if (_elapsedPathTime >= _pathUpdateDelay && _calculatingPath == null)
         {
             _waypoints.Clear();
-            NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, _path);
-            _calculatingPath = StartCoroutine(CalculatePath());
+            _calculatingPath = StartCoroutine(CalculatePath(target, desiredPosition));
         }
         if (_waypoints.Count > 0){
             return _waypoints[_currentWaypointIndex];
@@ -51,14 +52,28 @@ public class Pathfinder : MonoBehaviour
         }
     }
 
-    private IEnumerator CalculatePath()
+    private IEnumerator CalculatePath(Transform target, Transform? desiredPosition)
     {
+        Transform targetToPathTo = desiredPosition == null ? target : desiredPosition;
+        // Try initial path.
+        NavMesh.CalculatePath(transform.position, targetToPathTo.position, NavMesh.AllAreas, _path);
         // Check to see if the path is complete or invalud and then continue.
-        yield return new WaitUntil(()=>_path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete || _path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid);
-        // If the path failed return.
+        yield return new WaitUntil(() => _path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete || _path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid);
+        // If the path failed find a new path.
         if (_path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("Path failed.");
+            if (desiredPosition != null)
+            {
+                // March the waypoint towards the target until it succeeds or is within 20f of the target.
+                while (_path.status != UnityEngine.AI.NavMeshPathStatus.PathComplete && Vector3.Distance(targetToPathTo.position, target.position) >= 20f)
+                {
+                    Vector3 dirToTarget = target.position - targetToPathTo.position;
+                    Vector3 offset = dirToTarget.normalized * _marchOffset;
+                    targetToPathTo.position += offset;
+                    NavMesh.CalculatePath(transform.position, targetToPathTo.position, NavMesh.AllAreas, _path);
+                }
+            }
             yield break;
         }
         // If it created a path, add the current path to the waypoints list.

@@ -77,7 +77,7 @@ public class MoveToTargetState : State
             if (Vector3.Distance(transform.position, _idleTransform.position) <= 10f){
                 MovementCalculationInput(SpeedModifierEnum.Reefed_Sails);
             } else {
-                _currentWaypoint = _pathfinder.PathToTarget(_idleTransform);
+                _currentWaypoint = _pathfinder.PathToTarget(_idleTransform, null);
                 MovementCalculationInput(SpeedModifierEnum.Full_Sails);
             }
         }
@@ -88,11 +88,31 @@ public class MoveToTargetState : State
     {
         if (_mainTarget != null && _shipTarget == null)
         {
-            _currentWaypoint = _pathfinder.PathToTarget(_mainTarget);
-            MovementCalculationInput(SpeedModifierEnum.Full_Sails);
+            _currentWaypoint = _pathfinder.PathToTarget(_mainTarget, null);
+            float distance = Vector3.Distance(transform.position, _mainTarget.position);
+            MovementCalculationInput(SlowDownOnApparoach(distance));
             return Attack(_mainTarget);
         }
         return this;
+    }
+
+    private SpeedModifierEnum SlowDownOnApparoach(float distance)
+    {
+        if (distance > _maxAttackRange + 60f)
+        {
+            return SpeedModifierEnum.Full_Sails;
+        } else
+        if (distance > _maxAttackRange + 40f)
+        {
+            return SpeedModifierEnum.Three_Quater_Sails;
+        } else
+        if (distance > _maxAttackRange + 20f)
+        {
+            return SpeedModifierEnum.Half_Sails;
+        } else
+        {
+            return SpeedModifierEnum.Quater_Sails;
+        }
     }
 
     private State ChaseShipBehaviour()
@@ -104,7 +124,7 @@ public class MoveToTargetState : State
         else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _maxAttackRange)
         {
             // Try to get back into range.
-            _currentWaypoint = _pathfinder.PathToTarget(_shipTarget);
+            _currentWaypoint = _pathfinder.PathToTarget(_shipTarget, null);
             MovementCalculationInput(SpeedModifierEnum.Full_Sails);
             // Initiate chase
             if (_chasing == false)

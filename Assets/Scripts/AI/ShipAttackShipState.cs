@@ -39,6 +39,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
 
     public void CorporealDamageModifier(float modifier)
     {
+        // MAKE SURE TO SORT IF IT'S THE HEALTH FROM THIS OBJECT OR FROM ANOTHER.
         throw new System.NotImplementedException();
     }
 
