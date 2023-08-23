@@ -35,14 +35,14 @@ public class EntityManager : MonoBehaviour
         if (_cannonManager != null && !_isAI) _cannonManager.Setup(null);
         if (_cannonManager != null && _isAI) _cannonManager.Setup(_stateManager);
         if (_aiInputManager != null && _isAI) _aiInputManager.Setup(_movementManager, _cannonManager);
+        if (_stateManager != null && _isAI) _stateManager.Setup(_aiInputManager, _movementData);
         if (_healthManager != null)
         {
             ICorporealDamageModifier[] corporealDamageModifiers = {_movementManager, _cannonManager};
-            IStructuralDamageModifier[] structuralDamageModifiers = {_movementManager};
+            IStructuralDamageModifier[] structuralDamageModifiers = {_movementManager, _stateManager.GetShipAttackStateForHealthSetup};
             IMobilityDamageModifier[] mobilityDamageModifiers = {_movementManager};
             _healthManager.Setup(corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
         }
-        if (_stateManager != null && _isAI) _stateManager.Setup(_aiInputManager, _movementData);
         if (_damageHandler != null) _damageHandler.Setup(_healthManager);
         if (_inputManager != null && !_isAI) _inputManager.Setup(_movementManager, _cameraController, _cannonManager);
         

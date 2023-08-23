@@ -31,10 +31,10 @@ public class MobilityHealth : HealthComponent
         _currentHealth -= damage;
         if(_mobilityModifiers != null && _mobilityModifiers.Length == 0)
         foreach(IMobilityDamageModifier item in _mobilityModifiers){
-            item.MobilityDamageModifier(ToPercent(_currentHealth, _maxHealth));
+            item.MobilityDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }
         foreach(var item in _recieversDict){
-            item.Value.MobilityDamageModifier(ToPercent(_currentHealth, _maxHealth));
+            item.Value.MobilityDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }
     }
 }

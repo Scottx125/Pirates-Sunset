@@ -27,17 +27,17 @@ namespace PirateGame.Moving{
             _rotation.SetRightTurn(turnBool);
         }
 
-        public void CorporealDamageModifier(float modifier)
+        public void CorporealDamageModifier(float modifier, string nameOfSender)
         {
             _rotation.SetCorporealDamageModifier(modifier);
         }
 
-        public void StructuralDamageModifier(float modifier)
+        public void StructuralDamageModifier(float modifier, string nameOfSender)
         {
             _movement.SetStructuralDamageModifier(modifier);
         }
 
-        public void MobilityDamageModifier(float modifier)
+        public void MobilityDamageModifier(float modifier, string nameOfSender)
         {
             _movement.SetMobilityDamageModifier(modifier);
         }

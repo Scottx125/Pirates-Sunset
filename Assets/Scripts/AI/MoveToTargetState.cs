@@ -26,7 +26,6 @@ public class MoveToTargetState : State
     private Transform _idleTransform;
     private Vector3? _currentWaypoint;
     private AIInputManager _inputManager;
-    private SphereCollider _sphereCollider;
     private Pathfinder _pathfinder;
     private float _elapsedChaseTime;
     private bool _chasing;
@@ -36,17 +35,14 @@ public class MoveToTargetState : State
     
 
     #nullable enable
-    public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, SphereCollider sphereCollider, 
+    public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, 
         Pathfinder pathfinder, MovementSO movementData, string targetable, List<AmmunitionSO> ammoList)
     {
         _mainTarget = mainTarget;
         _inputManager = inputManager;
         _idleTransform = idleTransform;
-        _sphereCollider = sphereCollider;
         _pathfinder = pathfinder;
         _movementData = movementData;
-        if (_sphereCollider == null) return;
-        _sphereCollider.radius = _maxAttackRange;
         _elapsedChaseTime = 0f;
         _targetable = targetable;
         _chasing = false;

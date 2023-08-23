@@ -11,8 +11,8 @@ namespace PirateGame.Health{
 
         private Dictionary<DamageTypeEnum, List<HealthComponent>> _healthComponenetsDict = new Dictionary<DamageTypeEnum, List<HealthComponent>>();
         
-        public void Setup(ICorporealDamageModifier[] corporealDamageModifiers, IStructuralDamageModifier[] structuralDamageModifiers,
-        IMobilityDamageModifier[] mobilityDamageModifiers)
+        public void Setup(ICorporealDamageModifier[] corporealDamageModifierRecievers, IStructuralDamageModifier[] structuralDamageModifierRecievers,
+        IMobilityDamageModifier[] mobilityDamageModifierRecievers)
         {   
             // Get the objects from the HealthList and set them up with their max health.
             // If the damagetype exists just add the HealthComponent.
@@ -20,13 +20,13 @@ namespace PirateGame.Health{
            foreach (HealthDataStruct healthStruct in _healthStructList){
                 switch (healthStruct.HealthComponent){
                     case CorporealHealth corp:
-                    corp.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, corporealDamageModifiers);
+                    corp.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, corporealDamageModifierRecievers);
                     break;
                     case StructuralHealth struc:
-                        struc.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, structuralDamageModifiers);
+                        struc.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, structuralDamageModifierRecievers);
                     break;
                     case MobilityHealth mob:
-                        mob.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, mobilityDamageModifiers);
+                        mob.SetupHealthComponenet(healthStruct.HealthData.MaxHealth, mobilityDamageModifierRecievers);
                     break;
                     default:
                     // Bleh

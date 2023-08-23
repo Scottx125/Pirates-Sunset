@@ -34,10 +34,10 @@ public class StructuralHealth : HealthComponent
         Debug.Log(_currentHealth);
         if(_structuralModifiers != null && _structuralModifiers.Length == 0)
         foreach(IStructuralDamageModifier item in _structuralModifiers){
-            item.StructuralDamageModifier(ToPercent(_currentHealth, _maxHealth));
+            item.StructuralDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }
         foreach(var item in _recieversDict){
-            item.Value.StructuralDamageModifier(ToPercent(_currentHealth, _maxHealth));
+            item.Value.StructuralDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }
     }
 

@@ -1,3 +1,4 @@
+using PirateGame.Helpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,9 @@ using UnityEngine;
 
 public class StateManager : MonoBehaviour, IAmmunitionData
 {
+
+    public IStructuralDamageModifier GetShipAttackStateForHealthSetup => _shipAttackShipState;
+
     // Current state to be processed.
     [SerializeField]
     private State _currentState;
@@ -27,6 +31,7 @@ public class StateManager : MonoBehaviour, IAmmunitionData
     private SphereCollider _sphereCollider;
     // Ammo stuff
     private List<AmmunitionSO> _ammunitionList;
+    
 
 
     public void Setup(AIInputManager inputManager, MovementSO movementData)
@@ -36,11 +41,12 @@ public class StateManager : MonoBehaviour, IAmmunitionData
         _shipAttackShipState = GetComponent<ShipAttackShipState>();
         _shipAttackBaseState = GetComponent<ShipAttackBaseState>();
         _sphereCollider = GetComponent<SphereCollider>();
+        _sphereCollider.radius = AIHelpers.GetAmmunitionRangesInOrder(_ammunitionList).Last().GetMaxRange;
         if (_moveToTargetState != null){
-            _moveToTargetState.Setup(_mainTarget, _idlePosition, inputManager, _sphereCollider, _pathfinder, movementData, _targetable, _ammunitionList);
+            _moveToTargetState.Setup(_mainTarget, _idlePosition, inputManager, _pathfinder, movementData, _targetable, _ammunitionList);
         }
         if (_shipAttackShipState != null){
-            _shipAttackShipState.Setup(inputManager);
+            _shipAttackShipState.Setup(inputManager, _pathfinder, movementData, _targetable, _ammunitionList);
         }
         if (_shipAttackBaseState != null){
             _shipAttackBaseState.Setup(_mainTarget, inputManager, _targetting, _ammunitionList, _targetable);

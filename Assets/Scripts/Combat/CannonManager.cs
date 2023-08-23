@@ -125,7 +125,7 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
         _cannonDictLoaded[position]++;
     }
 
-    public void CorporealDamageModifier(float modifier)
+    public void CorporealDamageModifier(float modifier, string nameOfSender)
     {
         foreach (Cannon cannon in _cannonsList){
             cannon.ModifyReloadTime(modifier);

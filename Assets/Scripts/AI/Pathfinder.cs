@@ -22,7 +22,7 @@ public class Pathfinder : MonoBehaviour
         _path = new NavMeshPath();
         _elapsedPathTime = 0f;
     }
-
+    #nullable enable
     public Vector3? PathToTarget(Transform target, Transform? desiredPosition)
     {
         if (_elapsedPathTime >= _pathUpdateDelay && _calculatingPath == null)
@@ -35,7 +35,7 @@ public class Pathfinder : MonoBehaviour
         }
         return null;
     }
-
+    #nullable disable
     private void Update(){
         _elapsedPathTime += Time.deltaTime;
         NextWaypoint();
@@ -51,7 +51,7 @@ public class Pathfinder : MonoBehaviour
             }
         }
     }
-
+    #nullable enable
     private IEnumerator CalculatePath(Transform target, Transform? desiredPosition)
     {
         Transform targetToPathTo = desiredPosition == null ? target : desiredPosition;
@@ -85,4 +85,5 @@ public class Pathfinder : MonoBehaviour
         _elapsedPathTime = 0f;
         _calculatingPath = null;
     }
+    #nullable disable
 }
