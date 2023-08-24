@@ -23,7 +23,7 @@ public class Pathfinder : MonoBehaviour
         _elapsedPathTime = 0f;
     }
     #nullable enable
-    public Vector3? PathToTarget(Transform target, Transform? desiredPosition)
+    public Vector3? PathToTarget(Transform target, Vector3? desiredPosition)
     {
         if (_elapsedPathTime >= _pathUpdateDelay && _calculatingPath == null)
         {
@@ -52,11 +52,11 @@ public class Pathfinder : MonoBehaviour
         }
     }
     #nullable enable
-    private IEnumerator CalculatePath(Transform target, Transform? desiredPosition)
+    private IEnumerator CalculatePath(Transform target, Vector3? desiredPosition)
     {
-        Transform targetToPathTo = desiredPosition == null ? target : desiredPosition;
+        Vector3 targetToPathTo = (Vector3)(desiredPosition == null ? target.position : desiredPosition);
         // Try initial path.
-        NavMesh.CalculatePath(transform.position, targetToPathTo.position, NavMesh.AllAreas, _path);
+        NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
         // Check to see if the path is complete or invalud and then continue.
         yield return new WaitUntil(() => _path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete || _path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid);
         // If the path failed find a new path.
@@ -66,12 +66,12 @@ public class Pathfinder : MonoBehaviour
             if (desiredPosition != null)
             {
                 // March the waypoint towards the target until it succeeds or is within 20f of the target.
-                while (_path.status != UnityEngine.AI.NavMeshPathStatus.PathComplete && Vector3.Distance(targetToPathTo.position, target.position) >= 20f)
+                while (_path.status != UnityEngine.AI.NavMeshPathStatus.PathComplete && Vector3.Distance(targetToPathTo, target.position) >= 20f)
                 {
-                    Vector3 dirToTarget = target.position - targetToPathTo.position;
+                    Vector3 dirToTarget = target.position - targetToPathTo;
                     Vector3 offset = dirToTarget.normalized * _marchOffset;
-                    targetToPathTo.position += offset;
-                    NavMesh.CalculatePath(transform.position, targetToPathTo.position, NavMesh.AllAreas, _path);
+                    targetToPathTo += offset;
+                    NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
                 }
             }
             yield break;

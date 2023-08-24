@@ -3,12 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using PirateGame.Health;
 using PirateGame.Helpers;
+using PirateGame.Moving;
 using UnityEngine;
 
 public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporealDamageModifier, IMobilityDamageModifier
 {
     [SerializeField]
     private float _shipRangeOffset = 30f;
+    [SerializeField]
+    private float _maxAngleToReduceSpeed = 67.5f;
+    [SerializeField]
+    private float _timeBetweenAttackAttempts = 6f;
     [SerializeField]
     private State _followState;
     [Header("AI Behaviour Weights")]
@@ -34,11 +39,15 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     private Transform _currentTarget;
     private AIInputManager _inputManager;
     private Pathfinder _pathfinder;
-    private MovementSO _movementSO;
+    private MovementSO _movementData;
     private string _targetable;
     private HealthComponent[] _targetHealthComponenets;
     private Targetting _targetting;
     private State _state;
+    private Vector3? _currentWaypoint;
+    private Vector3? _attackWaypoint;
+    private bool _withinAttackRange = false;
+    private float _timeSinceLastAttackWhileInRange = 0f;
     AttackTypesStruct _structuralAttack = new AttackTypesStruct();
     AttackTypesStruct _mobiltiyAttack = new AttackTypesStruct();
     AttackTypesStruct _corporealAttack = new AttackTypesStruct();
@@ -67,7 +76,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     {
         _inputManager = inputManager;
         _pathfinder = pathfinder;
-        _movementSO = movementData;
+        _movementData = movementData;
         _targetable = targetable;
         _targetting = targetting;
         _structuralAttack.Setup(AIHelpers.GetTopDamageOfType(ammoList, DamageTypeEnum.Structural));
@@ -80,23 +89,94 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         
         _state = CheckRange();
         if (_state == _followState) return _state;
-        _state = CalculatedDesiredAttack();
-        _state = PathToDesiredAttackRange();
-
-        return _state;
+        CalculatedDesiredAttack();
+        PathToDesiredAttackRange();
+        AttackBehaviour();
+        return this;
     }
 
-    private State Attack()
+    private void Update()
     {
-        
+        _timeSinceLastAttackWhileInRange += Time.deltaTime;
     }
 
-    private State PathToDesiredAttackRange()
+    private void AttackBehaviour()
+    {
+        // If we're within Xf of the target positon
+        // create a waypoint off the the right or left depending on which side of the target we're on, default to right.
+        // The waypoint will be based on the angle from whatever side we will fire on to hit the target waypoint.
+        // After we will fire and when we get within 5f of the waypoint we'll revert to normal behaviour. This waypoint will be 30f away from the player
+        // in the Z direction of the enemy ship + the angle and the 30f distance.
+        // Every Xs if we're below our max range - the offset. We will attempt to fire.
+        if (_currentWaypoint == null) return;
+        if (Vector3.Distance((Vector3)_currentWaypoint, transform.position) <= 10f || _attackWaypoint != null ||
+            (_timeSinceLastAttackWhileInRange >= _timeBetweenAttackAttempts && Vector3.Distance(_currentTarget.position, transform.position) <= _chosenAttack.GetAmmoData.GetMaxRange - _shipRangeOffset))
+        {
+            // Calc attack waypoint.
+
+            // Path to attack waypoint
+
+            // If cannons line up with target fire.
+
+            // If we get within 1f of the target position OR if the time attacking > *2 the attack delay time.
+            // Reset and get back into position.
+
+        }
+
+    }
+
+    private CannonPositionEnum CalcDirectionToShoot()
+    {
+        Vector3 crossProduct = Vector3.Cross(transform.forward, _currentTarget.position);
+        if (crossProduct.y < 0)
+        {
+            return CannonPositionEnum.Right;
+        }
+        else
+        {
+            return CannonPositionEnum.Left;
+        }
+    }
+
+    private void PathToDesiredAttackRange()
     {
         // This is where if we're in range of our waypoint (within 10f) we 
         // Calcualte the target position we need to get to taking into account the lead and then trigger the attack.
         // This will be as simple as ordering the ship to go to a new waypoint .
         // Then create a waypoint based on lining up our cannons to the enemy.
+        if (_attackWaypoint != null) return;
+        // Get position we need to aim for.
+        Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
+        // Calculate direction to that position.
+        Vector3 directionToTarget = (shootingOffsetPos - transform.position).normalized;
+        // Calculate the position we need to path to along that direciton.
+        Vector3 wayPoint = shootingOffsetPos - directionToTarget * (_chosenAttack.GetAmmoData.GetMaxRange - _shipRangeOffset);
+        // Calculate the path to the waypoint.
+        _currentWaypoint = _pathfinder.PathToTarget(_currentTarget, wayPoint);
+        // Move to that point.
+        MovementCalculationInput(SpeedModifierEnum.Full_Sails);
+    }
+
+    private void MovementCalculationInput(SpeedModifierEnum speed)
+    {
+        if (_currentWaypoint == null) return;
+        // Calc direciton to waypoint
+        Vector3 directionToWayPoint = (Vector3)_currentWaypoint - transform.position;
+        // Calc angle between forward vector and the direction.
+        float angleToWayPoint = Vector3.Angle(transform.forward, directionToWayPoint);
+
+        // Determine a speed based on how great the angle is away from the waypoint.
+        if (angleToWayPoint > _maxAngleToReduceSpeed)
+        {
+            _inputManager.MovementInput(_movementData.GetTurnSpeedEasePoint);
+        }
+        else
+        {
+            _inputManager.MovementInput(speed);
+        }
+
+        // Determine the direction of the next way point and the smallest angle to deviat from that angle.
+        _inputManager.Rotation((Vector3)_currentWaypoint, transform.forward);
     }
 
     private State CheckRange()
@@ -107,6 +187,8 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         }
         if (Vector3.Distance(transform.position, _currentTarget.position) > _structuralAttack.GetAmmoData.GetMaxRange)
         {
+            _currentTarget = null;
+            UnRegisterToTargetHealthComponenets();
             return _followState;
         } else
         {
@@ -114,18 +196,20 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         }
     }
 
-    private State CalculatedDesiredAttack()
+    private void CalculatedDesiredAttack()
     {
         if (!_currentTarget)
         {
-            return _followState;
+            return;
         }
         // Weights are weight + targetHealth + own structural health (longer range is affected more).
         _structuralAttackDesire = (_structuralTargetWeight + _targetStructuralHealth) + (1f - _structuralHealth);
         _mobilityAttackDesire = (_mobilityTargetWeight + _targetMobilityHealth) + (1f - _structuralHealth/2f);
         _corporealAttackDesire = (_corporealTargetWeight + _targetCorporealHealth) + (1f - _structuralHealth/3f);
-        
-        if (_chosenAttack.Equals(default(AttackTypesStruct)) || _chosenAttack.DesireBeforeChange < Mathf.Max(_structuralAttackDesire, _mobilityAttackDesire, _corporealAttackDesire))
+        // Here we decide what attack type we are going to be doing.
+        // This only changes when one weight becomes higher than other weights, or if the current health is equal to 0.
+        if (_chosenAttack.Equals(default(AttackTypesStruct)) || _chosenAttack.DesireBeforeChange < Mathf.Max(_structuralAttackDesire, _mobilityAttackDesire, _corporealAttackDesire)
+            || _chosenAttack.DesireBeforeChange - _currentAttackTypeContinuationWeight <= 0f)
         {
             if (_structuralAttackDesire >= _mobilityAttackDesire || _structuralAttackDesire >= _corporealAttackDesire)
             {
@@ -143,7 +227,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
                 _chosenAttack.DesireBeforeChange = _corporealAttackDesire + _currentAttackTypeContinuationWeight;
             }
         }
-        return this;
+        return;
     }
 
     // Get the current damage modifiers from the target.
@@ -186,15 +270,6 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         {
             _currentTarget = other.transform;
             RegisterToTargetHealthComponenets();
-        }
-        
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.tag == _targetable)
-        {
-            _currentTarget = null;
-            UnRegisterToTargetHealthComponenets();
         }
     }
 

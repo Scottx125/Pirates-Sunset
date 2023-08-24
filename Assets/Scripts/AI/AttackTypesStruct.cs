@@ -19,6 +19,7 @@ public struct AttackTypesStruct
         {
             _desireBeforeChange = value;
         }
+    }
     private AmmunitionSO _ammoData;
     private float _desireBeforeChange;
 }
