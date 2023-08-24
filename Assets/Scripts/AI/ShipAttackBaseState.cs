@@ -14,6 +14,7 @@ public class ShipAttackBaseState : State
     private float _maxAttackRange = 0f;
     private Targetting _targetting;
     private AmmunitionSO _topStructuralDamageAmmo;
+    State _state;
     public void Setup(Transform mainTarget ,AIInputManager inputManager, Targetting targetting, List<AmmunitionSO> ammoList, string targetable)
     {
         _mainTarget = mainTarget;
@@ -26,9 +27,9 @@ public class ShipAttackBaseState : State
 
     public override State RunCurrentState()
     {
-        DetectShip();
-        AttackBase();
-        return this;
+        _state = DetectShip();
+        _state = AttackBase();
+        return _state;
     }
 
     private State DetectShip()
@@ -40,7 +41,7 @@ public class ShipAttackBaseState : State
         return this;
     }
 
-    private void AttackBase()
+    private State AttackBase()
     {
         if (_attackShip == null && _mainTarget != null && Vector3.Distance(transform.position, _mainTarget.position) < _maxAttackRange &&
         Vector3.Distance(transform.position, _mainTarget.position) > 0f)
@@ -60,6 +61,7 @@ public class ShipAttackBaseState : State
                 _inputManager.Fire(cannonsToFire, _topStructuralDamageAmmo.GetAmmunitionType);
             }
         }
+        return this;
     }
 
     private (Vector3, CannonPositionEnum) DirectionToTurn(Vector3 targetToShoot, Vector3 directionToTarget)

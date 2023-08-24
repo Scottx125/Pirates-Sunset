@@ -8,6 +8,8 @@ using UnityEngine;
 public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporealDamageModifier, IMobilityDamageModifier
 {
     [SerializeField]
+    private float _shipRangeOffset = 30f;
+    [SerializeField]
     private State _followState;
     [Header("AI Behaviour Weights")]
     [SerializeField]
@@ -34,10 +36,13 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     private Pathfinder _pathfinder;
     private MovementSO _movementSO;
     private string _targetable;
-    private AmmunitionSO _structuralDamageAmmo;
-    private AmmunitionSO _corporealDamageAmmo;
-    private AmmunitionSO _mobilityDamageAmmo;
     private HealthComponent[] _targetHealthComponenets;
+    private Targetting _targetting;
+    private State _state;
+    AttackTypesStruct _structuralAttack = new AttackTypesStruct();
+    AttackTypesStruct _mobiltiyAttack = new AttackTypesStruct();
+    AttackTypesStruct _corporealAttack = new AttackTypesStruct();
+    AttackTypesStruct _chosenAttack;
 
     // Idea of the weight system below is the AI will have a range it wants to attack at based on it's desired type of attack.
     // If the AI lowers the enemy health to a certain point it will want to change attack based on it's current weights.
@@ -47,7 +52,6 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     private float _targetStructuralHealth;
     private float _targetCorporealHealth;
     private float _targetMobilityHealth;
-    
 
     // My health
     // Will add to targeting weights, lower this is, the more the AI will want to stay far away.
@@ -59,22 +63,87 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     private float _structuralAttackDesire;
     
 
-    // Setup close, medium and far ranges based on ammo range.
-
-    public void Setup(AIInputManager inputManager, Pathfinder pathfinder, MovementSO movementData, string targetable, List<AmmunitionSO> ammoList)
+    public void Setup(AIInputManager inputManager, Pathfinder pathfinder, MovementSO movementData, string targetable, List<AmmunitionSO> ammoList, Targetting targetting)
     {
         _inputManager = inputManager;
         _pathfinder = pathfinder;
         _movementSO = movementData;
         _targetable = targetable;
-        _structuralDamageAmmo = AIHelpers.GetTopDamageOfType(ammoList, DamageTypeEnum.Structural);
-        _corporealDamageAmmo = AIHelpers.GetTopDamageOfType(ammoList, DamageTypeEnum.Corporal);
-        _mobilityDamageAmmo = AIHelpers.GetTopDamageOfType(ammoList, DamageTypeEnum.Mobility);
+        _targetting = targetting;
+        _structuralAttack.Setup(AIHelpers.GetTopDamageOfType(ammoList, DamageTypeEnum.Structural));
+        _mobiltiyAttack.Setup(AIHelpers.GetTopDamageOfType(ammoList, DamageTypeEnum.Mobility));
+        _corporealAttack.Setup(AIHelpers.GetTopDamageOfType(ammoList, DamageTypeEnum.Corporal));
     }
 
     public override State RunCurrentState()
     {
-        throw new System.NotImplementedException();
+        
+        _state = CheckRange();
+        if (_state == _followState) return _state;
+        _state = CalculatedDesiredAttack();
+        _state = PathToDesiredAttackRange();
+
+        return _state;
+    }
+
+    private State Attack()
+    {
+        
+    }
+
+    private State PathToDesiredAttackRange()
+    {
+        // This is where if we're in range of our waypoint (within 10f) we 
+        // Calcualte the target position we need to get to taking into account the lead and then trigger the attack.
+        // This will be as simple as ordering the ship to go to a new waypoint .
+        // Then create a waypoint based on lining up our cannons to the enemy.
+    }
+
+    private State CheckRange()
+    {
+        if (!_currentTarget)
+        {
+            return _followState;
+        }
+        if (Vector3.Distance(transform.position, _currentTarget.position) > _structuralAttack.GetAmmoData.GetMaxRange)
+        {
+            return _followState;
+        } else
+        {
+            return this;
+        }
+    }
+
+    private State CalculatedDesiredAttack()
+    {
+        if (!_currentTarget)
+        {
+            return _followState;
+        }
+        // Weights are weight + targetHealth + own structural health (longer range is affected more).
+        _structuralAttackDesire = (_structuralTargetWeight + _targetStructuralHealth) + (1f - _structuralHealth);
+        _mobilityAttackDesire = (_mobilityTargetWeight + _targetMobilityHealth) + (1f - _structuralHealth/2f);
+        _corporealAttackDesire = (_corporealTargetWeight + _targetCorporealHealth) + (1f - _structuralHealth/3f);
+        
+        if (_chosenAttack.Equals(default(AttackTypesStruct)) || _chosenAttack.DesireBeforeChange < Mathf.Max(_structuralAttackDesire, _mobilityAttackDesire, _corporealAttackDesire))
+        {
+            if (_structuralAttackDesire >= _mobilityAttackDesire || _structuralAttackDesire >= _corporealAttackDesire)
+            {
+                _chosenAttack = _structuralAttack;
+                _chosenAttack.DesireBeforeChange = _structuralAttackDesire + _currentAttackTypeContinuationWeight;
+            }
+            if (_mobilityAttackDesire >= _structuralAttackDesire || _mobilityAttackDesire >= _corporealAttackDesire)
+            {
+                _chosenAttack = _mobiltiyAttack;
+                _chosenAttack.DesireBeforeChange = _mobilityAttackDesire + _currentAttackTypeContinuationWeight;
+            }
+            if (_corporealAttackDesire >= _structuralAttackDesire || _corporealAttackDesire >= _mobilityAttackDesire)
+            {
+                _chosenAttack = _corporealAttack;
+                _chosenAttack.DesireBeforeChange = _corporealAttackDesire + _currentAttackTypeContinuationWeight;
+            }
+        }
+        return this;
     }
 
     // Get the current damage modifiers from the target.

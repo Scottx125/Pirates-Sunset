@@ -46,7 +46,7 @@ public class StateManager : MonoBehaviour, IAmmunitionData
             _moveToTargetState.Setup(_mainTarget, _idlePosition, inputManager, _pathfinder, movementData, _targetable, _ammunitionList);
         }
         if (_shipAttackShipState != null){
-            _shipAttackShipState.Setup(inputManager, _pathfinder, movementData, _targetable, _ammunitionList);
+            _shipAttackShipState.Setup(inputManager, _pathfinder, movementData, _targetable, _ammunitionList, _targetting);
         }
         if (_shipAttackBaseState != null){
             _shipAttackBaseState.Setup(_mainTarget, inputManager, _targetting, _ammunitionList, _targetable);

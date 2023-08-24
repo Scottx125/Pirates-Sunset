@@ -31,10 +31,11 @@ public class MoveToTargetState : State
     private bool _chasing;
     private float _maxAttackRange;
     private MovementSO _movementData;
-    
-    
+    State _state;
 
-    #nullable enable
+
+
+#nullable enable
     public void Setup(Transform? mainTarget, Transform? idleTransform, AIInputManager inputManager, 
         Pathfinder pathfinder, MovementSO movementData, string targetable, List<AmmunitionSO> ammoList)
     {
@@ -57,14 +58,13 @@ public class MoveToTargetState : State
 
     public override State RunCurrentState()
     {
-        State state;
-        state = MoveToIdlePositionBehaviour();
+        _state = MoveToIdlePositionBehaviour();
         // Move to Ship.
-        state = ChaseShipBehaviour();
+        _state = ChaseShipBehaviour();
         // If we have a main target but no ship target then move to main target.
-        state = MoveToMainTargetBehaviour();
+        _state = MoveToMainTargetBehaviour();
         
-        return state;
+        return _state;
     }
 
     private State MoveToIdlePositionBehaviour()
