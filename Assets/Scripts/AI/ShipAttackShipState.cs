@@ -11,6 +11,8 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     [SerializeField]
     private float _shipRangeOffset = 30f;
     [SerializeField]
+    private float _shipAttackWaypointOffset = 15f;
+    [SerializeField]
     private float _maxAngleToReduceSpeed = 67.5f;
     [SerializeField]
     private float _timeBetweenAttackAttempts = 6f;
@@ -45,8 +47,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     private Targetting _targetting;
     private State _state;
     private Vector3? _currentWaypoint;
-    private Vector3? _attackWaypoint;
-    private bool _withinAttackRange = false;
+    private Vector3? _attackWaypointPos;
     private float _timeSinceLastAttackWhileInRange = 0f;
     AttackTypesStruct _structuralAttack = new AttackTypesStruct();
     AttackTypesStruct _mobiltiyAttack = new AttackTypesStruct();
@@ -102,27 +103,70 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
 
     private void AttackBehaviour()
     {
-        // If we're within Xf of the target positon
-        // create a waypoint off the the right or left depending on which side of the target we're on, default to right.
-        // The waypoint will be based on the angle from whatever side we will fire on to hit the target waypoint.
-        // After we will fire and when we get within 5f of the waypoint we'll revert to normal behaviour. This waypoint will be 30f away from the player
-        // in the Z direction of the enemy ship + the angle and the 30f distance.
-        // Every Xs if we're below our max range - the offset. We will attempt to fire.
         if (_currentWaypoint == null) return;
-        if (Vector3.Distance((Vector3)_currentWaypoint, transform.position) <= 10f || _attackWaypoint != null ||
-            (_timeSinceLastAttackWhileInRange >= _timeBetweenAttackAttempts && Vector3.Distance(_currentTarget.position, transform.position) <= _chosenAttack.GetAmmoData.GetMaxRange - _shipRangeOffset))
+        // Calculate waypoint if it's not done.
+        // If we're close to the range waypoint and haven't created a waypoint.
+        // Or If we're within max range, time elapsed is greater than the delay and we've not created a waypoint.
+        if (_timeSinceLastAttackWhileInRange >= _timeBetweenAttackAttempts && Vector3.Distance(_currentTarget.position, transform.position) <= _chosenAttack.GetAmmoData.GetMaxRange - _shipRangeOffset)
         {
-            // Calc attack waypoint.
-
+            if (_attackWaypointPos == null)
+            {
+                // Calc waypoint..
+                _attackWaypointPos = CalculateAttackWaypoint();
+            }
             // Path to attack waypoint
-
-            // If cannons line up with target fire.
-
-            // If we get within 1f of the target position OR if the time attacking > *2 the attack delay time.
-            // Reset and get back into position.
+            _currentWaypoint = _pathfinder.PathToTarget(transform, _attackWaypointPos);
+            _inputManager.MovementInput(SpeedModifierEnum.Full_Sails);
+            _inputManager.Rotation((Vector3)_currentWaypoint, transform.forward);
+            // Calculate target firing position.
+            Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
+            // Calc direciton to target
+            Vector3 directionToTarget = shootingOffsetPos - transform.position;
+            // Calc angle between forward vector and the direction.
+            float angleToShoot = Vector3.Angle(transform.forward, directionToTarget);
+            if (angleToShoot >= 87.5f || angleToShoot <= 92.5f)
+            {
+                _inputManager.Fire(CalcDirectionToShoot(), _chosenAttack.GetAmmoData.GetAmmunitionType);
+            }
+            // Reset behaviour and go to get into range.
+            if (Vector3.Distance(transform.position, (Vector3)_attackWaypointPos) < 0.1f || _timeSinceLastAttackWhileInRange >= _timeBetweenAttackAttempts * 2)
+            {
+                _timeSinceLastAttackWhileInRange = 0f;
+                _attackWaypointPos = null;
+            }
 
         }
+    }
+    private Vector3 CalculateAttackWaypoint()
+    {
 
+        // THIS ISN'T WORKING, LOOK AT FIXING THIS NEXT.
+        // Calc attack waypoint.
+        // Get position we need to aim for.
+        Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
+        // Calc direciton to target
+        Vector3 directionToTarget = shootingOffsetPos - transform.position;
+        // Get the angle from the front of the ship to the shooting position.
+        float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
+        // Get direction to shoot.
+        CannonPositionEnum directionToShoot = CalcDirectionToShoot();
+        // Take the angle and turn it into a left or right waypoint.
+        float angleInRadians = Mathf.Abs((90f - angleToTarget) * Mathf.Deg2Rad);
+        if (directionToShoot == CannonPositionEnum.Left)
+        {
+            // Waypoint Right
+            float xOffset = 1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
+            float zOffset = 1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
+            return (Vector3)(_attackWaypointPos = transform.position + new Vector3(xOffset, 0f, zOffset));
+
+        }
+        else
+        {
+            // Waypoint Left
+            float xOffset = -1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
+            float zOffset = -1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
+            return (Vector3)(_attackWaypointPos = transform.position + new Vector3(xOffset, 0f, zOffset));
+        }
     }
 
     private CannonPositionEnum CalcDirectionToShoot()
@@ -144,13 +188,13 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         // Calcualte the target position we need to get to taking into account the lead and then trigger the attack.
         // This will be as simple as ordering the ship to go to a new waypoint .
         // Then create a waypoint based on lining up our cannons to the enemy.
-        if (_attackWaypoint != null) return;
+        if (_attackWaypointPos != null) return;
         // Get position we need to aim for.
         Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
         // Calculate direction to that position.
         Vector3 directionToTarget = (shootingOffsetPos - transform.position).normalized;
         // Calculate the position we need to path to along that direciton.
-        Vector3 wayPoint = shootingOffsetPos - directionToTarget * (_chosenAttack.GetAmmoData.GetMaxRange - _shipRangeOffset);
+        Vector3 wayPoint = directionToTarget * (_chosenAttack.GetAmmoData.GetMaxRange - _shipRangeOffset);
         // Calculate the path to the waypoint.
         _currentWaypoint = _pathfinder.PathToTarget(_currentTarget, wayPoint);
         // Move to that point.

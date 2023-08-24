@@ -22,7 +22,21 @@ public class Pathfinder : MonoBehaviour
         _path = new NavMeshPath();
         _elapsedPathTime = 0f;
     }
-    #nullable enable
+
+    private void OnDrawGizmosSelected()
+    {
+        // Draw a wireframe sphere at the specified position
+        Gizmos.color = Color.red; // You can change the color if desired
+        if (_waypoints.Count > 0)
+        {
+            foreach (Vector3 waypoint in _waypoints)
+            {
+                Gizmos.DrawWireSphere(waypoint, 10f); // 0.5f is the radius of the sphere
+            }
+        }
+        
+    }
+#nullable enable
     public Vector3? PathToTarget(Transform target, Vector3? desiredPosition)
     {
         if (_elapsedPathTime >= _pathUpdateDelay && _calculatingPath == null)
@@ -35,6 +49,10 @@ public class Pathfinder : MonoBehaviour
         }
         return null;
     }
+    public Vector3 CheckNextWaypoint()
+    {
+        return _waypoints[_currentWaypointIndex];
+    }
     #nullable disable
     private void Update(){
         _elapsedPathTime += Time.deltaTime;
@@ -45,7 +63,7 @@ public class Pathfinder : MonoBehaviour
     {
         if (_waypoints.Count > 0 && _currentWaypointIndex < _waypoints.Count - 1)
         {
-            if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex]) < .5f)
+            if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex]) < 5f)
             {
                 _currentWaypointIndex++;
             }
@@ -84,6 +102,7 @@ public class Pathfinder : MonoBehaviour
         _currentWaypointIndex = 0;
         _elapsedPathTime = 0f;
         _calculatingPath = null;
+        yield break;
     }
     #nullable disable
 }

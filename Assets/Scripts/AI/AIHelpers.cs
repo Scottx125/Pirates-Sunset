@@ -8,13 +8,6 @@ namespace PirateGame.Helpers
     public static class AIHelpers
     {
         ///<summary>
-        ///Returns a Vector3 direction towards a target.
-        ///</summary>
-        public static Vector3 DirectionToObjective(Vector3 target, Vector3 myTransform)
-        {
-            return target - myTransform;
-        }
-        ///<summary>
         ///Returns a List of AmmunitionSO, the first element being the lowest and last being the highest range.
         ///</summary>
         public static List<AmmunitionSO> GetAmmunitionRangesInOrder(List<AmmunitionSO> ammoList)

@@ -1,12 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.UIElements;
-using UnityEngine;
-using UnityEngine.AI;
 using PirateGame.Helpers;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class MoveToTargetState : State
 {
@@ -18,17 +13,20 @@ public class MoveToTargetState : State
     private float _followTime = 5f;
     [SerializeField]
     private float _maxAngleToReduceSpeed = 67.5f;
+    [SerializeField]
+    private float _maxDistanceForSlowdown = 60f;
 
     // Current target (this is the base not the player)
     private string _targetable;
     private Transform _mainTarget;
     private Transform _shipTarget;
+    private Transform _currentTarget;
     private Transform _idleTransform;
     private Vector3? _currentWaypoint;
     private AIInputManager _inputManager;
     private Pathfinder _pathfinder;
     private float _elapsedChaseTime;
-    private bool _chasing;
+    private bool _chasing = false;
     private float _maxAttackRange;
     private MovementSO _movementData;
     State _state;
@@ -58,51 +56,75 @@ public class MoveToTargetState : State
 
     public override State RunCurrentState()
     {
-        _state = MoveToIdlePositionBehaviour();
+        MoveToIdlePositionBehaviour();
         // Move to Ship.
         _state = ChaseShipBehaviour();
+        if (_state == _attackShip) return _attackShip;
         // If we have a main target but no ship target then move to main target.
         _state = MoveToMainTargetBehaviour();
+        if (_state == _attackBase) return _attackBase;
         
         return _state;
     }
 
-    private State MoveToIdlePositionBehaviour()
+    private void MoveToIdlePositionBehaviour()
     {
         if (_idleTransform != null && _mainTarget == null && _shipTarget == null){
-            if (Vector3.Distance(transform.position, _idleTransform.position) <= 10f){
+
+            if (Vector3.Distance(transform.position, _idleTransform.position) <= 10f)
+            {
                 MovementCalculationInput(SpeedModifierEnum.Reefed_Sails);
             } else {
-                _currentWaypoint = _pathfinder.PathToTarget(_idleTransform, null);
-                MovementCalculationInput(SpeedModifierEnum.Full_Sails);
+                if (_currentTarget != _idleTransform || _currentWaypoint == null)
+                {
+                    _currentTarget = _idleTransform;
+                    _currentWaypoint = _pathfinder.PathToTarget(_idleTransform, null);
+                }
+                if (_currentWaypoint != null)
+                {
+                    _currentWaypoint = _pathfinder.CheckNextWaypoint();
+                    float distance = Vector3.Distance(transform.position, _idleTransform.position);
+                    MovementCalculationInput(SlowDownOnApproach(distance));
+                }
             }
         }
-        return this;
     }
 
     private State MoveToMainTargetBehaviour()
     {
         if (_mainTarget != null && _shipTarget == null)
         {
-            _currentWaypoint = _pathfinder.PathToTarget(_mainTarget, null);
-            float distance = Vector3.Distance(transform.position, _mainTarget.position);
-            MovementCalculationInput(SlowDownOnApparoach(distance));
+            // Calc path
+            if (_currentTarget != _mainTarget || _currentWaypoint == null)
+            {
+                _currentTarget = _mainTarget;
+                _currentWaypoint = _pathfinder.PathToTarget(_currentTarget, null);
+            }
+            // If we have a path move to it.
+            if (_currentWaypoint != null)
+            {
+                _currentWaypoint = _pathfinder.CheckNextWaypoint();
+                Vector3 offsetDirection = transform.position - _mainTarget.position;
+                Vector3 offsetPosition = _mainTarget.position + offsetDirection.normalized * _maxAttackRange;
+                float distance = Vector3.Distance(transform.position, offsetPosition);
+                MovementCalculationInput(SlowDownOnApproach(distance));
+            }
             return Attack(_mainTarget);
         }
         return this;
     }
 
-    private SpeedModifierEnum SlowDownOnApparoach(float distance)
+    private SpeedModifierEnum SlowDownOnApproach(float distance)
     {
-        if (distance > _maxAttackRange + 60f)
+        if (distance > _maxDistanceForSlowdown)
         {
             return SpeedModifierEnum.Full_Sails;
         } else
-        if (distance > _maxAttackRange + 40f)
+        if (distance > (_maxDistanceForSlowdown * .66f))
         {
             return SpeedModifierEnum.Three_Quater_Sails;
         } else
-        if (distance > _maxAttackRange + 20f)
+        if (distance > (_maxDistanceForSlowdown * .33f))
         {
             return SpeedModifierEnum.Half_Sails;
         } else
@@ -119,9 +141,17 @@ public class MoveToTargetState : State
         } // If the ship is a target but is out of range chase.
         else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _maxAttackRange)
         {
+            if (_currentTarget != _shipTarget || _currentWaypoint == null)
+            {
+                _currentTarget = _shipTarget;
+                _currentWaypoint = _pathfinder.PathToTarget(_shipTarget, null);
+            }
             // Try to get back into range.
-            _currentWaypoint = _pathfinder.PathToTarget(_shipTarget, null);
-            MovementCalculationInput(SpeedModifierEnum.Full_Sails);
+            if (_currentWaypoint != null)
+            {
+                _currentWaypoint = _pathfinder.CheckNextWaypoint();
+                MovementCalculationInput(SlowDownOnApproach(Mathf.Infinity));
+            }
             // Initiate chase
             if (_chasing == false)
             {
@@ -146,10 +176,15 @@ public class MoveToTargetState : State
             //attack
             if (_attackBase != null && target.name == _mainTarget.name)
             {
+                _currentWaypoint = null;
+                _currentTarget = null;
                 return _attackBase;
             }
             if (_attackShip != null && target.name == _shipTarget.name)
             {
+                _chasing = false;
+                _currentWaypoint = null;
+                _currentTarget = null;
                 return _attackShip;
             }
         }
@@ -165,7 +200,7 @@ public class MoveToTargetState : State
         float angleToWayPoint = Vector3.Angle(transform.forward, directionToWayPoint);
 
         // Determine a speed based on how great the angle is away from the waypoint.
-        if (angleToWayPoint > _maxAngleToReduceSpeed){
+        if (angleToWayPoint > _maxAngleToReduceSpeed && speed > _movementData.GetTurnSpeedEasePoint){
             _inputManager.MovementInput(_movementData.GetTurnSpeedEasePoint);
         } else {
             _inputManager.MovementInput(speed);

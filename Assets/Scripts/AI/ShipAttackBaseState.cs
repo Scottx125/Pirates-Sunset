@@ -43,15 +43,14 @@ public class ShipAttackBaseState : State
 
     private State AttackBase()
     {
-        if (_attackShip == null && _mainTarget != null && Vector3.Distance(transform.position, _mainTarget.position) < _maxAttackRange &&
-        Vector3.Distance(transform.position, _mainTarget.position) > 0f)
+        if (_shipTarget == null && _mainTarget != null && Vector3.Distance(transform.position, _mainTarget.position) < _maxAttackRange)
         {
             // We're in range. Turn to face the target and attack.
             _inputManager.MovementInput(SpeedModifierEnum.Reefed_Sails);
             // Calculate target firing position.
             Vector3 targetToShoot = _targetting.Target(_mainTarget, _topStructuralDamageAmmo.GetSpeed);
             // Calc direciton to target
-            Vector3 directionToTarget = AIHelpers.DirectionToObjective(targetToShoot, transform.position);
+            Vector3 directionToTarget = targetToShoot - transform.position;
             // Rotate towards target based on whichever side is closest.
             (Vector3 directionToShoot, CannonPositionEnum cannonsToFire) = DirectionToTurn(targetToShoot, directionToTarget);
             // Calc angle between forward vector and the direction.

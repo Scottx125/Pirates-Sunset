@@ -30,6 +30,7 @@ public class AIInputManager : MonoBehaviour
 
     public void Rotation(Vector3 currentWaypoint, Vector3 directionToFace)
     {
+
         // Calc direciton to waypoint
         Vector3 directionToWayPoint = currentWaypoint - transform.position;
         // Calc angle between forward vector and the direction.

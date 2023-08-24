@@ -38,10 +38,21 @@ public class EntityManager : MonoBehaviour
         if (_stateManager != null && _isAI) _stateManager.Setup(_aiInputManager, _movementData);
         if (_healthManager != null)
         {
-            ICorporealDamageModifier[] corporealDamageModifiers = {_movementManager, _cannonManager};
-            IStructuralDamageModifier[] structuralDamageModifiers = {_movementManager, _stateManager.GetShipAttackStateForHealthSetup};
-            IMobilityDamageModifier[] mobilityDamageModifiers = {_movementManager};
-            _healthManager.Setup(corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
+            if (_isAI)
+            {
+                ICorporealDamageModifier[] corporealDamageModifiers = { _movementManager, _cannonManager };
+                IStructuralDamageModifier[] structuralDamageModifiers = { _movementManager, _stateManager.GetShipAttackStateForHealthSetup };
+                IMobilityDamageModifier[] mobilityDamageModifiers = { _movementManager };
+                _healthManager.Setup(corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
+            } else
+            {
+                ICorporealDamageModifier[] corporealDamageModifiers = { _movementManager, _cannonManager };
+                IStructuralDamageModifier[] structuralDamageModifiers = { _movementManager};
+                IMobilityDamageModifier[] mobilityDamageModifiers = { _movementManager };
+                _healthManager.Setup(corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
+            }
+            
+            
         }
         if (_damageHandler != null) _damageHandler.Setup(_healthManager);
         if (_inputManager != null && !_isAI) _inputManager.Setup(_movementManager, _cameraController, _cannonManager);
