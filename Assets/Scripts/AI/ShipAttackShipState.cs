@@ -92,7 +92,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         if (_state == _followState) return _state;
         CalculatedDesiredAttack();
         PathToDesiredAttackRange();
-        AttackBehaviour();
+        //AttackBehaviour();
         return this;
     }
 
@@ -113,11 +113,15 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
             {
                 // Calc waypoint..
                 _attackWaypointPos = CalculateAttackWaypoint();
+                _currentWaypoint = _pathfinder.PathToTarget(transform, _attackWaypointPos);
             }
             // Path to attack waypoint
-            _currentWaypoint = _pathfinder.PathToTarget(transform, _attackWaypointPos);
-            _inputManager.MovementInput(SpeedModifierEnum.Full_Sails);
-            _inputManager.Rotation((Vector3)_currentWaypoint, transform.forward);
+            if (_currentWaypoint != null)
+            {
+                _currentWaypoint = _pathfinder.CheckNextWaypoint();
+                _inputManager.MovementInput(SpeedModifierEnum.Full_Sails);
+                _inputManager.Rotation((Vector3)_currentWaypoint, transform.forward);
+            }
             // Calculate target firing position.
             Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
             // Calc direciton to target
@@ -134,18 +138,16 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
                 _timeSinceLastAttackWhileInRange = 0f;
                 _attackWaypointPos = null;
             }
-
         }
     }
     private Vector3 CalculateAttackWaypoint()
     {
-
         // THIS ISN'T WORKING, LOOK AT FIXING THIS NEXT.
         // Calc attack waypoint.
         // Get position we need to aim for.
         Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
         // Calc direciton to target
-        Vector3 directionToTarget = shootingOffsetPos - transform.position;
+        Vector3 directionToTarget = (shootingOffsetPos - transform.position).normalized;
         // Get the angle from the front of the ship to the shooting position.
         float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
         // Get direction to shoot.
@@ -157,7 +159,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
             // Waypoint Right
             float xOffset = 1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
             float zOffset = 1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
-            return (Vector3)(_attackWaypointPos = transform.position + new Vector3(xOffset, 0f, zOffset));
+            return transform.position + new Vector3(xOffset, 0f, zOffset);
 
         }
         else
@@ -165,7 +167,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
             // Waypoint Left
             float xOffset = -1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
             float zOffset = -1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
-            return (Vector3)(_attackWaypointPos = transform.position + new Vector3(xOffset, 0f, zOffset));
+            return transform.position + new Vector3(xOffset, 0f, zOffset);
         }
     }
 
@@ -194,7 +196,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         // Calculate direction to that position.
         Vector3 directionToTarget = (shootingOffsetPos - transform.position).normalized;
         // Calculate the position we need to path to along that direciton.
-        Vector3 wayPoint = directionToTarget * (_chosenAttack.GetAmmoData.GetMaxRange - _shipRangeOffset);
+        Vector3 wayPoint = shootingOffsetPos - (directionToTarget * (_chosenAttack.GetAmmoData.GetMaxRange - _shipRangeOffset));
         // Calculate the path to the waypoint.
         _currentWaypoint = _pathfinder.PathToTarget(_currentTarget, wayPoint);
         // Move to that point.

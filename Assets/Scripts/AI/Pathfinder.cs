@@ -86,13 +86,20 @@ public class Pathfinder : MonoBehaviour
                 // March the waypoint towards the target until it succeeds or is within 20f of the target.
                 while (_path.status != UnityEngine.AI.NavMeshPathStatus.PathComplete && Vector3.Distance(targetToPathTo, target.position) >= 20f)
                 {
-                    Vector3 dirToTarget = target.position - targetToPathTo;
-                    Vector3 offset = dirToTarget.normalized * _marchOffset;
+
+                    // Get the direction to the target, and march it by the _marchOffset.
+                    // If it fails continue looping otherwise break.
+                    Vector3 dirToTarget = (target.position - targetToPathTo).normalized;
+                    Vector3 offset = dirToTarget * _marchOffset;
                     targetToPathTo += offset;
                     NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
+                    yield return new WaitUntil(() => _path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete || _path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid);
+                    if (_path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete)
+                    {
+                        break;
+                    }
                 }
             }
-            yield break;
         }
         // If it created a path, add the current path to the waypoints list.
         foreach (Vector3 waypoint in _path.corners)

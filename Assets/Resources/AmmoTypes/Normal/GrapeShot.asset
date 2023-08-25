@@ -19,9 +19,9 @@ MonoBehaviour:
     _time: 0
     _repeatAmount: 0
   _ammunitionType: 2
-  _maxRange: 0
-  _highestPointDistance: 0
-  _highestPointOffset: 0
-  _rangeOffset: 0
-  _angleOffset: 0
-  _speed: 0
+  _maxRange: 50
+  _highestPointDistance: 12
+  _highestPointOffset: 5
+  _rangeOffset: 5
+  _angleOffset: 5
+  _speed: 65

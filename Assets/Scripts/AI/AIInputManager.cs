@@ -32,7 +32,7 @@ public class AIInputManager : MonoBehaviour
     {
 
         // Calc direciton to waypoint
-        Vector3 directionToWayPoint = currentWaypoint - transform.position;
+        Vector3 directionToWayPoint = (currentWaypoint - transform.position).normalized;
         // Calc angle between forward vector and the direction.
         float angleToWayPoint = Vector3.Angle(directionToFace, directionToWayPoint);
         // If the angle is large enough to warrent turning.

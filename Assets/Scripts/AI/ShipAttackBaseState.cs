@@ -28,7 +28,8 @@ public class ShipAttackBaseState : State
     public override State RunCurrentState()
     {
         _state = DetectShip();
-        _state = AttackBase();
+        if (_state == _attackShip) return _state; 
+        AttackBase();
         return _state;
     }
 
@@ -41,7 +42,7 @@ public class ShipAttackBaseState : State
         return this;
     }
 
-    private State AttackBase()
+    private void AttackBase()
     {
         if (_shipTarget == null && _mainTarget != null && Vector3.Distance(transform.position, _mainTarget.position) < _maxAttackRange)
         {
@@ -60,7 +61,6 @@ public class ShipAttackBaseState : State
                 _inputManager.Fire(cannonsToFire, _topStructuralDamageAmmo.GetAmmunitionType);
             }
         }
-        return this;
     }
 
     private (Vector3, CannonPositionEnum) DirectionToTurn(Vector3 targetToShoot, Vector3 directionToTarget)

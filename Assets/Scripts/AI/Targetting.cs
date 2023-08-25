@@ -4,18 +4,32 @@ using UnityEngine;
 
 public class Targetting : MonoBehaviour
 {
-    Transform _lastPosition;
+    Vector3 _lastPosition;
+    string _name;
+
+    private void OnDrawGizmosSelected()
+    {
+        // Draw a wireframe sphere at the specified position
+        Gizmos.color = Color.black; // You can change the color if desired
+        if (_lastPosition != null)
+        {
+            Gizmos.DrawWireSphere(_lastPosition, 10f); // 0.5f is the radius of the sphere
+        }
+
+    }
     ///<summary>
     ///Returns a Vector3 position, predicting the impact location of your projectile based on it's speed and the targets position.
     ///</summary>
     public Vector3 Target(Transform target, float projectileSpeed){
         if (_lastPosition == null){
-            _lastPosition = target;
+            _lastPosition = target.position;
+            _name = target.name;
         }
         // If the last position isn't that of the current target.
         // Send the current targets current position.
-        if (target.name != _lastPosition.name){
-            _lastPosition = target;
+        if (target.name != _name){
+            _lastPosition = target.position;
+            _name = target.name;
             return target.position;
         }
 
@@ -26,12 +40,11 @@ public class Targetting : MonoBehaviour
         // Calculate time taken for projectile to reach object.
         float timeToReachTarget = relativeDistance.magnitude / projectileSpeed;
         // Calculate the targets speed.
-        float targetSpeed = (target.position - _lastPosition.position).magnitude / Time.deltaTime;
+        float targetSpeed = (target.position - _lastPosition).magnitude / Time.deltaTime;
         // Predict based on the above calculations.
         Vector3 predictedIntersection = target.position + target.forward * (targetSpeed * timeToReachTarget);
 
-        _lastPosition = target;
-
+        _lastPosition = target.position;
         return predictedIntersection;
     }
 }
