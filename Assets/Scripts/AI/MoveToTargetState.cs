@@ -20,7 +20,6 @@ public class MoveToTargetState : State
     private string _targetable;
     private Transform _mainTarget;
     private Transform _shipTarget;
-    private Transform _currentTarget;
     private Transform _idleTransform;
     private Vector3? _currentWaypoint;
     private AIInputManager _inputManager;
@@ -51,7 +50,11 @@ public class MoveToTargetState : State
 #nullable disable
     private void Update()
     {
-        _elapsedChaseTime += Time.deltaTime;
+        if (_chasing == true)
+        {
+           _elapsedChaseTime += Time.deltaTime;
+        }
+       
     }
 
     public override State RunCurrentState()
@@ -75,11 +78,7 @@ public class MoveToTargetState : State
             {
                 MovementCalculationInput(SpeedModifierEnum.Reefed_Sails);
             } else {
-                if (_currentTarget != _idleTransform || _currentWaypoint == null)
-                {
-                    _currentTarget = _idleTransform;
                     _currentWaypoint = _pathfinder.PathToTarget(_idleTransform, null);
-                }
                 if (_currentWaypoint != null)
                 {
                     _currentWaypoint = _pathfinder.CheckNextWaypoint();
@@ -95,11 +94,7 @@ public class MoveToTargetState : State
         if (_mainTarget != null && _shipTarget == null)
         {
             // Calc path
-            if (_currentTarget != _mainTarget || _currentWaypoint == null)
-            {
-                _currentTarget = _mainTarget;
-                _currentWaypoint = _pathfinder.PathToTarget(_currentTarget, null);
-            }
+            _currentWaypoint = _pathfinder.PathToTarget(_mainTarget, null);
             // If we have a path move to it.
             if (_currentWaypoint != null)
             {
@@ -135,17 +130,14 @@ public class MoveToTargetState : State
 
     private State ChaseShipBehaviour()
     {
-        if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) <= _maxAttackRange)
+        if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) < _maxAttackRange)
         {
             return Attack(_shipTarget);
         } // If the ship is a target but is out of range chase.
         else if (_shipTarget != null && Vector3.Distance(transform.position, _shipTarget.position) > _maxAttackRange)
         {
-            if (_currentTarget != _shipTarget || _currentWaypoint == null)
-            {
-                _currentTarget = _shipTarget;
-                _currentWaypoint = _pathfinder.PathToTarget(_shipTarget, null);
-            }
+
+            _currentWaypoint = _pathfinder.PathToTarget(_shipTarget, null);
             // Try to get back into range.
             if (_currentWaypoint != null)
             {
@@ -171,20 +163,18 @@ public class MoveToTargetState : State
     private State Attack(Transform target)
     {
         // Check if we are in range to attack, if we are return the nextstate.
-        if (Vector3.Distance(transform.position, target.position) <= _maxAttackRange)
+        if (Vector3.Distance(transform.position, target.position) < _maxAttackRange)
         {
             //attack
             if (_attackBase != null && target.name == _mainTarget.name)
             {
                 _currentWaypoint = null;
-                _currentTarget = null;
                 return _attackBase;
             }
             if (_attackShip != null && target.name == _shipTarget.name)
             {
                 _chasing = false;
                 _currentWaypoint = null;
-                _currentTarget = null;
                 return _attackShip;
             }
         }

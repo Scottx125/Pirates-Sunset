@@ -52,7 +52,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     AttackTypesStruct _structuralAttack = new AttackTypesStruct();
     AttackTypesStruct _mobiltiyAttack = new AttackTypesStruct();
     AttackTypesStruct _corporealAttack = new AttackTypesStruct();
-    AttackTypesStruct _chosenAttack;
+    AttackTypesStruct _chosenAttack = new AttackTypesStruct();
 
     // Idea of the weight system below is the AI will have a range it wants to attack at based on it's desired type of attack.
     // If the AI lowers the enemy health to a certain point it will want to change attack based on it's current weights.
@@ -66,12 +66,6 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     // My health
     // Will add to targeting weights, lower this is, the more the AI will want to stay far away.
     private float _structuralHealth;
-
-    // Total weights for each decision.
-    private float _corporealAttackDesire;
-    private float _mobilityAttackDesire;
-    private float _structuralAttackDesire;
-    
 
     public void Setup(AIInputManager inputManager, Pathfinder pathfinder, MovementSO movementData, string targetable, List<AmmunitionSO> ammoList, Targetting targetting)
     {
@@ -142,7 +136,6 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     }
     private Vector3 CalculateAttackWaypoint()
     {
-        // THIS ISN'T WORKING, LOOK AT FIXING THIS NEXT.
         // Calc attack waypoint.
         // Get position we need to aim for.
         Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
@@ -231,7 +224,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         {
             return _followState;
         }
-        if (Vector3.Distance(transform.position, _currentTarget.position) > _structuralAttack.GetAmmoData.GetMaxRange)
+        if (Vector3.Distance(transform.position, _currentTarget.position) > _structuralAttack.GetAmmoData.GetMaxRange + _shipRangeOffset)
         {
             _currentTarget = null;
             UnRegisterToTargetHealthComponenets();
@@ -249,28 +242,39 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
             return;
         }
         // Weights are weight + targetHealth + own structural health (longer range is affected more).
-        _structuralAttackDesire = (_structuralTargetWeight + _targetStructuralHealth) + (1f - _structuralHealth);
-        _mobilityAttackDesire = (_mobilityTargetWeight + _targetMobilityHealth) + (1f - _structuralHealth/2f);
-        _corporealAttackDesire = (_corporealTargetWeight + _targetCorporealHealth) + (1f - _structuralHealth/3f);
+        _structuralAttack.WeightValue = (_structuralTargetWeight + _targetStructuralHealth) + (1f - _structuralHealth);
+        _mobiltiyAttack.WeightValue = (_mobilityTargetWeight + _targetMobilityHealth) + (1f - _structuralHealth/2f);
+        _corporealAttack.WeightValue = (_corporealTargetWeight + _targetCorporealHealth) + (1f - _structuralHealth/3f);
+        // Update attacks.
         // Here we decide what attack type we are going to be doing.
         // This only changes when one weight becomes higher than other weights, or if the current health is equal to 0.
-        if (_chosenAttack.Equals(default(AttackTypesStruct)) || _chosenAttack.DesireBeforeChange < Mathf.Max(_structuralAttackDesire, _mobilityAttackDesire, _corporealAttackDesire)
-            || _chosenAttack.DesireBeforeChange - _currentAttackTypeContinuationWeight <= 0f)
+
+        if (_chosenAttack == null || _chosenAttack.TotalWeightValue < Mathf.Max(_structuralAttack.TotalWeightValue, _mobiltiyAttack.TotalWeightValue, _corporealAttack.TotalWeightValue)
+            || _chosenAttack.TotalWeightValue <= 0f)
         {
-            if (_structuralAttackDesire >= _mobilityAttackDesire || _structuralAttackDesire >= _corporealAttackDesire)
+            // Reset the selected modifier on whatever current weight is chosen.
+            if (_chosenAttack != null)
             {
+                _chosenAttack.SelectedModifier = 0f;
+            }
+            // Decide on attack.
+            if (_structuralAttack.WeightValue >= _mobiltiyAttack.WeightValue && _structuralAttack.WeightValue >= _corporealAttack.WeightValue)
+            {
+                Debug.Log("long");
                 _chosenAttack = _structuralAttack;
-                _chosenAttack.DesireBeforeChange = _structuralAttackDesire + _currentAttackTypeContinuationWeight;
-            }
-            if (_mobilityAttackDesire >= _structuralAttackDesire || _mobilityAttackDesire >= _corporealAttackDesire)
+                _chosenAttack.SelectedModifier = _currentAttackTypeContinuationWeight;
+            } else
+            if (_mobiltiyAttack.WeightValue >= _structuralAttack.WeightValue && _mobiltiyAttack.WeightValue >= _corporealAttack.WeightValue)
             {
+                Debug.Log("medium");
                 _chosenAttack = _mobiltiyAttack;
-                _chosenAttack.DesireBeforeChange = _mobilityAttackDesire + _currentAttackTypeContinuationWeight;
-            }
-            if (_corporealAttackDesire >= _structuralAttackDesire || _corporealAttackDesire >= _mobilityAttackDesire)
+                _chosenAttack.SelectedModifier = _currentAttackTypeContinuationWeight;
+            } else
+            if (_corporealAttack.WeightValue >= _structuralAttack.WeightValue && _corporealAttack.WeightValue >= _mobiltiyAttack.WeightValue)
             {
+                Debug.Log("short");
                 _chosenAttack = _corporealAttack;
-                _chosenAttack.DesireBeforeChange = _corporealAttackDesire + _currentAttackTypeContinuationWeight;
+                _chosenAttack.SelectedModifier = _currentAttackTypeContinuationWeight;
             }
         }
         return;
@@ -311,6 +315,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("test enter");
         // Update the ship target if it's in range.
         if (other.tag == _targetable)
         {

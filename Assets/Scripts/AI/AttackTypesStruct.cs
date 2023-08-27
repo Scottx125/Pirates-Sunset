@@ -2,24 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct AttackTypesStruct
+public class AttackTypesStruct
 {
     public void Setup(AmmunitionSO ammoData)
     {
         _ammoData = ammoData;
     }
     public AmmunitionSO GetAmmoData => _ammoData;
-    public float DesireBeforeChange
+    public float SelectedModifier
     {
         get
         {
-            return _desireBeforeChange;
+            return _selectedModifier;
         }
         set
         {
-            _desireBeforeChange = value;
+            _selectedModifier = value;
+        }
+    }
+    public float WeightValue
+    {
+        get
+        {
+            return _weightValue;
+        }
+        set
+        {
+            _weightValue = value;
+        }
+    }
+    public float TotalWeightValue
+    {
+        get
+        {
+            return _weightValue + _selectedModifier;
         }
     }
     private AmmunitionSO _ammoData;
-    private float _desireBeforeChange;
+    private float _selectedModifier;
+    private float _weightValue;
 }

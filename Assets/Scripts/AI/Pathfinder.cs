@@ -9,11 +9,14 @@ public class Pathfinder : MonoBehaviour
     private float _pathUpdateDelay = .5f;
     [SerializeField]
     private float _marchOffset = 5f;
+    [SerializeField]
+    private float _pathTimeLimit = 2f;
 
     private List<Vector3> _waypoints = new List<Vector3>();
     private Coroutine _calculatingPath;
     private NavMeshPath _path;
     private float _elapsedPathTime;
+    private float _runTime;
     private int _currentWaypointIndex = 0;
 
 
@@ -21,6 +24,7 @@ public class Pathfinder : MonoBehaviour
     {
         _path = new NavMeshPath();
         _elapsedPathTime = 0f;
+        _runTime = 0f;
     }
 
     private void OnDrawGizmosSelected()
@@ -56,6 +60,11 @@ public class Pathfinder : MonoBehaviour
     #nullable disable
     private void Update(){
         _elapsedPathTime += Time.deltaTime;
+        _runTime += Time.deltaTime;
+        if (_calculatingPath != null && _runTime >= _pathTimeLimit)
+        {
+            StopCoroutine(_calculatingPath);
+        }
         NextWaypoint();
     }
 
@@ -72,6 +81,7 @@ public class Pathfinder : MonoBehaviour
     #nullable enable
     private IEnumerator CalculatePath(Transform target, Vector3? desiredPosition)
     {
+        _runTime = 0f;
         Vector3 targetToPathTo = (Vector3)(desiredPosition == null ? target.position : desiredPosition);
         // Try initial path.
         NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
