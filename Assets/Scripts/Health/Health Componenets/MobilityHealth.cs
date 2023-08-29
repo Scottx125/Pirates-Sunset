@@ -11,7 +11,7 @@ public class MobilityHealth : HealthComponent
     {
         if (state is IMobilityDamageModifier modifier)
         {
-            _recieversDict.Add(objName, modifier);
+            _recieversDict.TryAdd(objName, modifier);
         }
     }
 

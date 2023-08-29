@@ -12,7 +12,7 @@ public class CorporealHealth : HealthComponent
     {
         if (state is ICorporealDamageModifier modifier)
         {
-            _recieversDict.Add(objName, modifier);
+            _recieversDict.TryAdd(objName, modifier);
         }
     }
 

@@ -3917,6 +3917,7 @@ MonoBehaviour:
   _shipAttackWaypointOffset: 15
   _maxAngleToReduceSpeed: 67.5
   _timeBetweenAttackAttempts: 6
+  _lockOnTimeForAttack: 6
   _followState: {fileID: 845768766}
   _structuralTargetWeight: 1
   _corporealTargetWeight: 0.4
@@ -31381,11 +31382,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000032012828
+      value: 0.000000032012824
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000021341886
+      value: 0.000000021341883
       objectReference: {fileID: 0}
     - target: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_Name
@@ -31453,11 +31454,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504919976806997559, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000022481217
+      value: 0.00000002248122
       objectReference: {fileID: 0}
     - target: {fileID: 7504919976806997559, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000009312025
+      value: 0.000000009312027
       objectReference: {fileID: 0}
     - target: {fileID: 8333797614704921114, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: _movementData

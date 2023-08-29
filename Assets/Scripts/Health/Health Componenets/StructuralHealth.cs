@@ -12,7 +12,7 @@ public class StructuralHealth : HealthComponent
     {
         if (state is IStructuralDamageModifier modifier)
         {
-            _recieversDict.Add(objName, modifier);
+            _recieversDict.TryAdd(objName, modifier);
         }
     }
 
