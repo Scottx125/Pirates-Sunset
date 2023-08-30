@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using PirateGame.Health;
 using PirateGame.Helpers;
 using PirateGame.Moving;
+using UnityEditor;
 using UnityEngine;
 
 public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporealDamageModifier, IMobilityDamageModifier
@@ -110,98 +111,62 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
 
     private void AttackBehaviour()
     {
-        if (_currentWaypoint == null) return;
         // Calculate waypoint if it's not done.
         // If we're close to the range waypoint and haven't created a waypoint.
         // Or If we're within max range, time elapsed is greater than the delay and we've not created a waypoint.
         if (_timeSinceLastAttackWhileInRange >= _timeBetweenAttackAttempts && Vector3.Distance(_currentTarget.position, transform.position) <= _chosenAttack.GetAmmoData.GetMaxRange - _shipRangeOffset)
         {
-            // Calculate target firing position.
-            Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
-            // Calc direciton to target
-            Vector3 directionToTarget = shootingOffsetPos - transform.position;
-            // Calc angle between forward vector and the direction.
-            float angleToShoot = Vector3.Angle(transform.forward, directionToTarget);
-            if (angleToShoot >= 87.5f && angleToShoot <= 92.5f)
+
+            // Calc waypoint..
+            _attackWaypointPos = CalculateAttackWaypoint();
+            _currentWaypoint = _pathfinder.PathToTarget(transform, _attackWaypointPos);
+
+            // Path to attack waypoint
+            if (_attackWaypointPos != null && _currentWaypoint != null)
             {
-                // Set up attack.
-                if (_attacking == false)
+
+                // Move to waypoint.
+                _currentWaypoint = _pathfinder.CheckNextWaypoint();
+                MovementCalculationInput(SpeedModifierEnum.Full_Sails);
+
+                // Calc attack waypoint.
+                // Get position we need to aim for.
+                Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
+                // Get the angle from the front of the ship to the shooting position.
+                float angleToTarget = Vector3.SignedAngle(transform.forward, shootingOffsetPos, Vector3.up);
+                // If we're in a suitable firing angle.
+                if (angleToTarget >= 87.5f && angleToTarget <= 92.5f)
                 {
-                    // Begin timer.
-                    _attacking = true;
-                    _timeSinceLockedOn = 0f;
                     // Get direction to shoot and Fire.
-                    CannonPositionEnum directionToShoot = CalcDirectionToShoot(shootingOffsetPos);
-                    Vector3 transformDirection = transform.right;
-                    if (directionToShoot == CannonPositionEnum.Left)
-                    {
-                        transformDirection = -transform.right;
-                    }
+                    CannonPositionEnum directionToShoot = CalcDirectionToShoot(angleToTarget);
                     _inputManager.Fire(directionToShoot, _chosenAttack.GetAmmoData.GetAmmunitionType);
-                }
-                // Face the target for X time, this can be changed to increase or reduce accuracy.
-                if (_timeSinceLockedOn <= _lockOnTimeForAttack)
-                {
-                    _inputManager.MovementInput(SpeedModifierEnum.Full_Sails);
-                    _inputManager.Rotation(directionToTarget, transform.forward);
-                } else
-                {
-                    // Reset behaviour and go to get into range.
-                    _attacking = false;
                     _timeSinceLastAttackWhileInRange = 0f;
                     _attackWaypointPos = null;
                 }
-                return;
-            }
-
-            if (_attackWaypointPos == null && !_attacking)
-            {
-                // Calc waypoint..
-                _attackWaypointPos = CalculateAttackWaypoint();
-                _currentWaypoint = _pathfinder.PathToTarget(transform, _attackWaypointPos);
-            }
-
-            // Path to attack waypoint
-            if (_currentWaypoint != null && !_attacking)
-            {
-                _currentWaypoint = _pathfinder.CheckNextWaypoint();
-                MovementCalculationInput(SpeedModifierEnum.Full_Sails);
             }
         }
     }
     private Vector3 CalculateAttackWaypoint()
     {
-        // Calc attack waypoint.
-        // Get position we need to aim for.
+        // Target position to aim for.
         Vector3 shootingOffsetPos = _targetting.Target(_currentTarget, _chosenAttack.GetAmmoData.GetSpeed);
-        // Calc direciton to target
-        Vector3 directionToTarget = shootingOffsetPos - transform.position;
-        // Get the angle from the front of the ship to the shooting position.
-        float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
-        // Get direction to shoot.
-        CannonPositionEnum directionToShoot = CalcDirectionToShoot(shootingOffsetPos);
-        // Take the angle and turn it into a left or right waypoint.
-        float angleInRadians = Mathf.Abs((90f - angleToTarget) * Mathf.Deg2Rad);
-        if (directionToShoot == CannonPositionEnum.Left)
+        // Get the angle from the front of the ship to the target.
+        float angleFrontToTarget = Vector3.SignedAngle(transform.forward, shootingOffsetPos, Vector3.up);
+        if (angleFrontToTarget > 0f)
         {
-            // Waypoint Right
-            float xOffset = 1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
-            float zOffset = 1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
-            return transform.position + new Vector3(xOffset, 0f, zOffset);
-
-        }
-        else
+            angleFrontToTarget = angleFrontToTarget - 90f;
+        } else
         {
-            // Waypoint Left
-            float xOffset = -1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
-            float zOffset = -1 * Mathf.Cos(angleInRadians) * _shipAttackWaypointOffset;
-            return transform.position + new Vector3(xOffset, 0f, zOffset);
+            angleFrontToTarget = angleFrontToTarget + 90f;
         }
+        Vector3 point = transform.position + transform.forward * 10f;
+        Vector3 rotatedVector = Quaternion.AngleAxis(angleFrontToTarget, Vector3.up) * point;
+        Debug.DrawLine(transform.position, rotatedVector, Color.green, 10f);
+        return rotatedVector;
     }
 
-    private CannonPositionEnum CalcDirectionToShoot(Vector3 shootingOffsetPos)
+    private CannonPositionEnum CalcDirectionToShoot(float angle)
     {
-        float angle = Vector3.SignedAngle(transform.forward, shootingOffsetPos, Vector3.up);
         if (angle < 0)
         {
             return CannonPositionEnum.Right;
