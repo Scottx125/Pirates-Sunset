@@ -119,13 +119,9 @@ public class MoveToTargetState : State
         {
             return SpeedModifierEnum.Three_Quater_Sails;
         } else
-        if (distance > (_maxDistanceForSlowdown * .33f))
         {
-            return SpeedModifierEnum.Half_Sails;
-        } else
-        {
-            return SpeedModifierEnum.Quater_Sails;
-        }
+            return _movementData.GetTurnSpeedEasePoint;
+        } 
     }
 
     private State ChaseShipBehaviour()
