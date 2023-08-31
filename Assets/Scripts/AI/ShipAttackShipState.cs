@@ -134,14 +134,12 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
 
                 if (Mathf.Abs(angleToTarget) > 92.5f)
                 {
-                    MovementCalculationInput(_movementData.GetTurnSpeedEasePoint);
+                    MovementCalculationInput(SpeedModifierEnum.Half_Sails);
                 }
                 if (Mathf.Abs(angleToTarget) < 87.5f)
                 {
                     MovementCalculationInput(SpeedModifierEnum.Full_Sails);
                 }
-
-
 
                 // If we're in a suitable firing angle.
                 if (Mathf.Abs(angleToTarget) >= 87.5f && Mathf.Abs(angleToTarget) <= 92.5f)
@@ -151,6 +149,9 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
                     _inputManager.Fire(directionToShoot, _chosenAttack.GetAmmoData.GetAmmunitionType);
                 }
             }
+        } else
+        {
+            _attackWaypointPos = null;
         }
     }
     private Vector3 CalculateAttackWaypoint()

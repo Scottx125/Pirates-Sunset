@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class Targetting : MonoBehaviour
 {
     Vector3 _lastPosition;
     string _name;
+    Vector3 _lastSuccessfulPoint;
 
     private void OnDrawGizmosSelected()
     {
@@ -13,7 +16,7 @@ public class Targetting : MonoBehaviour
         Gizmos.color = Color.black; // You can change the color if desired
         if (_lastPosition != null)
         {
-            Gizmos.DrawWireSphere(_lastPosition, 10f); // 0.5f is the radius of the sphere
+            Gizmos.DrawWireSphere(_lastSuccessfulPoint, 10f); // 0.5f is the radius of the sphere
         }
 
     }
@@ -32,7 +35,6 @@ public class Targetting : MonoBehaviour
             _name = target.name;
             return target.position;
         }
-
         // Target is the last target, so predict how far infront we need to aim
         // in order to hit the target.
         // Get relative distance.
@@ -41,10 +43,15 @@ public class Targetting : MonoBehaviour
         float timeToReachTarget = relativeDistance.magnitude / projectileSpeed;
         // Calculate the targets speed.
         float targetSpeed = (target.position - _lastPosition).magnitude / Time.deltaTime;
-        // Predict based on the above calculations.
-        Vector3 predictedIntersection = target.position + target.forward * (targetSpeed * timeToReachTarget);
+        if (targetSpeed == 0)
+        {
+            return _lastSuccessfulPoint;
+        }
+        // Future position
+        Vector3 predictedIntersection = target.position + target.forward * targetSpeed * timeToReachTarget;
 
         _lastPosition = target.position;
+        _lastSuccessfulPoint = predictedIntersection;
         return predictedIntersection;
     }
 }
