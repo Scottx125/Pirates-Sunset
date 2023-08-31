@@ -8,6 +8,8 @@ TagManager:
   - Sea
   - Enemy
   - Pirates
+  - NoMove
+  - Static_Target
   layers:
   - Default
   - TransparentFX

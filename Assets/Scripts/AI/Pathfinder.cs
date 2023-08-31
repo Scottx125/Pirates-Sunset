@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,9 @@ public class Pathfinder : MonoBehaviour
     private float _marchOffset = 5f;
     [SerializeField]
     private float _pathTimeLimit = 2f;
+    [SerializeField]
+    [Range(0, 1)]
+    private float _pathSmoothFactor = .5f;
 
     private List<Vector3> _waypoints = new List<Vector3>();
     private Coroutine _calculatingPath;
@@ -81,8 +85,14 @@ public class Pathfinder : MonoBehaviour
     #nullable enable
     private IEnumerator CalculatePath(Transform target, Vector3? desiredPosition)
     {
+        NavMeshHit hit;
         _runTime = 0f;
         Vector3 targetToPathTo = (Vector3)(desiredPosition == null ? target.position : desiredPosition);
+        // Sample the target position and see if we can get to it, if not get the cloest area.
+        if (NavMesh.SamplePosition(targetToPathTo, out hit, float.MaxValue, NavMesh.AllAreas))
+        {
+            targetToPathTo = hit.position;
+        }
         // Try initial path.
         NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
         // Check to see if the path is complete or invalud and then continue.
@@ -112,10 +122,18 @@ public class Pathfinder : MonoBehaviour
             }
         }
         // If it created a path, add the current path to the waypoints list.
-        foreach (Vector3 waypoint in _path.corners)
+        _waypoints.Add(_path.corners[0]);
+        if (_path.corners.Length > 1)
         {
-            _waypoints.Add(waypoint);
+            for (int i = 1; i <= _path.corners.Length - 1; i++)
+            {
+                Vector3 smoothedPoint = Vector3.Lerp(_path.corners[i - 1], _path.corners[i], _pathSmoothFactor);
+                _waypoints.Add(smoothedPoint);
+                _waypoints.Add(_path.corners[i]);
+            }
         }
+
+
         _currentWaypointIndex = 0;
         _elapsedPathTime = 0f;
         _calculatingPath = null;

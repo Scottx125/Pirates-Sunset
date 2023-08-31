@@ -43,7 +43,8 @@ public class Targetting : MonoBehaviour
         float timeToReachTarget = relativeDistance.magnitude / projectileSpeed;
         // Calculate the targets speed.
         float targetSpeed = (target.position - _lastPosition).magnitude / Time.deltaTime;
-        if (targetSpeed == 0)
+        // Some frames happen so fast the ship doesn't have time to move, if that happens return the last successful frame.
+        if (targetSpeed == 0 && target.tag != "Static_Target")
         {
             return _lastSuccessfulPoint;
         }

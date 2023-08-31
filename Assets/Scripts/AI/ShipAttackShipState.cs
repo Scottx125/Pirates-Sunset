@@ -12,13 +12,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     [SerializeField]
     private float _shipRangeOffset = 30f;
     [SerializeField]
-    private float _shipAttackWaypointOffset = 15f;
-    [SerializeField]
     private float _maxAngleToReduceSpeed = 67.5f;
-    [SerializeField]
-    private float _timeBetweenAttackAttempts = 6f;
-    [SerializeField]
-    private float _lockOnTimeForAttack = 2f;
     [SerializeField]
     private State _followState;
     [Header("AI Behaviour Weights")]
@@ -52,7 +46,6 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     private Vector3? _currentWaypoint;
     private Vector3? _attackWaypointPos;
     private bool _attacking;
-    private float _timeSinceLastAttackWhileInRange = 0f;
     AttackTypesStruct _structuralAttack = new AttackTypesStruct();
     AttackTypesStruct _mobiltiyAttack = new AttackTypesStruct();
     AttackTypesStruct _corporealAttack = new AttackTypesStruct();
@@ -92,20 +85,6 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         PathToDesiredAttackRange();
         AttackBehaviour();
         return this;
-    }
-
-    private void Update()
-    {
-        Timers();
-    }
-
-    private void Timers()
-    {
-        if (_attacking)
-        {
-            _timeSinceLastAttackWhileInRange += Time.deltaTime;
-        }
-
     }
 
     private void AttackBehaviour()
@@ -175,7 +154,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         Vector3 rotatedVector = new Vector3(Mathf.Sin(rotationAngle), 0f, Mathf.Cos(rotationAngle));
 
         // Calculate the desired position
-        Vector3 desiredPosition = transform.position + playerRotation * rotatedVector * 20f;
+        Vector3 desiredPosition = transform.position + playerRotation * rotatedVector * _shipRangeOffset;
 
         Debug.DrawLine(transform.position, desiredPosition, Color.green, 10f);
         return desiredPosition;

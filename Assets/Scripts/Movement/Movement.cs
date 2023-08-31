@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace PirateGame.Moving{
         private float _targetSpeed;
         private float _mobilityStateModifier;
         private ICurrentSpeed _sendCurrentSpeed;
+        private Transform _noMoveArea;
         
         private float _mobilityDamageModifier = 1f;
         private float _structuralDamageModifier = 1f;
@@ -33,9 +35,27 @@ namespace PirateGame.Moving{
             _sendCurrentSpeed = currentSpeed;
         }
 
+        private void DetermineIfWeCanMove()
+        {
+            // Check if ship is facing away from the no-movement area
+            Vector3 directionToNoMovementArea = (_noMoveArea.position - transform.position).normalized;
+            float dotProduct = Vector3.Dot(transform.forward, directionToNoMovementArea);
+            // If facing away allow movement.
+            if (dotProduct <= 0)
+            {
+                CalculateMovement();
+            }
+        }
+
         private void FixedUpdate()
         {
-            CalculateMovement();
+            if (_noMoveArea)
+            {
+                DetermineIfWeCanMove();
+            } else
+            {
+                CalculateMovement();
+            }
         }
 
         private void CalculateMovement()
@@ -63,6 +83,22 @@ namespace PirateGame.Moving{
         private float AccelerationCalc(float difference, float rate, float easing, float min)
         {
             return Mathf.Max(rate * (difference * easing), min) * Time.deltaTime;
+        }
+
+        // Detects if we enter a no-move area.
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.tag == "NoMove")
+            {
+                _noMoveArea = other.transform;
+            }
+        }
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.tag == "NoMove")
+            {
+                _noMoveArea = null;
+            }
         }
     }
 }
