@@ -87,41 +87,45 @@ public class Pathfinder : MonoBehaviour
     {
         NavMeshHit hit;
         _runTime = 0f;
-        Vector3 targetToPathTo = (Vector3)(desiredPosition == null ? target.position : desiredPosition);
+        Vector3 targetToPathTo = desiredPosition ?? target.position;
+
         // Sample the target position and see if we can get to it, if not get the cloest area.
         if (NavMesh.SamplePosition(targetToPathTo, out hit, float.MaxValue, NavMesh.AllAreas))
         {
             targetToPathTo = hit.position;
+        } else
+        {
+            Debug.LogWarningFormat("Target position not on navmesh {0}", targetToPathTo.ToString());
         }
+
         // Try initial path.
         NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
         // Check to see if the path is complete or invalud and then continue.
         yield return new WaitUntil(() => _path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete || _path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid);
+
         // If the path failed find a new path.
         if (_path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("Path failed.");
             if (desiredPosition != null)
             {
-                // March the waypoint towards the target until it succeeds or is within 20f of the target.
-                while (_path.status != UnityEngine.AI.NavMeshPathStatus.PathComplete && Vector3.Distance(targetToPathTo, target.position) >= 20f)
-                {
-
-                    // Get the direction to the target, and march it by the _marchOffset.
-                    // If it fails continue looping otherwise break.
-                    Vector3 dirToTarget = (target.position - targetToPathTo).normalized;
-                    Vector3 offset = dirToTarget * _marchOffset;
-                    targetToPathTo += offset;
-                    NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
-                    yield return new WaitUntil(() => _path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete || _path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid);
-                    if (_path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete)
-                    {
-                        break;
-                    }
-                }
+                StartCoroutine(MarkTowardsTarget(target, targetToPathTo));
+                yield return new WaitUntil(() => _path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete);
             }
         }
+
         // If it created a path, add the current path to the waypoints list.
+        BuildWaypoints();
+
+        _currentWaypointIndex = 0;
+        _elapsedPathTime = 0f;
+        _calculatingPath = null;
+        yield break;
+    }
+
+    private void BuildWaypoints()
+    {
+        if (_path.corners.Length == 0) return;
         _waypoints.Add(_path.corners[0]);
         if (_path.corners.Length > 1)
         {
@@ -132,12 +136,32 @@ public class Pathfinder : MonoBehaviour
                 _waypoints.Add(_path.corners[i]);
             }
         }
-
-
-        _currentWaypointIndex = 0;
-        _elapsedPathTime = 0f;
-        _calculatingPath = null;
-        yield break;
     }
-    #nullable disable
+#nullable disable
+    private IEnumerator MarkTowardsTarget(Transform target, Vector3 targetToPathTo)
+    {
+        // divide distance by attempts as the march amount.
+        int attempts = 10;
+        // March the waypoint towards the target until it succeeds or is within 20f of the target.
+        while (_path.status != UnityEngine.AI.NavMeshPathStatus.PathComplete && Vector3.Distance(targetToPathTo, target.position) >= 20f)
+        {
+            // Get the direction to the target, and march it by the _marchOffset.
+            // If it fails continue looping otherwise break.
+            Vector3 dirToTarget = (target.position - targetToPathTo).normalized;
+            Vector3 offset = dirToTarget * _marchOffset;
+            targetToPathTo += offset;
+            NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
+            yield return new WaitUntil(() => _path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete || _path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid);
+            if (_path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete)
+            {
+                break;
+            }
+            attempts--;
+            if (attempts <= 0)
+            {
+                Debug.LogErrorFormat("Failed to march towards target {0}", target.position);
+                break;
+            }
+        }
+    }
 }

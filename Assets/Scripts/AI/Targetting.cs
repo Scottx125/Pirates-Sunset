@@ -33,6 +33,7 @@ public class Targetting : MonoBehaviour
         if (target.name != _name){
             _lastPosition = target.position;
             _name = target.name;
+            _lastSuccessfulPoint = target.position;
             return target.position;
         }
         // Target is the last target, so predict how far infront we need to aim
