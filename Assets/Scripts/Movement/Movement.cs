@@ -89,7 +89,6 @@ namespace PirateGame.Moving{
         private void OnTriggerEnter(Collider other)
         {
             if (other.tag == "NoMove")
-                Debug.Log(other);
             {
                 _noMoveArea = other.transform;
             }

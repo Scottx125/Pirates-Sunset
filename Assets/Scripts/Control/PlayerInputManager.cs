@@ -18,9 +18,10 @@ namespace PirateGame.Control{
         private KeyCode rightRudder;
         private KeyCode reefSail;
 
+        private bool _acceptGameplayInput = true;
         private bool _mouseVisible;
 
-
+        public bool SetGameplayInput(bool x) => _acceptGameplayInput = x;
         public void Setup(MovementManager movementManager, ICameraInterfaces cameraInterfaces, IFireCannons fireCannons)
         {
             if (_movementManager == null) _movementManager = movementManager;
@@ -29,6 +30,7 @@ namespace PirateGame.Control{
 
             // Use a SO and change it, it will save the data automatically.
         }
+
 
         private void Update(){
             MovementInput();
@@ -41,6 +43,7 @@ namespace PirateGame.Control{
         {
             if (_mouseVisible) return;
             if (_fireCannons == null) return;
+            if (!_acceptGameplayInput) return;
             if (Input.GetMouseButtonDown(0)){
                 // Calculate the position of the camera and fire in the direction it's looking in.
                 CannonPositionEnum? posEnum = _cameraInterfaces.CalculateFiringPosition();
@@ -58,8 +61,11 @@ namespace PirateGame.Control{
         // Set mouse visability.
         private void SetMouseVisability()
         {
-            if (Input.GetMouseButtonDown(1)){
+            if (Input.GetMouseButtonDown(1) && _acceptGameplayInput){
                 _mouseVisible = !_mouseVisible;
+            } else
+            {
+                _mouseVisible = true;
             }
 
             if (_mouseVisible){
@@ -73,6 +79,7 @@ namespace PirateGame.Control{
         // Trigger movement.
         private void MovementInput()
         {
+            if (!_acceptGameplayInput) return;
             if (Input.GetKey(KeyCode.W)){_movementManager.ChangeSpeed(null, true);}
             if (Input.GetKey(KeyCode.S)){_movementManager.ChangeSpeed(null, false);}
             if (Input.GetKeyDown(KeyCode.A)){_movementManager.TurnLeft(true);}
