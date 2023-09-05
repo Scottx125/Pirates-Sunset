@@ -335,4 +335,9 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         }
     }
 
+    private void OnDestroy()
+    {
+        // Ensure we no longer try to send updates to a destroyed target.
+        UnRegisterToTargetHealthComponenets();
+    }
 }

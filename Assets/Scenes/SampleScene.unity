@@ -1266,6 +1266,18 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6377209842706916836, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
   m_PrefabInstance: {fileID: 3062724214912530946}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &415233963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 415233917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0fa2db32d31cb4eb4914bc7823996b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &430023342
 GameObject:
   m_ObjectHideFlags: 0
@@ -5328,6 +5340,7 @@ MonoBehaviour:
   _cameraController: {fileID: 0}
   _aiInputManager: {fileID: 1096464409}
   _stateManager: {fileID: 2023146977}
+  _death: {fileID: 0}
 --- !u!114 &1096464404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31714,6 +31727,7 @@ GameObject:
   - component: {fileID: 7934335938235579827}
   - component: {fileID: 29101479}
   - component: {fileID: 4268684762616102354}
+  - component: {fileID: 8333797614726154177}
   - component: {fileID: 8333797614726154175}
   m_Layer: 6
   m_Name: TargetDummy
@@ -31774,11 +31788,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000032012835
+      value: -0.000000032012828
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000021341886
+      value: -0.000000021341883
       objectReference: {fileID: 0}
     - target: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_Name
@@ -31897,6 +31911,10 @@ PrefabInstance:
       value: 0.000000009312022
       objectReference: {fileID: 0}
     - target: {fileID: 8333797614704921114, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
+      propertyPath: _death
+      value: 
+      objectReference: {fileID: 415233963}
+    - target: {fileID: 8333797614704921114, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: _movementData
       value: 
       objectReference: {fileID: 11400000, guid: df3f8cb0b889c4549aef2b696a336fb7, type: 2}
@@ -31910,6 +31928,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 415233933}
+    - targetCorrespondingSourceObject: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 415233963}
   m_SourcePrefab: {fileID: 100100000, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
 --- !u!114 &3072768757415461240
 MonoBehaviour:
@@ -103275,6 +103296,7 @@ MonoBehaviour:
   _cameraController: {fileID: 0}
   _aiInputManager: {fileID: 29101479}
   _stateManager: {fileID: 845768763}
+  _death: {fileID: 8333797614726154177}
 --- !u!54 &8333797614726154175
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -103323,6 +103345,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6, y: 20, z: 25.92}
   m_Center: {x: 0, y: 11, z: 1}
+--- !u!114 &8333797614726154177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2887295656353878574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7e17b483f1ba6c4489775e775d4cfa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8383336734193872199
 GameObject:
   m_ObjectHideFlags: 0

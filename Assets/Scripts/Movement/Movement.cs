@@ -73,7 +73,7 @@ namespace PirateGame.Moving{
             }
             // Clamp speed to ensure no engative or overspeed.
             _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _maxSpeed * _mobilityDamageModifier);
-            // sends current speed to listener.
+            // sends current speed to listener. (determines turn rate based on speed.)
             if (_sendCurrentSpeed != null) _sendCurrentSpeed.SetCurrentSpeed(_currentSpeed);
 
             // Apply Movement.

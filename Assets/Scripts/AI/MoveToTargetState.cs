@@ -187,7 +187,7 @@ public class MoveToTargetState : State
 
         // Determine a speed based on how great the angle is away from the waypoint.
         if (angleToWayPoint > _maxAngleToReduceSpeed && speed > _movementData.GetTurnSpeedEasePoint){
-            _inputManager.MovementInput(_movementData.GetTurnSpeedEasePoint);
+                _inputManager.MovementInput(_movementData.GetTurnSpeedEasePoint);
         } else {
             _inputManager.MovementInput(speed);
         }

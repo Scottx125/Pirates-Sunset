@@ -21,7 +21,7 @@ namespace PirateGame.Control{
         private bool _acceptGameplayInput = true;
         private bool _mouseVisible;
 
-        public bool SetGameplayInput(bool x) => _acceptGameplayInput = x;
+        public void SetGameplayInput(bool x) => _acceptGameplayInput = x;
         public void Setup(MovementManager movementManager, ICameraInterfaces cameraInterfaces, IFireCannons fireCannons)
         {
             if (_movementManager == null) _movementManager = movementManager;
@@ -61,9 +61,9 @@ namespace PirateGame.Control{
         // Set mouse visability.
         private void SetMouseVisability()
         {
-            if (Input.GetMouseButtonDown(1) && _acceptGameplayInput){
+            if (Input.GetMouseButtonDown(1) && _acceptGameplayInput) {
                 _mouseVisible = !_mouseVisible;
-            } else
+            } else if (!_acceptGameplayInput)
             {
                 _mouseVisible = true;
             }
