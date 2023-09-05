@@ -45,7 +45,6 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     private State _state;
     private Vector3? _currentWaypoint;
     private Vector3? _attackWaypointPos;
-    private bool _attacking;
     AttackTypesStruct _structuralAttack = new AttackTypesStruct();
     AttackTypesStruct _mobiltiyAttack = new AttackTypesStruct();
     AttackTypesStruct _corporealAttack = new AttackTypesStruct();
@@ -329,6 +328,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
     }
     private void UnRegisterToTargetHealthComponenets()
     {
+        if (_targetHealthComponenets == null) return;
         foreach (HealthComponent componenet in _targetHealthComponenets)
         {
             componenet.RemoveReciever(this.name);

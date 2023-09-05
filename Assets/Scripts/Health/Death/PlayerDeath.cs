@@ -4,41 +4,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyDeath : DeathAbstract
+public class PlayerDeath : DeathAbstract
 {
-
-    // Disable AI (make sure to unregister from events/listening )
+    // Disable input
     // Set speed to 0
-    // Play death animation and sink for 10 seconds
-    // Destroy the AI once it's out of sight.
+    // Play death animation and sink for 3 seconds
+    // Pause the game and present the ending screen.
+
     private Coroutine _death;
-    private GameObject _aiComponenets;
+    private PlayerInputManager _playerInputManager;
     private MovementManager _movementManager;
 
 
-    public void Setup(GameObject aiComponenets, MovementManager movementManager)
+    public void Setup(PlayerInputManager playerInputManager, MovementManager movementManager)
     {
-        _aiComponenets = aiComponenets;
+        _playerInputManager = playerInputManager;
         _movementManager = movementManager;
     }
 
     public override IEnumerator OnDeath()
     {
         // Stop input.
-        _aiComponenets.SetActive(false);
+        _playerInputManager.SetGameplayInput(false);
         // Stop movement.
-        _movementManager.ChangeSpeed(SpeedModifierEnum.Reefed_Sails, null);
+        _movementManager.ChangeSpeed(SpeedModifierEnum.Reefed_Sails ,null);
         _movementManager.TurnLeft(false);
         _movementManager.TurnRight(false);
-        // Play death animation and mvoe down.
-        StartCoroutine(DeathAnimation());
+        // Play death animation
 
-        yield return new WaitForSeconds(3f);
-        Destroy(transform.gameObject);
+        yield return new WaitForSeconds(1f);
+        // End game
+
         yield return null;
     }
 
-    public override IEnumerator DeathAnimation()
+    public IEnumerator DeathAnimation()
     {
         // Explosion
         while (true)
