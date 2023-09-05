@@ -38,6 +38,16 @@ public class PlayerDeath : DeathAbstract
         yield return null;
     }
 
+    public override IEnumerator DeathAnimation()
+    {
+        // Explosion
+        while (true)
+        {
+            transform.position += (Vector3.down * 2f) * Time.deltaTime;
+            yield return null;
+        }
+    }
+
     public override void StructuralDamageModifier(float modifier, string nameOfSender)
     {
         if (modifier <= 0 && _death == null)

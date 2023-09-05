@@ -31,11 +31,21 @@ public class EnemyDeath : DeathAbstract
         _movementManager.TurnLeft(false);
         _movementManager.TurnRight(false);
         // Play death animation and mvoe down.
+        StartCoroutine(DeathAnimation());
 
-
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
         Destroy(transform.gameObject);
         yield return null;
+    }
+
+    public override IEnumerator DeathAnimation()
+    {
+        // Explosion
+        while (true)
+        {
+            transform.position += (Vector3.down * 2f) * Time.deltaTime;
+            yield return null;
+        }
     }
 
     public override void StructuralDamageModifier(float modifier, string nameOfSender)

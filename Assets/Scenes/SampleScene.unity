@@ -4549,7 +4549,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.04120564, y: -0.000000034651112, z: 0.0000000014290349, w: 0.9991507}
+  m_LocalRotation: {x: 0.04120564, y: 0.000000034651112, z: -0.0000000014290349, w: 0.9991507}
   m_LocalPosition: {x: 676.2, y: 5, z: -86.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -31840,11 +31840,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4297755269925661833, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000017325556
+      value: 0.000000017325553
       objectReference: {fileID: 0}
     - target: {fileID: 4297755269925661833, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 7.145175e-10
+      value: -7.145174e-10
       objectReference: {fileID: 0}
     - target: {fileID: 6377209842706916836, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -31904,11 +31904,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504919976806997559, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000022481213
+      value: -0.000000022481224
       objectReference: {fileID: 0}
     - target: {fileID: 7504919976806997559, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000009312022
+      value: -0.000000009312028
       objectReference: {fileID: 0}
     - target: {fileID: 8333797614704921114, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: _death
@@ -83720,7 +83720,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _healthStructList:
   - _healthComponent: {fileID: 7230269897068511652}
-    _healthData: {fileID: 11400000, guid: bd2ac29e34da7e44c8aaadb09e755ece, type: 2}
+    _healthData: {fileID: 11400000, guid: f33033e8b9f4b52439985e852ddad172, type: 2}
   - _healthComponent: {fileID: 8275250194377482596}
     _healthData: {fileID: 11400000, guid: 1973fce5e2ad9974f9a06b4a6093bd5f, type: 2}
   - _healthComponent: {fileID: 2260538577388476691}
