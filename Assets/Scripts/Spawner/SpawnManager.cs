@@ -8,8 +8,6 @@ using Random = UnityEngine.Random;
 public class SpawnManager : MonoBehaviour
 {
     [SerializeField]
-    private Transform _mainTarget;
-    [SerializeField]
     private bool _startSpawning = false;
     [SerializeField]
     private bool _bForceNextLevelAfterAllSpawned;
@@ -100,6 +98,7 @@ public class SpawnManager : MonoBehaviour
         // Set everything up for the new level.
         _newLevel = false;
         _currentLevelData = _levels[_currentLevelInt - 1];
+        GameManager.GetInstance().SetWaveReached(_currentLevelInt);
         foreach (ShipToSpawnStruct ship in _currentLevelData.GetShipsToSpawn)
         {
             _shipsRemaining += ship.GetAmount;

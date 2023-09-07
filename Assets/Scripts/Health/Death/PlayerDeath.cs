@@ -34,8 +34,7 @@ public class PlayerDeath : DeathAbstract
         // Play death animation
 
         yield return new WaitForSeconds(1f);
-        // End game
-
+        GameManager.GetInstance().GameOver();
         yield return null;
     }
 

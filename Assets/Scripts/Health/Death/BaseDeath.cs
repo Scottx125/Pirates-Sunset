@@ -12,7 +12,7 @@ public class BaseDeath : DeathAbstract
 
 
         yield return new WaitForSeconds(3f);
-        // End game
+        GameManager.GetInstance().GameOver();
         yield return null;
     }
 
