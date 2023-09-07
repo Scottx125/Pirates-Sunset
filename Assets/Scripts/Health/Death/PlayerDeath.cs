@@ -10,7 +10,8 @@ public class PlayerDeath : DeathAbstract
     // Set speed to 0
     // Play death animation and sink for 3 seconds
     // Pause the game and present the ending screen.
-
+    [SerializeField]
+    private float _deathTime = 3f;
     private Coroutine _death;
     private PlayerInputManager _playerInputManager;
     private MovementManager _movementManager;
@@ -40,12 +41,14 @@ public class PlayerDeath : DeathAbstract
 
     public IEnumerator DeathAnimation()
     {
+        float timer = 0f;
         // Explosion
-        while (true)
+        while (timer <= _deathTime)
         {
             transform.position += (Vector3.down * 2f) * Time.deltaTime;
             yield return null;
         }
+        yield return null;
     }
 
     public override void StructuralDamageModifier(float modifier, string nameOfSender)

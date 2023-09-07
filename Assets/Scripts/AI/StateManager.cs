@@ -15,8 +15,6 @@ public class StateManager : MonoBehaviour, IAmmunitionData
     [SerializeField]
     private State _currentState;
     [SerializeField]
-    private Transform _mainTarget;
-    [SerializeField]
     private Transform _idlePosition;
     [SerializeField]
     private Pathfinder _pathfinder;
@@ -24,6 +22,8 @@ public class StateManager : MonoBehaviour, IAmmunitionData
     private Targetting _targetting;
     [SerializeField]
     private string _targetable;
+    [SerializeField]
+    private Transform _mainTarget;
 
     private MoveToTargetState _moveToTargetState;
     private ShipAttackShipState _shipAttackShipState;
@@ -42,6 +42,7 @@ public class StateManager : MonoBehaviour, IAmmunitionData
         _shipAttackBaseState = GetComponent<ShipAttackBaseState>();
         _sphereCollider = GetComponent<SphereCollider>();
         _sphereCollider.radius = AIHelpers.GetAmmunitionRangesInOrder(_ammunitionList).Last().GetMaxRange;
+        if (_mainTarget == null) _mainTarget = GameObject.FindGameObjectWithTag("Base").transform.parent;
         if (_moveToTargetState != null){
             _moveToTargetState.Setup(_mainTarget, _idlePosition, inputManager, _pathfinder, movementData, _targetable, _ammunitionList);
         }

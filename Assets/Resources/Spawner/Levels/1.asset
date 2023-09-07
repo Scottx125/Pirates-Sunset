@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab03eb04109c46f4a9d036978f75b57e, type: 3}
   m_Name: 1
   m_EditorClassIdentifier: 
-  _bSpawnDelay: 0
-  _bForceNextLevelAfterAllSpawned: 0
-  _delayToNextLevelTime: 0
-  _spawnDelayTime: 0
-  _shipsToSpawn: []
+  _delayToNextLevelTime: 4
+  _spawnDelayTime: 4
+  _shipsToSpawn:
+  - _shipToSpawn: {fileID: 9181921530350218193, guid: fc9602a43ca09114ab81b3aac7b85843, type: 3}
+    _amount: 4
+    _shipType: 2

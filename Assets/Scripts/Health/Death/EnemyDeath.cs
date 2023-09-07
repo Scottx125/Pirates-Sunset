@@ -11,9 +11,12 @@ public class EnemyDeath : DeathAbstract
     // Set speed to 0
     // Play death animation and sink for 10 seconds
     // Destroy the AI once it's out of sight.
+    [SerializeField]
+    private float _deathTime = 3f;
     private Coroutine _death;
     private GameObject _aiComponenets;
     private MovementManager _movementManager;
+
 
 
     public void Setup(GameObject aiComponenets, MovementManager movementManager)
@@ -40,12 +43,14 @@ public class EnemyDeath : DeathAbstract
 
     public IEnumerator DeathAnimation()
     {
+        float timer = 0f;
         // Explosion
-        while (true)
+        while (timer <= _deathTime)
         {
             transform.position += (Vector3.down * 2f) * Time.deltaTime;
             yield return null;
         }
+        yield return null;
     }
 
     public override void StructuralDamageModifier(float modifier, string nameOfSender)

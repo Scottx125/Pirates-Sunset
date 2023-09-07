@@ -18,9 +18,9 @@ public class AIManager: MonoBehaviour
     [SerializeField]
     private AIInputManager _aiInputManager;
     [SerializeField]
-    private StateManager _stateManager;
-    [SerializeField]
     private EnemyDeath _death;
+    [SerializeField]
+    protected StateManager _stateManager;
 
 
     private void Awake(){

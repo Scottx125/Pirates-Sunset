@@ -10,6 +10,7 @@ TagManager:
   - Pirates
   - NoMove
   - Static_Target
+  - Base
   layers:
   - Default
   - TransparentFX
