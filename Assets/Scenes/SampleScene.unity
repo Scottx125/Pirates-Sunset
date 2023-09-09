@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 9850.714, g: 8194.148, b: 6014.807, a: 1}
+  m_IndirectSpecularColor: {r: 7813.8667, g: 6894.491, b: 5586.657, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9232,11 +9232,11 @@ MonoBehaviour:
   ripplesCurrentMapInfluence: 1
   deformation: 1
   deformationRes: 256
-  deformationAreaSize: {x: 200, y: 200}
+  deformationAreaSize: {x: 2000, y: 1000}
   deformationAreaOffset: {x: 0, y: 0}
   foam: 1
   foamResolution: 256
-  foamAreaSize: {x: 200, y: 200}
+  foamAreaSize: {x: 2000, y: 2000}
   foamAreaOffset: {x: 0, y: 0}
   foamPersistenceMultiplier: 0.5
   foamTextureTiling: 0.15
@@ -9539,7 +9539,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _healthStructList:
   - _healthComponent: {fileID: 1541904469}
-    _healthData: {fileID: 11400000, guid: 929b9a07dacfc6e49993a8889b1cb683, type: 2}
+    _healthData: {fileID: 11400000, guid: fae4189c3e1a9264eb7e5177d56faa08, type: 2}
 --- !u!1001 &1565359636
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11849,11 +11849,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000032012835
+      value: -0.000000032012828
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000021341886
+      value: -0.000000021341883
       objectReference: {fileID: 0}
     - target: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_Name
@@ -12006,7 +12006,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2617754653774614734, guid: 96abb44983f47094893cfada0fc56d78, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 300
+      value: 1222.8
       objectReference: {fileID: 0}
     - target: {fileID: 2617754653774614734, guid: 96abb44983f47094893cfada0fc56d78, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12071,7 +12071,7 @@ PrefabInstance:
       objectReference: {fileID: 1541904465}
     - target: {fileID: 3202856514337611833, guid: bdfda4f10a41f0b4ea0ae7d195841a92, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 296.23
+      value: 1236
       objectReference: {fileID: 0}
     - target: {fileID: 3202856514337611833, guid: bdfda4f10a41f0b4ea0ae7d195841a92, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12079,7 +12079,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3202856514337611833, guid: bdfda4f10a41f0b4ea0ae7d195841a92, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 21.87
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 3202856514337611833, guid: bdfda4f10a41f0b4ea0ae7d195841a92, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12136,7 +12136,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7649060549272468773, guid: fc9602a43ca09114ab81b3aac7b85843, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 296.2
+      value: 1170.3
       objectReference: {fileID: 0}
     - target: {fileID: 7649060549272468773, guid: fc9602a43ca09114ab81b3aac7b85843, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12144,7 +12144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7649060549272468773, guid: fc9602a43ca09114ab81b3aac7b85843, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 47.2
+      value: -45.7
       objectReference: {fileID: 0}
     - target: {fileID: 7649060549272468773, guid: fc9602a43ca09114ab81b3aac7b85843, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12193,7 +12193,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6804924050857540144, guid: 753f8f6b0bd91e945a59af00d976fa93, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 295.92
+      value: 1218.72
       objectReference: {fileID: 0}
     - target: {fileID: 6804924050857540144, guid: 753f8f6b0bd91e945a59af00d976fa93, type: 3}
       propertyPath: m_LocalPosition.y

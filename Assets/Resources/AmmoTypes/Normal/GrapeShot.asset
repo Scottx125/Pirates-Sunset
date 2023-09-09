@@ -20,7 +20,7 @@ MonoBehaviour:
     _repeatAmount: 0
   _ammunitionType: 2
   _maxRange: 100
-  _highestPointDistance: 30
+  _highestPointDistance: 50
   _highestPointOffset: 5
   _rangeOffset: 5
   _angleOffset: 5
