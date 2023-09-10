@@ -24,6 +24,11 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         Timers();
+        StartGame();
+    }
+
+    private void StartGame()
+    {
         if (_timeBeforeStart <= 0)
         {
             SpawnManager.GetInstance().StartSpawning();

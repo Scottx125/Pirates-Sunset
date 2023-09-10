@@ -45,10 +45,10 @@ public class Targetting : MonoBehaviour
         // Calculate the targets speed.
         float targetSpeed = (target.position - _lastPosition).magnitude / Time.deltaTime;
         // Some frames happen so fast the ship doesn't have time to move, if that happens return the last successful frame.
-        if (targetSpeed == 0 && target.tag != "Static_Target")
-        {
-            return _lastSuccessfulPoint;
-        }
+        //if (targetSpeed == 0 && target.tag != "Static_Target")
+        //{
+        //    return _lastSuccessfulPoint;
+        //}
         // Future position
         Vector3 predictedIntersection = target.position + target.forward * targetSpeed * timeToReachTarget;
 

@@ -101,16 +101,16 @@ public class Pathfinder : MonoBehaviour
         // Try initial path.
         NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
         // Check to see if the path is complete or invalud and then continue.
-        yield return new WaitUntil(() => _path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete || _path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid);
+        yield return new WaitUntil(() => _path.status == NavMeshPathStatus.PathComplete || _path.status == NavMeshPathStatus.PathInvalid);
 
         // If the path failed find a new path.
-        if (_path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid)
+        if (_path.status == NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("Path failed.");
             if (desiredPosition != null)
             {
                 StartCoroutine(MarkTowardsTarget(target, targetToPathTo));
-                yield return new WaitUntil(() => _path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete);
+                yield return new WaitUntil(() => _path.status == NavMeshPathStatus.PathComplete);
             }
         }
 
