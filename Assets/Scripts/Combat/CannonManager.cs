@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
+using static UnityEditor.PlayerSettings;
 
 public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, ICorporealDamageModifier, IChangeAmmo
 {
@@ -15,6 +17,9 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
     private AmmunitionSO _currentAmmunitionLoaded;
     private int _ammoEnumInt = 0;
 
+    private ICannonsLoaded _cannonsLoadedUI;
+    private ITotalCannons _totalCannonsUI;
+    private ICurrentAmmoImage _currentAmmoImage;
     private Dictionary<CannonPositionEnum, List<Cannon>> _cannonDict = new Dictionary<CannonPositionEnum, List<Cannon>>();
     private Dictionary<CannonPositionEnum, int> _cannonDictTotalNumber = new Dictionary<CannonPositionEnum, int>();
     private Dictionary<CannonPositionEnum, int> _cannonDictLoaded = new Dictionary<CannonPositionEnum, int>();
@@ -22,7 +27,7 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
     private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _ammunitionDict = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
     //private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
     #nullable enable
-    public void Setup(IAmmunitionData? requiresAmmoData){
+    public void Setup(IAmmunitionData? requiresAmmoData, ICannonsLoaded? cannonsLoadedUI, ITotalCannons? cannonsTotalUI, ICurrentAmmoImage? currentAmmoImage){
         // Set everything up
         if (_cannonsList != null){
             // Set cannons up
@@ -42,6 +47,28 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
             _currentAmmunitionLoaded = _ammunitionDict.First().Value;
         } else {
             Debug.Log("Error, no cannons have been set up!");
+        }
+        // Add UI requesters to cannons UI.
+        if (cannonsLoadedUI != null)
+        {
+            _cannonsLoadedUI = cannonsLoadedUI;
+            foreach(CannonPositionEnum pos in _cannonDictLoaded.Keys)
+            {
+                NotifyLoadedCannons(pos);
+            }
+        }
+        if (cannonsTotalUI != null)
+        {
+            _totalCannonsUI = cannonsTotalUI;
+            foreach(KeyValuePair<CannonPositionEnum, int> kvp in _cannonDictTotalNumber)
+            {
+                _totalCannonsUI.TotalCannons(kvp.Key, kvp.Value);
+            }
+        }
+        if (currentAmmoImage != null)
+        {
+            _currentAmmoImage = currentAmmoImage;
+            _currentAmmoImage.SetUICurrentAmmoImage(_currentAmmunitionLoaded.GetAmmoImage);
         }
     }
     #nullable disable
@@ -72,7 +99,7 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
             }
         }
     }
-    // Sends the cannon dict off to the object that needs it (AI).
+    // Sends the cannon dict off to the object that needs it (AI/UI).
     private void SendAmmoData(IAmmunitionData data){
         data.AmmunitionData(_ammunitionDict);
     }
@@ -101,6 +128,8 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
             // If the enum is in the dict set the new ammo type.
             if (_ammunitionDict.ContainsKey(ammoToLoadIntToEnum)){
                 _currentAmmunitionLoaded = _ammunitionDict[ammoToLoadIntToEnum];
+                // Make sure to update ammo image for UI's.
+                _currentAmmoImage.SetUICurrentAmmoImage(_currentAmmunitionLoaded.GetAmmoImage);
             }
             return;
         }
@@ -117,12 +146,14 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
                     _cannonDictLoaded[position]--;
                 }
             }
+            NotifyLoadedCannons(position);
         }
     }
 
     public void CannonLoaded(CannonPositionEnum position)
     {
         _cannonDictLoaded[position]++;
+        NotifyLoadedCannons(position);
     }
 
     public void CorporealDamageModifier(float modifier, string nameOfSender)
@@ -130,5 +161,10 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
         foreach (Cannon cannon in _cannonsList){
             cannon.ModifyReloadTime(modifier);
         }
+    }
+
+    public void NotifyLoadedCannons(CannonPositionEnum pos)
+    {
+        _cannonsLoadedUI.CannonsLoaded(pos, _cannonDictLoaded[pos]);
     }
 }

@@ -8,12 +8,13 @@ public class CorporealHealth : HealthComponent
     // List of enemy states that want to recieve info.
     private Dictionary<string, ICorporealDamageModifier> _recieversDict = new Dictionary<string, ICorporealDamageModifier>();
 
-    public override void AddReciever(string objName, State state)
+    public override void AddReciever(string objName, object state)
     {
         if (state is ICorporealDamageModifier modifier)
         {
             _recieversDict.TryAdd(objName, modifier);
         }
+        NotifyRecievers();
     }
 
     public override void RemoveReciever(string objName)
@@ -26,11 +27,18 @@ public class CorporealHealth : HealthComponent
         _maxHealth = maxHealth;
         _currentHealth = _maxHealth;
         _corpoeralModifiers = corporealDamageModifiers;
+        NotifyRecievers();
     }
 
     public override void TakeDamage(int damage)
     {
         _currentHealth -= damage;
+        NotifyRecievers();
+
+    }
+
+    private void NotifyRecievers()
+    {
         foreach (ICorporealDamageModifier item in _corpoeralModifiers)
         {
             item.CorporealDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
@@ -39,6 +47,5 @@ public class CorporealHealth : HealthComponent
         {
             item.Value.CorporealDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }
-        
     }
 }

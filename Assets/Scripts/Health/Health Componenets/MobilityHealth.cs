@@ -7,12 +7,13 @@ public class MobilityHealth : HealthComponent
     // List of enemy states that want to recieve info.
     private Dictionary<string, IMobilityDamageModifier> _recieversDict = new Dictionary<string, IMobilityDamageModifier>();
 
-    public override void AddReciever(string objName, State state)
+    public override void AddReciever(string objName, object state)
     {
         if (state is IMobilityDamageModifier modifier)
         {
             _recieversDict.TryAdd(objName, modifier);
         }
+        NotifyRecievers();
     }
 
     public override void RemoveReciever(string objName)
@@ -22,13 +23,19 @@ public class MobilityHealth : HealthComponent
 
     public void SetupHealthComponenet(int maxHealth, IMobilityDamageModifier[] mobilityDamageModifiers = null)
     {
-    _maxHealth = maxHealth;
-    _currentHealth = _maxHealth;
-    _mobilityModifiers = mobilityDamageModifiers;
+        _maxHealth = maxHealth;
+        _currentHealth = _maxHealth;
+        _mobilityModifiers = mobilityDamageModifiers;
+        NotifyRecievers();
     }
     public override void TakeDamage(int damage)
     {
         _currentHealth -= damage;
+        NotifyRecievers();
+    }
+
+    private void NotifyRecievers()
+    {
         foreach (IMobilityDamageModifier item in _mobilityModifiers)
         {
             item.MobilityDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);

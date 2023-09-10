@@ -10,7 +10,7 @@ namespace PirateGame.Health{
         protected int _maxHealth = 100;
         protected int _currentHealth;
     
-        protected float ToPercent(int health, int maxHealth) => (float)health / maxHealth;
+        protected float ToPercent(int health, int maxHealth) => Mathf.Clamp01((float)health / maxHealth);
         
         [SerializeField]
         private List<DamageTypeEnum> _associatedDamageTypes = new List<DamageTypeEnum>();
@@ -19,7 +19,7 @@ namespace PirateGame.Health{
 
         public abstract void TakeDamage(int damage);
 
-        public abstract void AddReciever(string objName, State state);
+        public abstract void AddReciever(string objName, object state);
 
         public abstract void RemoveReciever(string objName);
 

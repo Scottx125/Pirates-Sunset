@@ -8,12 +8,13 @@ public class StructuralHealth : HealthComponent
     // List of enemy states that want to recieve info.
     private Dictionary<string, IStructuralDamageModifier> _recieversDict = new Dictionary<string, IStructuralDamageModifier>();
 
-    public override void AddReciever(string objName, State state)
+    public override void AddReciever(string objName, object state)
     {
         if (state is IStructuralDamageModifier modifier)
         {
             _recieversDict.TryAdd(objName, modifier);
         }
+        NotifyRecievers();
     }
 
     public override void RemoveReciever(string objName)
@@ -23,19 +24,25 @@ public class StructuralHealth : HealthComponent
 
     public void SetupHealthComponenet(int maxHealth, IStructuralDamageModifier[] structuralDamageModifiers = null)
     {
-    _maxHealth = maxHealth;
-    _currentHealth = _maxHealth;
-    _structuralModifiers = structuralDamageModifiers;
+        _maxHealth = maxHealth;
+        _currentHealth = _maxHealth;
+        _structuralModifiers = structuralDamageModifiers;
+        NotifyRecievers();
     }
 
     public override void TakeDamage(int damage)
     {
         _currentHealth -= damage;
-        foreach (IStructuralDamageModifier item in _structuralModifiers) 
+        NotifyRecievers();
+    }
+
+    private void NotifyRecievers()
+    {
+        foreach (IStructuralDamageModifier item in _structuralModifiers)
         {
             item.StructuralDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }
-        foreach (var item in _recieversDict) 
+        foreach (var item in _recieversDict)
         {
             item.Value.StructuralDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }

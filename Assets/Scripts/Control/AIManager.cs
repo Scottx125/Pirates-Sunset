@@ -21,6 +21,8 @@ public class AIManager: MonoBehaviour
     private EnemyDeath _death;
     [SerializeField]
     protected StateManager _stateManager;
+    [SerializeField]
+    private AIUIController _uiController;
 
 
     private void Awake(){
@@ -28,16 +30,16 @@ public class AIManager: MonoBehaviour
     }
     private void Setup(){
         if (_movementManager != null) _movementManager.Setup(_movementData);
-        if (_cannonManager != null) _cannonManager.Setup(_stateManager);
+        if (_cannonManager != null) _cannonManager.Setup(_stateManager, null, null, null);
         if (_aiInputManager != null) _aiInputManager.Setup(_movementManager, _cannonManager);
         if (_stateManager != null) _stateManager.Setup(_aiInputManager, _movementData);
         if (_death != null) _death.Setup(_stateManager.gameObject, _movementManager);
         if (_healthManager != null)
         {
 
-            ICorporealDamageModifier[] corporealDamageModifiers = { _movementManager, _cannonManager };
-            IStructuralDamageModifier[] structuralDamageModifiers = { _movementManager, _stateManager.GetShipAttackStateForHealthSetup, _death};
-            IMobilityDamageModifier[] mobilityDamageModifiers = { _movementManager };
+            ICorporealDamageModifier[] corporealDamageModifiers = { _movementManager, _cannonManager, _uiController };
+            IStructuralDamageModifier[] structuralDamageModifiers = { _movementManager, _stateManager.GetShipAttackStateForHealthSetup, _death, _uiController };
+            IMobilityDamageModifier[] mobilityDamageModifiers = { _movementManager, _uiController };
             _healthManager.Setup(corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
         }
         if (_damageHandler != null) _damageHandler.Setup(_healthManager);
