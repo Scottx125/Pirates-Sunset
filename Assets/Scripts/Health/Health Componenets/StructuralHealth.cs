@@ -38,10 +38,13 @@ public class StructuralHealth : HealthComponent
 
     private void NotifyRecievers()
     {
+
         foreach (IStructuralDamageModifier item in _structuralModifiers)
         {
             item.StructuralDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }
+        
+
         foreach (var item in _recieversDict)
         {
             item.Value.StructuralDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);

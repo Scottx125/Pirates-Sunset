@@ -9,7 +9,7 @@ using System;
         }
 
         public static int GetMobilityStateEnumLength(){
-            return Enum.GetValues(typeof(SpeedModifierEnum)).Length - 1;
+            return Enum.GetValues(typeof(SpeedModifierEnum)).Length;
         }
 
     }

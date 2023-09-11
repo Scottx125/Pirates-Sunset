@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+
 namespace PirateGame.Moving{
     public class MovementManager : MonoBehaviour, ICorporealDamageModifier, IStructuralDamageModifier, IMobilityDamageModifier
     {
@@ -10,9 +12,10 @@ namespace PirateGame.Moving{
         Rotation _rotation;
 
         MovementSO _movementData;
-        public void Setup(MovementSO movementData){
+        public void Setup(MovementSO movementData, ICurrentSpeed uiCurrentSpeed = null){
             _movementData = movementData;
-            _movement.Setup(_movementData, _rotation);
+            List<ICurrentSpeed> currentSpeedList = new List<ICurrentSpeed> {_rotation, uiCurrentSpeed};
+            _movement.Setup(_movementData, currentSpeedList);
             _mobilityStates.Setup(_movementData, _movement);
             _rotation.Setup(_movementData);
         }

@@ -45,6 +45,7 @@ public class MobilityStates : MonoBehaviour
             if (increaseSpeed != null){
                 if ((bool)increaseSpeed){
                     _mobilityState++;
+                    
                 } else {_mobilityState--;}
             }
             // State Increase
@@ -56,8 +57,8 @@ public class MobilityStates : MonoBehaviour
                 _mobilityState--;
                 }
             }
-            Mathf.Clamp(_mobilityState, 0f, StaticHelpers.GetMobilityStateEnumLength());
-             ModifyMobilityStateByInterface();
+            _mobilityState = Mathf.Clamp(_mobilityState, 0, StaticHelpers.GetMobilityStateEnumLength());
+            ModifyMobilityStateByInterface();
              _mobilityStateTimeSinceChanged = 0f;
         }
     }

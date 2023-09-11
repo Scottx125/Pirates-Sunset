@@ -39,10 +39,13 @@ public class CorporealHealth : HealthComponent
 
     private void NotifyRecievers()
     {
+
         foreach (ICorporealDamageModifier item in _corpoeralModifiers)
         {
             item.CorporealDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }
+        
+
         foreach (var item in _recieversDict)
         {
             item.Value.CorporealDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);

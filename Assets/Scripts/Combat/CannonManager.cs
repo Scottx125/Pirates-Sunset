@@ -146,14 +146,21 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
                     _cannonDictLoaded[position]--;
                 }
             }
-            NotifyLoadedCannons(position);
+            if (_cannonsLoadedUI != null)
+            {
+                NotifyLoadedCannons(position);
+            }
+            
         }
     }
 
     public void CannonLoaded(CannonPositionEnum position)
     {
         _cannonDictLoaded[position]++;
-        NotifyLoadedCannons(position);
+        if (_cannonsLoadedUI != null)
+        {
+            NotifyLoadedCannons(position);
+        }
     }
 
     public void CorporealDamageModifier(float modifier, string nameOfSender)

@@ -33,7 +33,7 @@ public class PlayerManager : MonoBehaviour
     }
     private void Setup()
     {
-        if (_movementManager != null) _movementManager.Setup(_movementData);
+        if (_movementManager != null) _movementManager.Setup(_movementData, _playerUIController);
         if (_cannonManager != null) _cannonManager.Setup(null, _playerUIController, _playerUIController, _playerUIController);
         if (_inputManager != null) _inputManager.Setup(_movementManager, _cameraController, _cannonManager);
         if (_death != null) _death.Setup(_inputManager, _movementManager);

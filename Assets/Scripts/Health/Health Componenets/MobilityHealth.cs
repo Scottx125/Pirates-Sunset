@@ -36,10 +36,13 @@ public class MobilityHealth : HealthComponent
 
     private void NotifyRecievers()
     {
+
         foreach (IMobilityDamageModifier item in _mobilityModifiers)
         {
             item.MobilityDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);
         }
+        
+
         foreach (var item in _recieversDict)
         {
             item.Value.MobilityDamageModifier(ToPercent(_currentHealth, _maxHealth), transform.root.name);

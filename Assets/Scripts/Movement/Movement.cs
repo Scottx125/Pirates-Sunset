@@ -11,7 +11,7 @@ namespace PirateGame.Moving{
         private float _currentSpeed;
         private float _targetSpeed;
         private float _mobilityStateModifier;
-        private ICurrentSpeed _sendCurrentSpeed;
+        private List<ICurrentSpeed> _sendCurrentSpeedList = new List<ICurrentSpeed>();
         private Transform _noMoveArea;
         
         private float _mobilityDamageModifier = 1f;
@@ -21,7 +21,7 @@ namespace PirateGame.Moving{
         public void SetStructuralDamageModifier(float modifier) => _structuralDamageModifier = modifier;
         public void MobilityStateModifier(float modifier) => _mobilityStateModifier = modifier;
 
-        public void Setup(MovementSO movementData, ICurrentSpeed currentSpeed = null)
+        public void Setup(MovementSO movementData, List<ICurrentSpeed> currentSpeedList)
         {
             // Setup of variables.
             _maxSpeed = movementData.GetMaxSpeed;
@@ -32,7 +32,13 @@ namespace PirateGame.Moving{
             _maxDecelerationRate = movementData.GetMaxDecelerationRate;
             _decelerationEasingFactor = movementData.GetDecelerationEasingFactor;
             _minDeceleration = movementData.GetMinDeceleration;
-            _sendCurrentSpeed = currentSpeed;
+            foreach(ICurrentSpeed reciever in currentSpeedList)
+            {
+                if (reciever != null)
+                {
+                    _sendCurrentSpeedList.Add(reciever);
+                }
+            }
         }
 
         private void DetermineIfWeCanMove()
@@ -74,8 +80,14 @@ namespace PirateGame.Moving{
             // Clamp speed to ensure no engative or overspeed.
             _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _maxSpeed * _mobilityDamageModifier);
             // sends current speed to listener. (determines turn rate based on speed.)
-            if (_sendCurrentSpeed != null) _sendCurrentSpeed.SetCurrentSpeed(_currentSpeed);
-
+            if (_sendCurrentSpeedList != null)
+            {
+                foreach(ICurrentSpeed reciever in _sendCurrentSpeedList)
+                {
+                    reciever.SetCurrentSpeed(_currentSpeed);
+                }
+            }
+            Debug.Log(_currentSpeed);
             // Apply Movement.
             transform.position += transform.forward * _currentSpeed * Time.deltaTime;
         }

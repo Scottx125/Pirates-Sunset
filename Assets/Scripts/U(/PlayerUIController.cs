@@ -2,11 +2,24 @@ using PirateGame.Health;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
-public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMobilityDamageModifier, ICorporealDamageModifier, ICannonsLoaded, ITotalCannons, ICurrentAmmoImage
+public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMobilityDamageModifier, ICorporealDamageModifier, ICannonsLoaded, ITotalCannons, ICurrentAmmoImage, ICurrentSpeed
 {
     [SerializeField]
     private GameObject _base;
+    [SerializeField]
+    private TextMeshProUGUI _sailHealthText;
+    [SerializeField]
+    private TextMeshProUGUI _currentSpeedText;
+    [SerializeField]
+    private TextMeshProUGUI _crewHealthText;
+    [SerializeField]
+    private TextMeshProUGUI _hullHealthText;
+    [SerializeField]
+    private Image _baseHealthFill;
+
 
     // Cannons UI data
     private int _leftCannonsLoaded;
@@ -23,11 +36,13 @@ public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMob
     private float _structuralHealth;
     private float _mobilityHealth;
     private float _corporealHealth;
+    //
+    private float _currentSpeed;
     // Base health UI data
     private float _baseStructuralHealth;
     private HealthComponent[] _baseHealthComponenets;
 
-    public void Setup()
+    public void Start()
     {
         RegisterToTargetHealthComponenets();
     }
@@ -74,6 +89,7 @@ public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMob
         if (nameOfSender == transform.root.name)
         {
             _corporealHealth = modifier;
+            _crewHealthText.text = string.Format("Status: {0}%", _corporealHealth * 100f);
         }
     }
 
@@ -82,6 +98,7 @@ public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMob
         if (nameOfSender == transform.root.name)
         {
             _mobilityHealth = modifier;
+            _sailHealthText.text = string.Format("Status: {0}%", _mobilityHealth * 100f);
         }
     }
 
@@ -90,9 +107,11 @@ public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMob
         if (nameOfSender == transform.root.name)
         {
             _structuralHealth = modifier;
+            _hullHealthText.text = string.Format("Status: {0}%",  _structuralHealth * 100f);
         } else
         {
             _baseStructuralHealth = modifier;
+            _baseHealthFill.fillAmount = _baseStructuralHealth;
         }
     }
     public void SetUICurrentAmmoImage(Sprite image)
@@ -107,7 +126,7 @@ public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMob
     private void RegisterToTargetHealthComponenets()
     {
         // Search the target for it's health componenets and pass itself into them.
-        _baseHealthComponenets = _base.transform.root.GetComponent<HealthManager>().GetHealthComponents().ToArray();
+        _baseHealthComponenets = _base.GetComponent<HealthManager>().GetHealthComponents().ToArray();
         foreach (HealthComponent componenet in _baseHealthComponenets)
         {
             componenet.AddReciever(this.name, this);
@@ -120,5 +139,11 @@ public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMob
         {
             componenet.RemoveReciever(this.name);
         }
+    }
+
+    public void SetCurrentSpeed(float currentSpeed)
+    {
+        _currentSpeed = currentSpeed;
+        _currentSpeedText.text = string.Format("{0}", _currentSpeed.ToString("f1"));
     }
 }
