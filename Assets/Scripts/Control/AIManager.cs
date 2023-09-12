@@ -30,7 +30,11 @@ public class AIManager: MonoBehaviour
     }
     private void Setup(){
         if (_movementManager != null) _movementManager.Setup(_movementData);
-        if (_cannonManager != null) _cannonManager.Setup(_stateManager, null, null, null);
+        if (_cannonManager != null)
+        {
+            IAmmunitionData[] ammoData = { _stateManager, _uiController };
+            _cannonManager.Setup(ammoData, null, null, null);
+        }
         if (_aiInputManager != null) _aiInputManager.Setup(_movementManager, _cannonManager);
         if (_stateManager != null) _stateManager.Setup(_aiInputManager, _movementData);
         if (_death != null) _death.Setup(_stateManager.gameObject, _movementManager);

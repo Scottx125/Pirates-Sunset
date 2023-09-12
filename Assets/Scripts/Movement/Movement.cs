@@ -87,7 +87,6 @@ namespace PirateGame.Moving{
                     reciever.SetCurrentSpeed(_currentSpeed);
                 }
             }
-            Debug.Log(_currentSpeed);
             // Apply Movement.
             transform.position += transform.forward * _currentSpeed * Time.deltaTime;
         }

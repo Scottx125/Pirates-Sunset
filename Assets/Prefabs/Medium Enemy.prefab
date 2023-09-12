@@ -56026,6 +56026,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7649060549272468773}
   - component: {fileID: 6264728550611542178}
+  - component: {fileID: 4780338946854119157}
   - component: {fileID: 2047178720378745678}
   - component: {fileID: 8323467908837768404}
   - component: {fileID: 8164958784122272805}
@@ -56087,6 +56088,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6, y: 20, z: 25.92}
   m_Center: {x: 0, y: 11, z: 1}
+--- !u!114 &4780338946854119157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6597981393717036582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1d0895399aaaa94ab5b3b7b3ff1bb28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2047178720378745678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56107,6 +56120,7 @@ MonoBehaviour:
   _aiInputManager: {fileID: 473893115642308510}
   _death: {fileID: 587458401445397153}
   _stateManager: {fileID: 4851395031999129014}
+  _uiController: {fileID: 4780338946854119157}
 --- !u!114 &8323467908837768404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61939,7 +61953,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 959
+    m_Bits: 1983
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

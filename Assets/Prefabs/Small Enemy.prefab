@@ -19555,6 +19555,7 @@ GameObject:
   - component: {fileID: 3113768357573331047}
   - component: {fileID: 5803356433359461135}
   - component: {fileID: 2517274101603156735}
+  - component: {fileID: 7568364247260703625}
   m_Layer: 8
   m_Name: Small Enemy
   m_TagString: Enemy
@@ -19590,7 +19591,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 127
+    m_Bits: 896
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -19621,6 +19622,7 @@ MonoBehaviour:
   _aiInputManager: {fileID: 5511534656046412640}
   _death: {fileID: 5803356433359461135}
   _stateManager: {fileID: 2175424980748451775}
+  _uiController: {fileID: 7568364247260703625}
 --- !u!114 &1149264184064960186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19826,6 +19828,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46e528d7b767b0b4a919d844843f0b88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7568364247260703625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3301015432207074421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1d0895399aaaa94ab5b3b7b3ff1bb28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3581803973031906766
@@ -29930,7 +29944,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 959
+    m_Bits: 1983
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

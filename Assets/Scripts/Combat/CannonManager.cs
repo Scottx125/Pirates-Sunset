@@ -27,7 +27,7 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
     private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _ammunitionDict = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
     //private Dictionary<AmmunitionTypeEnum, AmmunitionSO> _boonDamage = new Dictionary<AmmunitionTypeEnum, AmmunitionSO>();
     #nullable enable
-    public void Setup(IAmmunitionData? requiresAmmoData, ICannonsLoaded? cannonsLoadedUI, ITotalCannons? cannonsTotalUI, ICurrentAmmoImage? currentAmmoImage){
+    public void Setup(IAmmunitionData[]? requiresAmmoData, ICannonsLoaded? cannonsLoadedUI, ITotalCannons? cannonsTotalUI, ICurrentAmmoImage? currentAmmoImage){
         // Set everything up
         if (_cannonsList != null){
             // Set cannons up
@@ -100,8 +100,11 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
         }
     }
     // Sends the cannon dict off to the object that needs it (AI/UI).
-    private void SendAmmoData(IAmmunitionData data){
-        data.AmmunitionData(_ammunitionDict);
+    private void SendAmmoData(IAmmunitionData[] data){
+        foreach(IAmmunitionData reciever in data)
+        {
+            reciever.AmmunitionData(_ammunitionDict);
+        }
     }
 
     public void ChangeAmmoType(AmmunitionTypeEnum? ammoToLoad, bool? iterate){
