@@ -19969,6 +19969,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _deathTime: 3
+  _pointsOnDeath: 10
 --- !u!114 &2517274101603156735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20285,7 +20286,7 @@ RectTransform:
   m_GameObject: {fileID: 3707722535935161771}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.03, y: 0.03, z: 1}
+  m_LocalScale: {x: -0.03, y: 0.03, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 87293438249143942}
@@ -31130,7 +31131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3384372561768993807}
   - component: {fileID: 6555725263388020938}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: CollisionHandler
   m_TagString: NoMove
   m_Icon: {fileID: 0}

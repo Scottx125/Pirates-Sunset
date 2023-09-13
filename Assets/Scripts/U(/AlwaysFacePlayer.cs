@@ -14,6 +14,6 @@ public class AlwaysFacePlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.rotation = Quaternion.LookRotation(transform.position - _camera.transform.position);
+        transform.LookAt(new Vector3(_camera.transform.position.x, transform.position.y, _camera.transform.position.z));
     }
 }

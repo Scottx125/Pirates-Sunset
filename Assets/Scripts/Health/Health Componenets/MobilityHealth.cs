@@ -28,6 +28,12 @@ public class MobilityHealth : HealthComponent
         _mobilityModifiers = mobilityDamageModifiers;
         NotifyRecievers();
     }
+    public override void MaxHealth()
+    {
+        _currentHealth = _maxHealth;
+        NotifyRecievers();
+    }
+
     public override void TakeDamage(int damage)
     {
         _currentHealth -= damage;

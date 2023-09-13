@@ -34,7 +34,6 @@ public class Projectile : MonoBehaviour
     {
         // Setup variables info from coreDamage.
         _meshRenderer.enabled = true;
-        _trailRenderer.enabled = true;
         _coreDamage = coreDamage;
         _bonusDamage = bonusDamage;
         _maxRange = _coreDamage.GetMaxRange;
@@ -102,16 +101,18 @@ public class Projectile : MonoBehaviour
         TargetCollision(other);
     }
 
-    private static void AmbientCollisions(Collider other)
+    private void AmbientCollisions(Collider other)
     {
         // Sort ambient impacts.
         if (other.CompareTag("Sea"))
         {
             // play splash animation and sound
+            StartCoroutine(WaitBeforeDisable());
         }
         if (other.CompareTag("Land"))
         {
             // play splash animation and sound
+            StartCoroutine(WaitBeforeDisable());
         }
     }
 
@@ -135,8 +136,7 @@ public class Projectile : MonoBehaviour
         StopCoroutine(_calculateFlightCoroutine);
         _meshRenderer.enabled = false;
         _trailRenderer.emitting = false;
-        yield return new WaitForSeconds(_disableWaitTime);
-        _trailRenderer.enabled = false;
+        yield return new WaitForSeconds(_trailRenderer.time);
         gameObject.SetActive(false);
     }
 

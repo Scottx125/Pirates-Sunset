@@ -1,3 +1,4 @@
+using PirateGame.Health;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,6 +29,8 @@ public class SpawnManager : MonoBehaviour
     GameObject _nextWaveTimerRect;
     [SerializeField]
     TextMeshProUGUI _shipsRemainingText;
+    [SerializeField]
+    GameObject _player;
 
     private static SpawnManager _instance;
 
@@ -40,12 +43,19 @@ public class SpawnManager : MonoBehaviour
     private float _nextLevelTimer;
     private LevelSO _currentLevelData;
     private List<ShipToSpawnStruct> _shipsToSpawn = new List<ShipToSpawnStruct>();
+    private List<HealthComponent> _playerHealth = new List<HealthComponent>();
     
 
     private void Awake()
     {
         _instance = this;
         _currentLevelInt = _levelToStartOn;
+        if (_player == null) 
+        {
+            Debug.LogError("Player is equal to NULL!");
+            return;
+        }
+        _playerHealth = _player.GetComponent<HealthManager>().GetHealthComponents();
     }
 
     private void Update()
@@ -53,20 +63,35 @@ public class SpawnManager : MonoBehaviour
         if (!_startSpawning) return;
         if (_newLevel && _currentLevelInt <= _levels.Count)
         {
-            Setup();
+            SetupLevel();
         }
         // Spawn
+        BeginSpawning();
+        // Next level
+        NextLevel();
+        // End Game
+        EndGame();
+    }
+
+    private void BeginSpawning()
+    {
         if (_spawningShips == null && _shipsToSpawn.Count > 0)
         {
             _spawningShips = StartCoroutine(SpawnShips());
         }
-        // Next level
+    }
+
+    private void NextLevel()
+    {
         if (_shipsToSpawn.Count == 0)
         {
             ForceNextLevel();
             LevelComplete();
         }
-        // End Game
+    }
+
+    private void EndGame()
+    {
         if (_shipsRemaining == 0 && _currentLevelInt == _levels.Count)
         {
             GameManager.GetInstance().GameOver();
@@ -129,9 +154,13 @@ public class SpawnManager : MonoBehaviour
         _nextLevelTimer -= Time.deltaTime;
     }
 
-    private void Setup()
+    private void SetupLevel()
     {
         // Set everything up for the new level.
+        foreach (HealthComponent healthComp in _playerHealth)
+        {
+            healthComp.MaxHealth();
+        }
         _nextWaveTimerRect.SetActive(false);
         _newLevel = false;
         _currentLevelData = _levels[_currentLevelInt - 1];

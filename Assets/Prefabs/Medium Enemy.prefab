@@ -826,7 +826,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3841787242384401905}
   - component: {fileID: 128898626300488176}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: CollisionHandler
   m_TagString: NoMove
   m_Icon: {fileID: 0}
@@ -47804,7 +47804,7 @@ RectTransform:
   m_GameObject: {fileID: 6473165879168290511}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.03, y: 0.03, z: 1}
+  m_LocalScale: {x: -0.03, y: 0.03, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5670750558328893363}
@@ -57975,6 +57975,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _deathTime: 3
+  _pointsOnDeath: 20
 --- !u!114 &957069880785588540
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,6 +13,9 @@ public class EnemyDeath : DeathAbstract
     // Destroy the AI once it's out of sight.
     [SerializeField]
     private float _deathTime = 3f;
+    [SerializeField]
+    private int _pointsOnDeath = 10;
+
     private Coroutine _death;
     private GameObject _aiComponenets;
     private MovementManager _movementManager;
@@ -37,6 +40,9 @@ public class EnemyDeath : DeathAbstract
         StartCoroutine(DeathAnimation());
 
         yield return new WaitForSeconds(3f);
+        GameManager.GetInstance().AddShipDestroyed();
+        GameManager.GetInstance().AddScore(_pointsOnDeath);
+        SpawnManager.GetInstance().ShipDestroyed();
         Destroy(transform.gameObject);
         yield return null;
     }

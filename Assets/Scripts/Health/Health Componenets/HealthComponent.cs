@@ -19,6 +19,8 @@ namespace PirateGame.Health{
 
         public abstract void TakeDamage(int damage);
 
+        public abstract void MaxHealth();
+
         public abstract void AddReciever(string objName, object state);
 
         public abstract void RemoveReciever(string objName);
