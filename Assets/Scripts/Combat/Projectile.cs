@@ -34,6 +34,7 @@ public class Projectile : MonoBehaviour
     {
         // Setup variables info from coreDamage.
         _meshRenderer.enabled = true;
+        _trailRenderer.enabled = true;
         _coreDamage = coreDamage;
         _bonusDamage = bonusDamage;
         _maxRange = _coreDamage.GetMaxRange;
@@ -133,7 +134,9 @@ public class Projectile : MonoBehaviour
     private IEnumerator WaitBeforeDisable(){
         StopCoroutine(_calculateFlightCoroutine);
         _meshRenderer.enabled = false;
+        _trailRenderer.emitting = false;
         yield return new WaitForSeconds(_disableWaitTime);
+        _trailRenderer.enabled = false;
         gameObject.SetActive(false);
     }
 

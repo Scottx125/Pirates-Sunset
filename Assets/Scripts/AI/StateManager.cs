@@ -42,7 +42,7 @@ public class StateManager : MonoBehaviour, IAmmunitionData
         _shipAttackBaseState = GetComponent<ShipAttackBaseState>();
         _sphereCollider = GetComponent<SphereCollider>();
         _sphereCollider.radius = AIHelpers.GetAmmunitionRangesInOrder(_ammunitionList).Last().GetMaxRange;
-        if (_mainTarget == null) _mainTarget = GameObject.FindGameObjectWithTag("Base").transform.parent;
+        if (_mainTarget == null) _mainTarget = GameObject.FindGameObjectWithTag("Base").transform;
         if (_moveToTargetState != null){
             _moveToTargetState.Setup(_mainTarget, _idlePosition, inputManager, _pathfinder, movementData, _targetable, _ammunitionList);
         }

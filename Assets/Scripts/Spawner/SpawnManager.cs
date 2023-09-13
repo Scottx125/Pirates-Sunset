@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -17,6 +18,16 @@ public class SpawnManager : MonoBehaviour
     private List<LevelSO> _levels;
     [SerializeField]
     private List<Transform> _spawnPositions;
+
+    // UIstuff
+    [SerializeField]
+    TextMeshProUGUI _currentWaveText;
+    [SerializeField]
+    TextMeshProUGUI _nextWaveTimer;
+    [SerializeField]
+    GameObject _nextWaveTimerRect;
+    [SerializeField]
+    TextMeshProUGUI _shipsRemainingText;
 
     private static SpawnManager _instance;
 
@@ -52,25 +63,50 @@ public class SpawnManager : MonoBehaviour
         // Next level
         if (_shipsToSpawn.Count == 0)
         {
-            if (_bForceNextLevelAfterAllSpawned)
-            {
-                Timers();
-                if (_nextLevelTimer <= 0)
-                {
-                    _newLevel = true;
-                    _currentLevelInt++;
-                }
+            ForceNextLevel();
+            LevelComplete();
+        }
+        // End Game
+        if (_shipsRemaining == 0 && _currentLevelInt == _levels.Count)
+        {
+            GameManager.GetInstance().GameOver();
+        }
+    }
 
+    private void LevelComplete()
+    {
+        if (_shipsRemaining == 0)
+        {
+            Timers();
+            NextLevelUIText();
+            if (_nextLevelTimer <= 0)
+            {
+                _newLevel = true;
+                _currentLevelInt++;
             }
-            if (_shipsRemaining == 0)
-            {
-                Timers();
-                if (_nextLevelTimer <= 0)
-                {
-                    _newLevel = true;
-                    _currentLevelInt++;
-                }
+        }
+    }
 
+    private void NextLevelUIText()
+    {
+        if (_nextWaveTimerRect == null) return;
+        if (_nextWaveTimerRect.activeInHierarchy == false && _currentLevelInt < _levels.Count)
+        {
+            _nextWaveTimerRect.SetActive(true);
+        } 
+        _nextWaveTimer.text = String.Format("{0}", _nextLevelTimer.ToString("F0"));
+    }
+
+    private void ForceNextLevel()
+    {
+        if (_bForceNextLevelAfterAllSpawned)
+        {
+            Timers();
+            NextLevelUIText();
+            if (_nextLevelTimer <= 0)
+            {
+                _newLevel = true;
+                _currentLevelInt++;
             }
         }
     }
@@ -81,7 +117,7 @@ public class SpawnManager : MonoBehaviour
         {
             int chosenSpawn = Random.Range(0, _spawnPositions.Count);
             int chosenShipToSpawn = Random.Range(0, _shipsToSpawn.Count);
-            Instantiate(_shipsToSpawn[chosenShipToSpawn].GetShip, _spawnPositions[chosenSpawn].position, Quaternion.identity);
+            Instantiate(_shipsToSpawn[chosenShipToSpawn].GetShip, _spawnPositions[chosenSpawn].position, _spawnPositions[chosenSpawn].transform.rotation);
             _shipsToSpawn.RemoveAt(chosenShipToSpawn);
             yield return new WaitForSeconds(_spawnDelayTime);
         }
@@ -96,20 +132,21 @@ public class SpawnManager : MonoBehaviour
     private void Setup()
     {
         // Set everything up for the new level.
+        _nextWaveTimerRect.SetActive(false);
         _newLevel = false;
         _currentLevelData = _levels[_currentLevelInt - 1];
+        if (_currentWaveText != null) _currentWaveText.text = String.Format("Wave: {0}/{1}", _currentLevelInt, _levels.Count);
         GameManager.GetInstance().SetWaveReached(_currentLevelInt);
         foreach (ShipToSpawnStruct ship in _currentLevelData.GetShipsToSpawn)
         {
             _shipsRemaining += ship.GetAmount;
             _shipsToSpawn.AddRange(Enumerable.Repeat(ship, ship.GetAmount));
         }
+        UpdateShipsRemainingText();
         _spawnDelayTime = _currentLevelData.GetSpawnDelayTime;
         _nextLevelDelayTime = _currentLevelData.GetSpawnDelayTime;
         _nextLevelTimer = _nextLevelDelayTime;
     }
-
-
 
     public static SpawnManager GetInstance()
     {
@@ -124,8 +161,15 @@ public class SpawnManager : MonoBehaviour
         _startSpawning = true;
     }
 
-    // Create a List to hold the levels SO.
-    // Get all the data for the current level.
-    // Then start spawning if we are allowed.
-    // When a child dies remove a ship from the spawned ship int.
+    public void ShipDestroyed()
+    {
+        _shipsRemaining -= 1;
+        UpdateShipsRemainingText();
+    }
+
+    private void UpdateShipsRemainingText()
+    {
+        if (_shipsRemainingText == null) return;
+        _shipsRemainingText.text = String.Format("Ships left: {0}", _shipsRemaining);
+    }
 }
