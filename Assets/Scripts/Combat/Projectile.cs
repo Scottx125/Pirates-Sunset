@@ -20,19 +20,18 @@ public class Projectile : MonoBehaviour
     private Vector3 _endPoint;
     private MeshRenderer _meshRenderer;
     private TrailRenderer _trailRenderer;
-    private float _disableWaitTime = 1f;
     private Coroutine _calculateFlightCoroutine;
 
     public void Setup(Transform parent){
         _startPoint = parent.transform.position;
         _meshRenderer = GetComponent<MeshRenderer>();
         _trailRenderer = GetComponentInChildren<TrailRenderer>();
-        _disableWaitTime = _trailRenderer.time;
     }
 
     public void UpdateProjectile(AmmunitionSO coreDamage, AmmunitionSO bonusDamage)
     {
         // Setup variables info from coreDamage.
+        _trailRenderer.emitting = true;
         _meshRenderer.enabled = true;
         _coreDamage = coreDamage;
         _bonusDamage = bonusDamage;

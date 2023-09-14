@@ -110,17 +110,17 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
                 // Move to waypoint.
                 _currentWaypoint = _pathfinder.CheckNextWaypoint();
 
-                if (Mathf.Abs(angleToTarget) > 92.5f)
+                if (Mathf.Abs(angleToTarget) > 91f)
                 {
                     MovementCalculationInput(SpeedModifierEnum.Half_Sails);
                 }
-                if (Mathf.Abs(angleToTarget) < 87.5f)
+                if (Mathf.Abs(angleToTarget) < 89f)
                 {
                     MovementCalculationInput(SpeedModifierEnum.Full_Sails);
                 }
 
                 // If we're in a suitable firing angle.
-                if (Mathf.Abs(angleToTarget) >= 87.5f && Mathf.Abs(angleToTarget) <= 92.5f)
+                if (Mathf.Abs(angleToTarget) >= 85f && Mathf.Abs(angleToTarget) <= 95f)
                 {
                     // Get direction to shoot and Fire.
                     CannonPositionEnum directionToShoot = CalcDirectionToShoot(angleToTarget);

@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour
         _shipsSunkText.text = String.Format("{0} Enemy Ships.", _shipsDestroyed);
         _pointsEarnedText.text = String.Format("{0} Points.", _score);
         // pause game etc.
+        Time.timeScale = 0;
     }
 
 }

@@ -12,6 +12,10 @@ public class EnemyDeath : DeathAbstract
     // Play death animation and sink for 10 seconds
     // Destroy the AI once it's out of sight.
     [SerializeField]
+    private ParticleSystem[] _explosions;
+    [SerializeField]
+    private AudioSource _explosionSound;
+    [SerializeField]
     private float _deathTime = 3f;
     [SerializeField]
     private int _pointsOnDeath = 10;
@@ -51,6 +55,17 @@ public class EnemyDeath : DeathAbstract
     {
         float timer = 0f;
         // Explosion
+        if (_explosions != null)
+        {
+            foreach (ParticleSystem particle in _explosions)
+            {
+                particle.Play();
+            }
+            if (_explosionSound != null)
+            {
+                _explosionSound.Play();
+            }
+        }
         while (timer <= _deathTime)
         {
             transform.position += (Vector3.down * 2f) * Time.deltaTime;

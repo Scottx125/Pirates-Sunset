@@ -11,6 +11,10 @@ public class PlayerDeath : DeathAbstract
     // Play death animation and sink for 3 seconds
     // Pause the game and present the ending screen.
     [SerializeField]
+    private ParticleSystem[] _explosions;
+    [SerializeField]
+    private AudioSource _explosionSound;
+    [SerializeField]
     private float _deathTime = 3f;
     private Coroutine _death;
     private PlayerInputManager _playerInputManager;
@@ -32,8 +36,8 @@ public class PlayerDeath : DeathAbstract
         _movementManager.TurnLeft(false);
         _movementManager.TurnRight(false);
         // Play death animation
-
-        yield return new WaitForSeconds(1f);
+        StartCoroutine(DeathAnimation());
+        yield return new WaitForSeconds(3f);
         GameManager.GetInstance().GameOver();
         yield return null;
     }
@@ -42,6 +46,17 @@ public class PlayerDeath : DeathAbstract
     {
         float timer = 0f;
         // Explosion
+        if (_explosions != null)
+        {
+            foreach (ParticleSystem particle in _explosions)
+            {
+                particle.Play();
+            }
+            if (_explosionSound != null)
+            {
+                _explosionSound.Play();
+            }
+        }
         while (timer <= _deathTime)
         {
             transform.position += (Vector3.down * 2f) * Time.deltaTime;
