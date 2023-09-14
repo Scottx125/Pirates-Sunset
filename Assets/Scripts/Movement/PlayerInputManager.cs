@@ -11,6 +11,8 @@ namespace PirateGame.Control{
         private ICameraInterfaces _cameraInterfaces;
         [SerializeField]
         private IFireCannons _fireCannons;
+        [SerializeField]
+        private IChangeAmmo _changeAmmo;
 
         // Will be used later.
         private KeyCode increaseSail;
@@ -22,11 +24,12 @@ namespace PirateGame.Control{
         private bool _mouseVisible;
 
         public void SetGameplayInput(bool x) => _acceptGameplayInput = x;
-        public void Setup(MovementManager movementManager, ICameraInterfaces cameraInterfaces, IFireCannons fireCannons)
+        public void Setup(MovementManager movementManager, ICameraInterfaces cameraInterfaces, IFireCannons fireCannons, IChangeAmmo changeAmmo)
         {
             if (_movementManager == null) _movementManager = movementManager;
             if (_cameraInterfaces == null) _cameraInterfaces = cameraInterfaces;
             if (_fireCannons == null) _fireCannons = fireCannons;
+            if (_changeAmmo == null) _changeAmmo = changeAmmo;
 
             // Use a SO and change it, it will save the data automatically.
         }
@@ -36,8 +39,17 @@ namespace PirateGame.Control{
             MovementInput();
             SetMouseVisability();
             CameraState();
+            ChangeAmmo();
             Fire();
         }
+
+        private void ChangeAmmo()
+        {
+            if (Input.mouseScrollDelta.y == 0) return;
+            if (Input.mouseScrollDelta.y < 0) _changeAmmo.ChangeAmmoType(null, false);
+            if (Input.mouseScrollDelta.y > 0) _changeAmmo.ChangeAmmoType(null, true);
+        }
+
         // Fire if mouse is not enabled.
         private void Fire()
         {

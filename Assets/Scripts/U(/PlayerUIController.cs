@@ -19,6 +19,8 @@ public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMob
     private TextMeshProUGUI _hullHealthText;
     [SerializeField]
     private Image _baseHealthFill;
+    [SerializeField]
+    private Image _ammoUIImage;
 
 
     // Cannons UI data
@@ -117,6 +119,7 @@ public class PlayerUIController : MonoBehaviour, IStructuralDamageModifier, IMob
     public void SetUICurrentAmmoImage(Sprite image)
     {
         _currentAmmoImage = image;
+        _ammoUIImage.sprite = _currentAmmoImage;
     }
 
     private void OnDestroy()

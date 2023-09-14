@@ -13,16 +13,27 @@ public class GameManager : MonoBehaviour
     TextMeshProUGUI _timeBeforeStartText;
     [SerializeField]
     GameObject _timeBeforeStartObject;
+    // End game UI
+    [SerializeField]
+    TextMeshProUGUI _waveReachedText;
+    [SerializeField]
+    TextMeshProUGUI _shipsSunkText;
+    [SerializeField]
+    TextMeshProUGUI _pointsEarnedText;
+    [SerializeField]
+    GameObject _gameoverUIObject;
 
     private int _score = 0;
     private int _shipsDestroyed = 0;
     private int _waveReached = 0;
+    private int _maxWaves = 0;
     private bool _gameStarted = false;
     private static GameManager _instance;
 
     public void AddScore(int x) => _score += x;
     public void AddShipDestroyed() => _shipsDestroyed += 1;
-    public void SetWaveReached(int x) => _waveReached += x;
+    public void SetWaveReached(int x) => _waveReached = x;
+    public void SetMaxWaves(int x) => _maxWaves = x;
     private void Awake()
     {
         _instance = this;
@@ -69,6 +80,15 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         // Initiate score screen.
+        if (_gameoverUIObject == null)
+        {
+            Debug.LogError("_gameoverUIObject is NULL!");
+            return;
+        }
+        _gameoverUIObject.SetActive(true);
+        _waveReachedText.text = String.Format("Wave {0} of {1}.", _waveReached, _maxWaves);
+        _shipsSunkText.text = String.Format("{0} Enemy Ships.", _shipsDestroyed);
+        _pointsEarnedText.text = String.Format("{0} Points.", _score);
         // pause game etc.
     }
 

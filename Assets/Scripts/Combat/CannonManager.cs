@@ -125,7 +125,7 @@ public class CannonManager : MonoBehaviour, ICannonManagerLoaded, IFireCannons, 
             {
                 _ammoEnumInt -= 1;
             }
-            Mathf.Clamp(_ammoEnumInt, 0, Enum.GetValues(typeof(AmmunitionTypeEnum)).Length - 1);
+            _ammoEnumInt = Mathf.Clamp(_ammoEnumInt, 0, Enum.GetValues(typeof(AmmunitionTypeEnum)).Length - 1);
             // Get the enum based on the value iterated.
             AmmunitionTypeEnum ammoToLoadIntToEnum = (AmmunitionTypeEnum)Enum.ToObject(typeof(AmmunitionTypeEnum), _ammoEnumInt);
             // If the enum is in the dict set the new ammo type.

@@ -55,6 +55,7 @@ public class SpawnManager : MonoBehaviour
             Debug.LogError("Player is equal to NULL!");
             return;
         }
+        GameManager.GetInstance().SetMaxWaves(_levels.Count);
         _playerHealth = _player.GetComponent<HealthManager>().GetHealthComponents();
     }
 
@@ -64,13 +65,16 @@ public class SpawnManager : MonoBehaviour
         if (_newLevel && _currentLevelInt <= _levels.Count)
         {
             SetupLevel();
+        } else
+        {
+            // End Game
+            EndGame();
         }
         // Spawn
         BeginSpawning();
         // Next level
         NextLevel();
-        // End Game
-        EndGame();
+
     }
 
     private void BeginSpawning()
@@ -92,7 +96,7 @@ public class SpawnManager : MonoBehaviour
 
     private void EndGame()
     {
-        if (_shipsRemaining == 0 && _currentLevelInt == _levels.Count)
+        if (_shipsRemaining == 0 && _shipsToSpawn.Count == 0 && _currentLevelInt == _levels.Count)
         {
             GameManager.GetInstance().GameOver();
         }
@@ -164,7 +168,7 @@ public class SpawnManager : MonoBehaviour
         _nextWaveTimerRect.SetActive(false);
         _newLevel = false;
         _currentLevelData = _levels[_currentLevelInt - 1];
-        if (_currentWaveText != null) _currentWaveText.text = String.Format("Wave: {0}/{1}", _currentLevelInt, _levels.Count);
+        if (_currentWaveText != null) _currentWaveText.text = String.Format("Wave: {0} of {1}", _currentLevelInt, _levels.Count);
         GameManager.GetInstance().SetWaveReached(_currentLevelInt);
         foreach (ShipToSpawnStruct ship in _currentLevelData.GetShipsToSpawn)
         {

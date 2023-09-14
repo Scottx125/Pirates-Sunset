@@ -16,5 +16,5 @@ MonoBehaviour:
   _spawnDelayTime: 4
   _shipsToSpawn:
   - _shipToSpawn: {fileID: 3301015432207074421, guid: bdfda4f10a41f0b4ea0ae7d195841a92, type: 3}
-    _amount: 4
+    _amount: 1
     _shipType: 1
