@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Medium Enemy
   m_EditorClassIdentifier: 
   _sailStateChangeDelay: 1
-  _maxSpeed: 20
-  _minSpeed: 0.3
+  _maxSpeed: 30
+  _minSpeed: 7.5
   _turnSpeedEasePoint: 2
   _maxTurnSpeed: 0.425
   _minTurnSpeed: 0.1

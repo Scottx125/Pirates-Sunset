@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Boss Enemy
   m_EditorClassIdentifier: 
   _sailStateChangeDelay: 1
-  _maxSpeed: 10
-  _minSpeed: 0.3
+  _maxSpeed: 15
+  _minSpeed: 2.5
   _turnSpeedEasePoint: 2
   _maxTurnSpeed: 0.2
   _minTurnSpeed: 0.1

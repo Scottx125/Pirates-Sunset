@@ -13,7 +13,6 @@ namespace PirateGame.Moving{
         private float _mobilityStateModifier;
         private List<ICurrentSpeed> _sendCurrentSpeedList = new List<ICurrentSpeed>();
         private Transform _noMoveArea;
-        
         private float _mobilityDamageModifier = 1f;
         private float _structuralDamageModifier = 1f;
 
@@ -78,7 +77,7 @@ namespace PirateGame.Moving{
                 _currentSpeed -= AccelerationCalc(difference, _maxDecelerationRate * _structuralDamageModifier, _decelerationEasingFactor, _minDeceleration);
             }
             // Clamp speed to ensure no engative or overspeed.
-            _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _maxSpeed * _mobilityDamageModifier);
+            _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _targetSpeed);
             // sends current speed to listener. (determines turn rate based on speed.)
             if (_sendCurrentSpeedList != null)
             {
