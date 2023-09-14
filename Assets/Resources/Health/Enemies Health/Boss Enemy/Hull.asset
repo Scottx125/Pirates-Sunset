@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71e17063064c01c46848048c0df12540, type: 3}
   m_Name: Hull
   m_EditorClassIdentifier: 
-  _maxHealth: 1000
+  _maxHealth: 400

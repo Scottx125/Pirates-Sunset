@@ -18,6 +18,16 @@ MonoBehaviour:
     _overTimeBool: 0
     _time: 0
     _repeatAmount: 0
+  - _damageType: 0
+    _damage: 1
+    _overTimeBool: 0
+    _time: 0
+    _repeatAmount: 0
+  - _damageType: 1
+    _damage: 1
+    _overTimeBool: 0
+    _time: 0
+    _repeatAmount: 0
   _ammunitionType: 2
   _maxRange: 100
   _highestPointDistance: 50

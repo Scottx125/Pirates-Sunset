@@ -120,7 +120,7 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
                 }
 
                 // If we're in a suitable firing angle.
-                if (Mathf.Abs(angleToTarget) >= 85f && Mathf.Abs(angleToTarget) <= 95f)
+                if (Mathf.Abs(angleToTarget) >= 86.25f && Mathf.Abs(angleToTarget) <= 93.75f)
                 {
                     // Get direction to shoot and Fire.
                     CannonPositionEnum directionToShoot = CalcDirectionToShoot(angleToTarget);

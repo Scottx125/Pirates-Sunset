@@ -64157,7 +64157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9886b2ddb8963064da3a09bd9884447a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pathUpdateDelay: 0.5
+  _pathUpdateDelay: 0.25
   _marchOffset: 5
   _pathTimeLimit: 2
   _pathSmoothFactor: 0.5
@@ -64189,9 +64189,9 @@ MonoBehaviour:
   _shipRangeOffset: 30
   _maxAngleToReduceSpeed: 67.5
   _followState: {fileID: 6299599750957522647}
-  _structuralTargetWeight: 1
-  _corporealTargetWeight: 0.4
-  _mobilityTargetWeight: 0.7
+  _structuralTargetWeight: 0.321
+  _corporealTargetWeight: 0.571
+  _mobilityTargetWeight: 0.9
   _currentAttackTypeContinuationWeight: 0.2
   _shipHealthWeight: 0.5
 --- !u!114 &2501656846589191204

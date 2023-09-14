@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab03eb04109c46f4a9d036978f75b57e, type: 3}
+  m_Name: 3
+  m_EditorClassIdentifier: 
+  _delayToNextLevelTime: 15
+  _spawnDelayTime: 7
+  _shipsToSpawn:
+  - _shipToSpawn: {fileID: 3301015432207074421, guid: bdfda4f10a41f0b4ea0ae7d195841a92, type: 3}
+    _amount: 6
+    _shipType: 1
+  - _shipToSpawn: {fileID: 6597981393717036582, guid: fc9602a43ca09114ab81b3aac7b85843, type: 3}
+    _amount: 3
+    _shipType: 2
+  - _shipToSpawn: {fileID: 3020260367128638257, guid: 753f8f6b0bd91e945a59af00d976fa93, type: 3}
+    _amount: 1
+    _shipType: 3

@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class Pathfinder : MonoBehaviour
 {
     [SerializeField]
-    private float _pathUpdateDelay = .5f;
+    private float _pathUpdateDelay = 1f;
     [SerializeField]
     private float _marchOffset = 5f;
     [SerializeField]
@@ -101,7 +101,7 @@ public class Pathfinder : MonoBehaviour
         // Try initial path.
         NavMesh.CalculatePath(transform.position, targetToPathTo, NavMesh.AllAreas, _path);
         // Check to see if the path is complete or invalud and then continue.
-        yield return new WaitUntil(() => _path.status == NavMeshPathStatus.PathComplete || _path.status == NavMeshPathStatus.PathInvalid);
+        yield return new WaitUntil(() => _path.status == NavMeshPathStatus.PathComplete || _path.status == NavMeshPathStatus.PathInvalid || _path.status == NavMeshPathStatus.PathPartial);
 
         // If the path failed find a new path.
         if (_path.status == NavMeshPathStatus.PathInvalid)

@@ -36,7 +36,7 @@ public class AIInputManager : MonoBehaviour
         // Calc angle between forward vector and the direction.
         float angleToWayPoint = Vector3.Angle(directionToFace, directionToWayPoint);
         // If the angle is large enough to warrent turning.
-        if (angleToWayPoint > 1f)
+        if (angleToWayPoint > .5f)
         {
             // crossproduct to determine if the angle is left or right of the forward vector.
             Vector3 crossProduct = Vector3.Cross(directionToFace, directionToWayPoint);
