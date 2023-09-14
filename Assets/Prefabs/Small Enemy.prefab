@@ -30819,7 +30819,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9886b2ddb8963064da3a09bd9884447a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pathUpdateDelay: 0.25
+  _pathUpdateDelay: 10
   _marchOffset: 5
   _pathTimeLimit: 2
   _pathSmoothFactor: 0.5

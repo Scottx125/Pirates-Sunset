@@ -31,6 +31,8 @@ public class SpawnManager : MonoBehaviour
     TextMeshProUGUI _shipsRemainingText;
     [SerializeField]
     GameObject _player;
+    [SerializeField]
+    private int _maxShipsAtOnce = 8;
 
     private static SpawnManager _instance;
 
@@ -38,13 +40,14 @@ public class SpawnManager : MonoBehaviour
     private int _currentLevelInt = 0;
     private Coroutine _spawningShips;
     private int _shipsRemaining;
+    private int _spawnedShips;
     private float _spawnDelayTime;
     private float _nextLevelDelayTime;
     private float _nextLevelTimer;
     private LevelSO _currentLevelData;
     private List<ShipToSpawnStruct> _shipsToSpawn = new List<ShipToSpawnStruct>();
     private List<HealthComponent> _playerHealth = new List<HealthComponent>();
-    
+
 
     private void Awake()
     {
@@ -144,10 +147,15 @@ public class SpawnManager : MonoBehaviour
     {
         while (_shipsToSpawn.Count > 0)
         {
+            while (_spawnedShips >= _maxShipsAtOnce) 
+            { 
+                yield return new WaitForSeconds(_spawnDelayTime); 
+            }
             int chosenSpawn = Random.Range(0, _spawnPositions.Count);
             int chosenShipToSpawn = Random.Range(0, _shipsToSpawn.Count);
             Instantiate(_shipsToSpawn[chosenShipToSpawn].GetShip, _spawnPositions[chosenSpawn].position, _spawnPositions[chosenSpawn].transform.rotation);
             _shipsToSpawn.RemoveAt(chosenShipToSpawn);
+            _spawnedShips += 1;
             yield return new WaitForSeconds(_spawnDelayTime);
         }
         _spawningShips = null;
@@ -197,6 +205,7 @@ public class SpawnManager : MonoBehaviour
     public void ShipDestroyed()
     {
         _shipsRemaining -= 1;
+        _spawnedShips -= 1;
         UpdateShipsRemainingText();
     }
 

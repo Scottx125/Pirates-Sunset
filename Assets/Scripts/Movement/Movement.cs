@@ -76,8 +76,6 @@ namespace PirateGame.Moving{
             if (_currentSpeed > _targetSpeed){
                 _currentSpeed -= AccelerationCalc(difference, _maxDecelerationRate * _structuralDamageModifier, _decelerationEasingFactor, _minDeceleration);
             }
-            // Clamp speed to ensure no engative or overspeed.
-            _currentSpeed = Mathf.Clamp(_currentSpeed, 0f, _targetSpeed);
             // sends current speed to listener. (determines turn rate based on speed.)
             if (_sendCurrentSpeedList != null)
             {

@@ -14,7 +14,7 @@ public class MoveToTargetState : State
     [SerializeField]
     private float _maxAngleToReduceSpeed = 67.5f;
     [SerializeField]
-    private float _maxDistanceForSlowdown = 60f;
+    private float _maxDistanceForSlowdown = 100f;
 
     // Current target (this is the base not the player)
     private string _targetable;
@@ -95,6 +95,7 @@ public class MoveToTargetState : State
         {
             // Calc path
             _currentWaypoint = _pathfinder.PathToTarget(_mainTarget, null);
+            
             // If we have a path move to it.
             if (_currentWaypoint != null)
             {

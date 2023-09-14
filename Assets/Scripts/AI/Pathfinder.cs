@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class Pathfinder : MonoBehaviour
 {
     [SerializeField]
-    private float _pathUpdateDelay = 1f;
+    private float _pathDelayTimeMin = 0.5f;
     [SerializeField]
     private float _marchOffset = 5f;
     [SerializeField]
@@ -19,6 +19,7 @@ public class Pathfinder : MonoBehaviour
     private List<Vector3> _waypoints = new List<Vector3>();
     private Coroutine _calculatingPath;
     private NavMeshPath _path;
+    private float _updateDelay = 0;
     private float _elapsedPathTime;
     private float _runTime;
     private int _currentWaypointIndex = 0;
@@ -47,7 +48,9 @@ public class Pathfinder : MonoBehaviour
 #nullable enable
     public Vector3? PathToTarget(Transform target, Vector3? desiredPosition)
     {
-        if (_elapsedPathTime >= _pathUpdateDelay && _calculatingPath == null)
+        Vector3 targetPos = desiredPosition ?? target.position;
+        _updateDelay = Mathf.Max(Mathf.Pow(Vector3.Distance(transform.position, targetPos) + 30f, 0.2f) - 1.5f, _pathDelayTimeMin);
+        if (_elapsedPathTime >= _updateDelay && _calculatingPath == null)
         {
             _waypoints.Clear();
             _calculatingPath = StartCoroutine(CalculatePath(target, desiredPosition));
