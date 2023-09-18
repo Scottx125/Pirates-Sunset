@@ -77,7 +77,6 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
 
     public override State RunCurrentState()
     {
-        
         _state = CheckRange();
         if (_state == _followState) return _state;
         CalculatedDesiredAttack();
@@ -237,15 +236,21 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
         }
         // Weights are weight + targetHealth + own structural health (longer range is affected more).
         float healthWeight = _structuralHealth * _shipHealthWeight;
-        _structuralAttack.WeightValue = (_structuralTargetWeight + _targetStructuralHealth) + (healthWeight / 3f);
+        _structuralAttack.TargetHealthValue = _targetStructuralHealth;
+        _structuralAttack.WeightValue = (_structuralTargetWeight + _targetStructuralHealth) + (healthWeight);
+
+        _mobiltiyAttack.TargetHealthValue = _targetMobilityHealth;
         _mobiltiyAttack.WeightValue = (_mobilityTargetWeight + _targetMobilityHealth) + (healthWeight / 2f);
-        _corporealAttack.WeightValue = (_corporealTargetWeight + _targetCorporealHealth) + (healthWeight);
+
+        _corporealAttack.TargetHealthValue = _targetCorporealHealth;
+        _corporealAttack.WeightValue = (_corporealTargetWeight + _targetCorporealHealth) + (healthWeight / 3);
+
         // Update attacks.
         // Here we decide what attack type we are going to be doing.
         // This only changes when one weight becomes higher than other weights, or if the current health is equal to 0.
 
-        if (_chosenAttack == null || _chosenAttack.TotalWeightValue < Mathf.Max(_structuralAttack.TotalWeightValue, _mobiltiyAttack.TotalWeightValue, _corporealAttack.TotalWeightValue)
-            || _chosenAttack.TotalWeightValue <= 0f)
+        if (_chosenAttack == null || _chosenAttack.GetTotalWeightValues < Mathf.Max(_structuralAttack.GetTotalWeightValues, _mobiltiyAttack.GetTotalWeightValues, _corporealAttack.GetTotalWeightValues)
+            || _chosenAttack.TargetHealthValue <= 0f)
         {
             // Reset the selected modifier on whatever current weight is chosen.
             if (_chosenAttack != null)
@@ -253,19 +258,18 @@ public class ShipAttackShipState : State , IStructuralDamageModifier, ICorporeal
                 _chosenAttack.SelectedModifier = 0f;
             }
             // Decide on attack.
-            if (_structuralAttack.WeightValue >= _mobiltiyAttack.WeightValue && _structuralAttack.WeightValue >= _corporealAttack.WeightValue)
+            if (_structuralAttack.WeightValue >= _mobiltiyAttack.WeightValue && _structuralAttack.WeightValue >= _corporealAttack.WeightValue && _structuralAttack.TargetHealthValue > 0)
             {
                 Debug.Log("long");
                 _chosenAttack = _structuralAttack;
                 _chosenAttack.SelectedModifier = _currentAttackTypeContinuationWeight;
             } else
-            if (_mobiltiyAttack.WeightValue >= _structuralAttack.WeightValue && _mobiltiyAttack.WeightValue >= _corporealAttack.WeightValue)
+            if (_mobiltiyAttack.WeightValue >= _corporealAttack.WeightValue && _mobiltiyAttack.TargetHealthValue > 0)
             {
                 Debug.Log("medium");
                 _chosenAttack = _mobiltiyAttack;
                 _chosenAttack.SelectedModifier = _currentAttackTypeContinuationWeight;
             } else
-            if (_corporealAttack.WeightValue >= _structuralAttack.WeightValue && _corporealAttack.WeightValue >= _mobiltiyAttack.WeightValue)
             {
                 Debug.Log("short");
                 _chosenAttack = _corporealAttack;

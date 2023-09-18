@@ -31,14 +31,27 @@ public class AttackTypesStruct
             _weightValue = value;
         }
     }
-    public float TotalWeightValue
+
+    public float TargetHealthValue
     {
         get
         {
-            return _weightValue + _selectedModifier;
+            return _targetHealthValue;
+        }
+        set
+        {
+            _targetHealthValue = value;
+        }
+    }
+    public float GetTotalWeightValues
+    {
+        get
+        {
+            return _weightValue + _selectedModifier + _targetHealthValue;
         }
     }
     private AmmunitionSO _ammoData;
     private float _selectedModifier;
     private float _weightValue;
+    private float _targetHealthValue;
 }
