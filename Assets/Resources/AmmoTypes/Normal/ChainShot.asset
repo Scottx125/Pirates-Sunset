@@ -30,8 +30,8 @@ MonoBehaviour:
     _repeatAmount: 0
   _ammunitionType: 1
   _maxRange: 200
-  _highestPointDistance: 200
-  _highestPointOffset: 40
+  _highestPointDistance: 150
+  _highestPointOffset: 35
   _rangeOffset: 5
   _angleOffset: 5
   _speed: 100

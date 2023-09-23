@@ -6,6 +6,17 @@ using Random = UnityEngine.Random;
 
 public class Projectile : MonoBehaviour
 {
+    [SerializeField]
+    private AudioClip[] _hullImpactSounds;
+    [SerializeField]
+    private AudioClip[] _sailImpactSounds;
+    [SerializeField]
+    private AudioClip[] _crewImpactSounds;
+    [SerializeField]
+    private AudioClip[] _seaImpactSounds;
+    [SerializeField]
+    private AudioClip[] _landImpactSounds;
+
     private float _maxRange;
     private float _highestPointDistance;
     private float _rangeOffset;
@@ -13,6 +24,7 @@ public class Projectile : MonoBehaviour
     private float _speed;
     private float _highestPointOffset;
     private float _currentDistance = 0f;
+    private float _disableWaitTime = 0f;
     private AmmunitionSO _coreDamage;
     private AmmunitionSO _bonusDamage;
     private Vector3 _highestPoint;
@@ -21,16 +33,21 @@ public class Projectile : MonoBehaviour
     private MeshRenderer _meshRenderer;
     private TrailRenderer _trailRenderer;
     private Coroutine _calculateFlightCoroutine;
+    private AudioClip _soundToPlay;
+    private AudioSource _audioSource;
+
 
     public void Setup(Transform parent){
         _startPoint = parent.transform.position;
         _meshRenderer = GetComponent<MeshRenderer>();
         _trailRenderer = GetComponentInChildren<TrailRenderer>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     public void UpdateProjectile(AmmunitionSO coreDamage, AmmunitionSO bonusDamage)
     {
         // Setup variables info from coreDamage.
+        _disableWaitTime = _trailRenderer.time;
         _trailRenderer.emitting = true;
         _meshRenderer.enabled = true;
         _coreDamage = coreDamage;
@@ -105,12 +122,12 @@ public class Projectile : MonoBehaviour
         // Sort ambient impacts.
         if (other.CompareTag("Sea"))
         {
-            // play splash animation and sound
+            DetermineDisableWaitTime(_seaImpactSounds);
             StartCoroutine(WaitBeforeDisable());
         }
         if (other.CompareTag("Land"))
         {
-            // play splash animation and sound
+            DetermineDisableWaitTime(_landImpactSounds);
             StartCoroutine(WaitBeforeDisable());
         }
     }
@@ -122,21 +139,52 @@ public class Projectile : MonoBehaviour
 
         if (_bonusDamage == null)
         {
-            iProcessDmg.RecieveDamage(_coreDamage.GetDamageAmounts);
+            iProcessDmg.RecieveDamage(_coreDamage.GetDamageAmounts);   
         }
         else
         {
             iProcessDmg.RecieveDamage(_coreDamage.GetDamageAmounts, _bonusDamage.GetDamageAmounts);
         }
+        DetermineDisableWaitTime(DetermineAmmoType());
         StartCoroutine(WaitBeforeDisable());
     }
 
     private IEnumerator WaitBeforeDisable(){
         StopCoroutine(_calculateFlightCoroutine);
-        _meshRenderer.enabled = false;
         _trailRenderer.emitting = false;
-        yield return new WaitForSeconds(_trailRenderer.time);
+        _meshRenderer.enabled = false;
+        if (_soundToPlay != null)
+        {
+            _audioSource.PlayOneShot(_soundToPlay);
+        }
+        yield return new WaitForSeconds(_disableWaitTime);
+        
         gameObject.SetActive(false);
+    }
+    private AudioClip[] DetermineAmmoType()
+    {
+        // Determine what sound array to play from.
+        switch (_coreDamage.GetAmmunitionType)
+        {
+            case AmmunitionTypeEnum.Round_Shot:
+                return _hullImpactSounds;
+            case AmmunitionTypeEnum.Chain_Shot:
+                return _sailImpactSounds;
+            case AmmunitionTypeEnum.Grape_Shot:
+                return _crewImpactSounds;
+                default:
+                return _hullImpactSounds;
+        }
+    }
+    private void DetermineDisableWaitTime(AudioClip[] audioArray)
+    {
+        // From the chosen array, choose a random sound and then determine if it's length is longer than the trail render.
+        // If it is delay death till the sound is finished.
+        int selection = Random.Range(0, audioArray.Length);
+        _soundToPlay = audioArray[selection];
+
+        if (_soundToPlay.length > _trailRenderer.time) _disableWaitTime = _soundToPlay.length;
+        else { _disableWaitTime = _trailRenderer.time; }
     }
 
 }
