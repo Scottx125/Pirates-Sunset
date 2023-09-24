@@ -49,7 +49,7 @@ public class SpawnManager : MonoBehaviour
     private List<HealthComponent> _playerHealth = new List<HealthComponent>();
 
 
-    private void Awake()
+    private void Start()
     {
         _instance = this;
         _currentLevelInt = _levelToStartOn;
@@ -185,7 +185,7 @@ public class SpawnManager : MonoBehaviour
         }
         UpdateShipsRemainingText();
         _spawnDelayTime = _currentLevelData.GetSpawnDelayTime;
-        _nextLevelDelayTime = _currentLevelData.GetSpawnDelayTime;
+        _nextLevelDelayTime = _currentLevelData.GetDelayToNextLevelTime;
         _nextLevelTimer = _nextLevelDelayTime;
     }
 

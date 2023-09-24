@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Small Enemy
   m_EditorClassIdentifier: 
   _sailStateChangeDelay: 1
-  _maxSpeed: 40
+  _maxSpeed: 30
   _minSpeed: 10
   _turnSpeedEasePoint: 2
   _maxTurnSpeed: 0.5

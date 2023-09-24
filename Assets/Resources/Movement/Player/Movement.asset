@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Movement
   m_EditorClassIdentifier: 
   _sailStateChangeDelay: 1
-  _maxSpeed: 30
+  _maxSpeed: 25
   _minSpeed: 10
   _turnSpeedEasePoint: 2
   _maxTurnSpeed: 0.4
-  _minTurnSpeed: 0.1
+  _minTurnSpeed: 0.2
   _maxAccelerationRate: 2
   _accelerationEasingFactor: 0.7
-  _minAcceleration: 0.3
+  _minAcceleration: 0.5
   _maxDecelerationRate: 2
   _decelerationEasingFactor: 0.7
-  _minDeceleration: 0.3
+  _minDeceleration: 0.5

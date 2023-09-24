@@ -30852,8 +30852,8 @@ MonoBehaviour:
   _maxAngleToReduceSpeed: 67.5
   _followState: {fileID: 4558124580871604572}
   _structuralTargetWeight: 0.1
-  _corporealTargetWeight: 0.5
-  _mobilityTargetWeight: 1
+  _corporealTargetWeight: 1
+  _mobilityTargetWeight: 0.5
   _currentAttackTypeContinuationWeight: 0.2
   _shipHealthWeight: 0.5
 --- !u!114 &5019395966926884960
