@@ -13,12 +13,9 @@ namespace PirateGame.Control{
         private IFireCannons _fireCannons;
         [SerializeField]
         private IChangeAmmo _changeAmmo;
+        [SerializeField]
+        private InputSO _inputSO;
 
-        // Will be used later.
-        private KeyCode increaseSail;
-        private KeyCode leftRudder;
-        private KeyCode rightRudder;
-        private KeyCode reefSail;
 
         private bool _acceptGameplayInput = true;
         private bool _mouseVisible;
@@ -92,12 +89,12 @@ namespace PirateGame.Control{
         private void MovementInput()
         {
             if (!_acceptGameplayInput) return;
-            if (Input.GetKey(KeyCode.W)){_movementManager.ChangeSpeed(null, true);}
-            if (Input.GetKey(KeyCode.S)){_movementManager.ChangeSpeed(null, false);}
-            if (Input.GetKeyDown(KeyCode.A)){_movementManager.TurnLeft(true);}
-            if (Input.GetKeyUp(KeyCode.A)){_movementManager.TurnLeft(false);}
-            if (Input.GetKeyDown(KeyCode.D)){_movementManager.TurnRight(true);}
-            if (Input.GetKeyUp(KeyCode.D)){_movementManager.TurnRight(false);}
+            if (Input.GetKey(_inputSO.ForwardKeyCode)){_movementManager.ChangeSpeed(null, true);}
+            if (Input.GetKey(_inputSO.BackKeyCode)){_movementManager.ChangeSpeed(null, false);}
+            if (Input.GetKeyDown(_inputSO.LeftKeyCode)){_movementManager.TurnLeft(true);}
+            if (Input.GetKeyUp(_inputSO.LeftKeyCode)){_movementManager.TurnLeft(false);}
+            if (Input.GetKeyDown(_inputSO.RightKeyCode)){_movementManager.TurnRight(true);}
+            if (Input.GetKeyUp(_inputSO.RightKeyCode)){_movementManager.TurnRight(false);}
         }
     }
 }
