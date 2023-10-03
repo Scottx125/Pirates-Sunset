@@ -89,12 +89,12 @@ namespace PirateGame.Control{
         private void MovementInput()
         {
             if (!_acceptGameplayInput) return;
-            if (Input.GetKey(_inputSO.ForwardKeyCode)){_movementManager.ChangeSpeed(null, true);}
-            if (Input.GetKey(_inputSO.BackKeyCode)){_movementManager.ChangeSpeed(null, false);}
-            if (Input.GetKeyDown(_inputSO.LeftKeyCode)){_movementManager.TurnLeft(true);}
-            if (Input.GetKeyUp(_inputSO.LeftKeyCode)){_movementManager.TurnLeft(false);}
-            if (Input.GetKeyDown(_inputSO.RightKeyCode)){_movementManager.TurnRight(true);}
-            if (Input.GetKeyUp(_inputSO.RightKeyCode)){_movementManager.TurnRight(false);}
+           // if (Input.GetKey(_inputSO.ForwardKeyCode)){_movementManager.ChangeSpeed(null, true);}
+           // if (Input.GetKey(_inputSO.BackKeyCode)){_movementManager.ChangeSpeed(null, false);}
+           // if (Input.GetKeyDown(_inputSO.LeftKeyCode)){_movementManager.TurnLeft(true);}
+           // if (Input.GetKeyUp(_inputSO.LeftKeyCode)){_movementManager.TurnLeft(false);}
+           // if (Input.GetKeyDown(_inputSO.RightKeyCode)){_movementManager.TurnRight(true);}
+           // if (Input.GetKeyUp(_inputSO.RightKeyCode)){_movementManager.TurnRight(false);}
         }
     }
 }

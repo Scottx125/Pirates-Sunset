@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,16 +5,7 @@ using UnityEngine;
 public class InputSO : ScriptableObject
 {
     [SerializeField]
-    private KeyCode _forward = KeyCode.W;
-    [SerializeField]
-    private KeyCode _back = KeyCode.S;
-    [SerializeField]
-    private KeyCode _left = KeyCode.A;
-    [SerializeField]
-    private KeyCode _right = KeyCode.D;
+    private List<KeyCodeStruct> _inputList;
 
-    public KeyCode ForwardKeyCode { get { return _forward; } set { _forward = value; } }
-    public KeyCode BackKeyCode { get { return _back; } set { _back = value; } }
-    public KeyCode LeftKeyCode { get { return _left; } set { _left = value; } }
-    public KeyCode RightKeyCode { get { return _right; } set { _right = value; } }
+    // Go through list, get keycode you want and return that or even set it.
 }
