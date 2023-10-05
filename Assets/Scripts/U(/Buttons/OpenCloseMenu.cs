@@ -5,12 +5,12 @@ using UnityEngine;
 public class OpenCloseMenu : MonoBehaviour
 {
     [SerializeField]
-    private Canvas _canvas;
+    private GameObject _gameObject;
     public void EnableDisable()
     {
-        if (_canvas != null)
+        if (_gameObject != null)
         {
-            _canvas.enabled = !_canvas.enabled;
+            _gameObject.SetActive(!_gameObject.activeInHierarchy);   
         }
     }
 }
