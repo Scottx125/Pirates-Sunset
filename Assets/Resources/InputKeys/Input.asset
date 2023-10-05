@@ -12,7 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf9036e6745cd064aad1eb26474d1b12, type: 3}
   m_Name: Input
   m_EditorClassIdentifier: 
-  _forward: 119
-  _back: 115
-  _left: 97
-  _right: 100
+  _inputList:
+  - _keybindEnum: 0
+    _keybindName: Increase Sails
+    _keycode: 119
+  - _keybindEnum: 1
+    _keybindName: Decrease Sails
+    _keycode: 115
+  - _keybindEnum: 2
+    _keybindName: Left Turn
+    _keycode: 97
+  - _keybindEnum: 3
+    _keybindName: Right Turn
+    _keycode: 100

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class KeybindsMenu : MonoBehaviour
@@ -14,6 +15,14 @@ public class KeybindsMenu : MonoBehaviour
     private void OnEnable()
     {
         // Match enum to object in _inputSO list.
+        foreach(KeyCodeStruct keycodeStruct in _inputSO.GetInputs)
+        {
+            if (keycodeStruct.GetKeybindEnum == _keybindEnum)
+            {
+                _text.text = keycodeStruct.GetName;
+                break;
+            }
+        }
     }
 
     private void OnDisable()
