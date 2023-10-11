@@ -16137,7 +16137,7 @@ PrefabInstance:
     - target: {fileID: 8080555073689809705, guid: 9fa3edcd2ea85ca46ab1f0557b10552e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1699131186}
+      objectReference: {fileID: 0}
     - target: {fileID: 8080555073689809705, guid: 9fa3edcd2ea85ca46ab1f0557b10552e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -16157,33 +16157,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3161059229595760642, guid: 9fa3edcd2ea85ca46ab1f0557b10552e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1699131186}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9fa3edcd2ea85ca46ab1f0557b10552e, type: 3}
 --- !u!224 &1699131184 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3895229810962897087, guid: 9fa3edcd2ea85ca46ab1f0557b10552e, type: 3}
   m_PrefabInstance: {fileID: 1699131183}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1699131185 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3161059229595760642, guid: 9fa3edcd2ea85ca46ab1f0557b10552e, type: 3}
-  m_PrefabInstance: {fileID: 1699131183}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1699131186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1699131185}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ce9b74ca344a4c4297879571f318268, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1722606492
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20234,11 +20214,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000032012835
+      value: -0.000000032012828
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000021341886
+      value: -0.000000021341883
       objectReference: {fileID: 0}
     - target: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_Name

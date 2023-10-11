@@ -25,3 +25,7 @@ MonoBehaviour:
   - _keybindEnum: 3
     _keybindName: Right Turn
     _keycode: 100
+  - _keybindEnum: 4
+    _keybindName: Options Menu
+    _keycode: 27
+  _blackList: 
