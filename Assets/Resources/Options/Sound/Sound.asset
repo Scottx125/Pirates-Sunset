@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 551cf17ee2dcfa444be774fc31f80d36, type: 3}
   m_Name: Sound
   m_EditorClassIdentifier: 
-  _musicAudioLevel: 0.5
-  _ambientAudioLevel: 0.5
-  _combatAudioLevel: 0.5
+  _soundOptionsDataList:
+  - _soundOptionEnum: 1
+    _soundOptionName: Music
+    _soundOptionLevel: 0.5
+  - _soundOptionEnum: 0
+    _soundOptionName: Ambient
+    _soundOptionLevel: 0.5
+  - _soundOptionEnum: 2
+    _soundOptionName: Combat
+    _soundOptionLevel: 0.5
