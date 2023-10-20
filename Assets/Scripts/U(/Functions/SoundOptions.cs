@@ -7,9 +7,8 @@ using UnityEngine.UI;
 
 public class SoundOptions : MonoBehaviour, IApplySettings
 {
-    // Hold the slider value temp.
-    // On enable load the current value.
-    // Load the SO on awake. When we apply set the SO setting to the temp setting. 
+    public static event Action OnSoundOptionsApplyEvent;
+
     [SerializeField]
     private SoundSO _soundData;
     [SerializeField]
@@ -19,7 +18,7 @@ public class SoundOptions : MonoBehaviour, IApplySettings
     [SerializeField]
     private TextMeshProUGUI _soundOptionTitle;
 
-    private SoundOptionObject _optionStruct;
+    private SoundOptionObject _optionObject;
     private float _soundLevel;
     private string _soundOptionName;
     
@@ -37,13 +36,13 @@ public class SoundOptions : MonoBehaviour, IApplySettings
             {
                 if (x.GetSoundEnum == _desiredOptionDataEnum)
                 {
-                    _optionStruct = x;
+                    _optionObject = x;
                 }
             }
         } else { Debug.LogError("SOUND DATA NOT FOUND!"); }
 
-        _soundLevel = _optionStruct.GetSetSoundLevel;
-        _soundOptionName = _optionStruct.GetName;
+        _soundLevel = _optionObject.GetSetSoundLevel;
+        _soundOptionName = _optionObject.GetName;
 
         if (_soundOptionTitle != null)
         {
@@ -58,13 +57,14 @@ public class SoundOptions : MonoBehaviour, IApplySettings
 
     private void OnEnable()
     {
-        _soundLevel = _optionStruct.GetSetSoundLevel;
+        _soundLevel = _optionObject.GetSetSoundLevel;
         _slider.value = _soundLevel;
     }
 
     public void Apply()
     {
         _soundLevel = _slider.value;
-        _optionStruct.GetSetSoundLevel = _soundLevel;
+        _optionObject.GetSetSoundLevel = _soundLevel;
+        OnSoundOptionsApplyEvent();
     }
 }

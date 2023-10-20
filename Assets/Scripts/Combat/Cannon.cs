@@ -1,3 +1,4 @@
+using PirateGame.Helpers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,8 @@ public class Cannon : MonoBehaviour
     private AudioClip[] _cannonFireSFX;
     [SerializeField]
     private GameObject _cannonFireParticles;
+    [SerializeField]
+    private SoundSO _soundSO;
     [SerializeField]
     private AudioSource _audioSource;
     [SerializeField]
@@ -23,9 +26,20 @@ public class Cannon : MonoBehaviour
     private float _reloadTime;
     private ICannonManagerLoaded _cannonManagerLoaded;
     private int _currentProjectileIndex = 0;
+    private SoundOptionObject _soundOptionObject;
 
     public bool GetCannonLoaded => _loaded;
     public CannonPositionEnum GetCannonPosition => _position;
+
+    private void OnEnable()
+    {
+        SoundOptions.OnSoundOptionsApplyEvent += UpdateSoundSettings;
+    }
+
+    private void OnDisable()
+    {
+        SoundOptions.OnSoundOptionsApplyEvent -= UpdateSoundSettings;
+    }
 
     public void Setup(ICannonManagerLoaded cannonManagerLoaded, CannonSO cannonData){
         _cannonManagerLoaded = cannonManagerLoaded;
@@ -35,7 +49,18 @@ public class Cannon : MonoBehaviour
         _maxReloadTime = cannonData.GetMaxReloadTime;
         _reloadTime = _minReloadTime;
 
-        if (_audioSource == null) GetComponent<AudioSource>();
+        // Load sound setting and set it up.
+        if (_soundSO != null)
+        {
+            _soundOptionObject = StaticHelpers.GetRequiredSoundObject(_soundSO.GetSoundOptionsData ,SoundOptionEnums.Combat);
+        }
+
+        if (_audioSource != null)
+        {
+            UpdateSoundSettings();
+        }
+
+        else { GetComponent<AudioSource>(); }
 
         // Instantiate all assigned projectiles and set them up.
         for(int i = 0; i <= _projectileGameObj.Count - 1; i++){
@@ -46,6 +71,7 @@ public class Cannon : MonoBehaviour
             _projectileGameObj[i].SetActive(false);
         }
     }
+
     // Handle the firing of the cannon as a coroutine.
     public IEnumerator Fire(AmmunitionSO coreDamage, AmmunitionSO bonusDamage = null)
     {
@@ -64,6 +90,11 @@ public class Cannon : MonoBehaviour
     // Modifys the reload time based on the passed health modifier.
     public void ModifyReloadTime(float modifier){
         _reloadTime = Mathf.Clamp(_minReloadTime * (1f + (1f - modifier)), _minReloadTime, _maxReloadTime);
+    }
+
+    private void UpdateSoundSettings()
+    {
+        _audioSource.volume = _soundOptionObject.GetSetSoundLevel;
     }
 
     private void SetupAndLaunchProjectile(AmmunitionSO coreDamage, AmmunitionSO bonusDamage)

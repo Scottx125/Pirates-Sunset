@@ -50,6 +50,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: db1bbfad06405ef4aa494e7b16d9f034, type: 3}
   - {fileID: 8300000, guid: adf2956fa8bcd92428540bb3aefdd8b9, type: 3}
   _cannonFireParticles: {fileID: 8030794947859611212}
+  _soundSO: {fileID: 11400000, guid: 3d6adc5459128f141a339e275496c23d, type: 2}
   _audioSource: {fileID: 8107729469301140163}
   _position: 1
   _projectileGameObj:

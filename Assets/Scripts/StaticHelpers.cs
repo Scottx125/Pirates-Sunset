@@ -1,5 +1,8 @@
 using System;
- namespace PirateGame.Helpers{
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace PirateGame.Helpers{
     public static class StaticHelpers
     {
             // Retrieves the sail enum value based on the int state of _sailState.
@@ -12,5 +15,16 @@ using System;
             return Enum.GetValues(typeof(SpeedModifierEnum)).Length;
         }
 
+        public static SoundOptionObject GetRequiredSoundObject(List<SoundOptionObject> soundObjects, SoundOptionEnums enumToSearchFor)
+        {
+            foreach (SoundOptionObject soundOptionObject in soundObjects)
+            {
+                if (soundOptionObject.GetSoundEnum == enumToSearchFor)
+                {
+                    return soundOptionObject;
+                }
+            }
+            return null;
+        }
     }
  }

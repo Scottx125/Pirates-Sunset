@@ -14645,6 +14645,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1541568935}
   - component: {fileID: 1541568934}
+  - component: {fileID: 1541568937}
   - component: {fileID: 1541568936}
   m_Layer: 4
   m_Name: Ocean
@@ -14926,6 +14927,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1541568937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541568933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf3ebccfabf6f44699d76848b6d1baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundSO: {fileID: 11400000, guid: 3d6adc5459128f141a339e275496c23d, type: 2}
+  _audioSource: {fileID: 1541568936}
 --- !u!1 &1541904463
 GameObject:
   m_ObjectHideFlags: 0
