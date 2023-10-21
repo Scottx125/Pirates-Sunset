@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6046134352428037427}
   - component: {fileID: 5402996827923426191}
   - component: {fileID: 8107729469301140163}
+  - component: {fileID: 2629888794113894451}
   m_Layer: 0
   m_Name: Cannon
   m_TagString: Untagged
@@ -46,13 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 552cff40d3c59254f9d9297387fa6756, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cannonFireSFX:
-  - {fileID: 8300000, guid: db1bbfad06405ef4aa494e7b16d9f034, type: 3}
-  - {fileID: 8300000, guid: adf2956fa8bcd92428540bb3aefdd8b9, type: 3}
   _cannonFireParticles: {fileID: 8030794947859611212}
-  _soundSO: {fileID: 11400000, guid: 3d6adc5459128f141a339e275496c23d, type: 2}
-  _audioSource: {fileID: 8107729469301140163}
   _position: 1
+  _audioHandler: {fileID: 2629888794113894451}
   _projectileGameObj:
   - {fileID: 2627008322823057784, guid: 77fbbacd87a4d2e48a882861a87d7e0b, type: 3}
   - {fileID: 2627008322823057784, guid: 77fbbacd87a4d2e48a882861a87d7e0b, type: 3}
@@ -154,6 +151,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2629888794113894451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270777097877593808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27774ed8183d77e479a87f22fcfcd0c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundSO: {fileID: 11400000, guid: 3d6adc5459128f141a339e275496c23d, type: 2}
+  _clips:
+  - {fileID: 8300000, guid: adf2956fa8bcd92428540bb3aefdd8b9, type: 3}
+  - {fileID: 8300000, guid: db1bbfad06405ef4aa494e7b16d9f034, type: 3}
+  _soundOptionsEnum: 2
+  _audioSource: {fileID: 8107729469301140163}
 --- !u!1001 &8030794947859805650
 PrefabInstance:
   m_ObjectHideFlags: 0

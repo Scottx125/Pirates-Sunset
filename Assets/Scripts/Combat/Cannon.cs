@@ -6,15 +6,11 @@ using UnityEngine;
 public class Cannon : MonoBehaviour
 {
     [SerializeField]
-    private AudioClip[] _cannonFireSFX;
-    [SerializeField]
     private GameObject _cannonFireParticles;
     [SerializeField]
-    private SoundSO _soundSO;
-    [SerializeField]
-    private AudioSource _audioSource;
-    [SerializeField]
     private CannonPositionEnum _position;
+    [SerializeField]
+    private AudioHandler _audioHandler;
     [SerializeField]
     private List<GameObject> _projectileGameObj = new List<GameObject>();
     private List<Projectile> _projectile = new List<Projectile>();
@@ -26,20 +22,10 @@ public class Cannon : MonoBehaviour
     private float _reloadTime;
     private ICannonManagerLoaded _cannonManagerLoaded;
     private int _currentProjectileIndex = 0;
-    private SoundOptionObject _soundOptionObject;
 
     public bool GetCannonLoaded => _loaded;
     public CannonPositionEnum GetCannonPosition => _position;
 
-    private void OnEnable()
-    {
-        SoundOptions.OnSoundOptionsApplyEvent += UpdateSoundSettings;
-    }
-
-    private void OnDisable()
-    {
-        SoundOptions.OnSoundOptionsApplyEvent -= UpdateSoundSettings;
-    }
 
     public void Setup(ICannonManagerLoaded cannonManagerLoaded, CannonSO cannonData){
         _cannonManagerLoaded = cannonManagerLoaded;
@@ -50,17 +36,11 @@ public class Cannon : MonoBehaviour
         _reloadTime = _minReloadTime;
 
         // Load sound setting and set it up.
-        if (_soundSO != null)
+        if (_audioHandler == null)
         {
-            _soundOptionObject = StaticHelpers.GetRequiredSoundObject(_soundSO.GetSoundOptionsData ,SoundOptionEnums.Combat);
+            Debug.LogError("Cannon has no instance of AudioHandler.");
+            return;
         }
-
-        if (_audioSource != null)
-        {
-            UpdateSoundSettings();
-        }
-
-        else { GetComponent<AudioSource>(); }
 
         // Instantiate all assigned projectiles and set them up.
         for(int i = 0; i <= _projectileGameObj.Count - 1; i++){
@@ -79,7 +59,7 @@ public class Cannon : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(_minFiringDelay, _maxFiringDelay));
         // Launch projectile.
         EnableDisableEffects();
-        PlayAudio();
+        _audioHandler.PlayAudio();
         SetupAndLaunchProjectile(coreDamage, bonusDamage);
         CalculateNextProjectileIndex();
         yield return new WaitForSeconds(_reloadTime);
@@ -92,11 +72,6 @@ public class Cannon : MonoBehaviour
         _reloadTime = Mathf.Clamp(_minReloadTime * (1f + (1f - modifier)), _minReloadTime, _maxReloadTime);
     }
 
-    private void UpdateSoundSettings()
-    {
-        _audioSource.volume = _soundOptionObject.GetSetSoundLevel;
-    }
-
     private void SetupAndLaunchProjectile(AmmunitionSO coreDamage, AmmunitionSO bonusDamage)
     {
         _projectileGameObj[_currentProjectileIndex].SetActive(true);
@@ -107,14 +82,6 @@ public class Cannon : MonoBehaviour
     private void EnableDisableEffects()
     {
         _cannonFireParticles.SetActive(!_cannonFireParticles.activeSelf);
-    }
-
-    private void PlayAudio()
-    {
-        if (_cannonFireSFX.Length == 0) return;
-        int soundToPlay = Random.Range(0,_cannonFireSFX.Length - 1);
-        _audioSource.clip = _cannonFireSFX[soundToPlay];
-        _audioSource.Play();
     }
 
     private void CalculateNextProjectileIndex()
