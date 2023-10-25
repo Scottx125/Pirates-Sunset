@@ -14,13 +14,13 @@ public class KeybindsMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        // Match enum to object in _inputSO list.
-        foreach(KeyCodeStruct keycodeStruct in _inputSO.GetInputs)
+        // Match enum to object in _inputSO list and cache object.
+        // Load object data such as keycode name, enum name etc.
+        foreach(KeyCodeObject keycodeStruct in _inputSO.GetInputs)
         {
             if (keycodeStruct.GetKeybindEnum == _keybindEnum)
             {
-                _text.text = keycodeStruct.GetName;
-                break;
+
             }
         }
     }

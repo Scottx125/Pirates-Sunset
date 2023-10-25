@@ -4,11 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Input", menuName = "ScriptableObjects/Options/Input", order = 2)]
 public class InputSO : ScriptableObject
 {
-    public List<KeyCodeStruct> GetInputs => _inputList;
+    public List<KeyCodeObject> GetInputs => _inputList;
     public List<KeyCode> GetInputBlacklist => _blackList;
 
     [SerializeField]
-    private List<KeyCodeStruct> _inputList;
+    private List<KeyCodeObject> _inputList;
     [SerializeField]
     private List<KeyCode> _blackList;
 

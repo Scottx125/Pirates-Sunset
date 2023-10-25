@@ -14,18 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputList:
   - _keybindEnum: 0
-    _keybindName: Increase Sails
     _keycode: 119
   - _keybindEnum: 1
-    _keybindName: Decrease Sails
     _keycode: 115
   - _keybindEnum: 2
-    _keybindName: Left Turn
-    _keycode: 97
+    _keycode: 268
   - _keybindEnum: 3
-    _keybindName: Right Turn
     _keycode: 100
   - _keybindEnum: 4
-    _keybindName: Options Menu
     _keycode: 27
   _blackList: 
