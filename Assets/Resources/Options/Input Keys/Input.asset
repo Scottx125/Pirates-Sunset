@@ -18,7 +18,7 @@ MonoBehaviour:
   - _keybindEnum: 1
     _keycode: 115
   - _keybindEnum: 2
-    _keycode: 268
+    _keycode: 97
   - _keybindEnum: 3
     _keycode: 100
   - _keybindEnum: 4
