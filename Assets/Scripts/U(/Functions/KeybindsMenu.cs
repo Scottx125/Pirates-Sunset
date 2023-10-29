@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 public class KeybindsMenu : MonoBehaviour, IApplySettings
 {
@@ -33,7 +34,8 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
 
     private void Setup()
     {
-        _keybindsMenus = GetComponents<KeybindsMenu>();
+        _keybindsMenus = transform.parent.GetComponentsInChildren<KeybindsMenu>();
+
         // Match enum to object in _inputSO list and cache object.
         // Load object data such as keycode name, enum name etc.
         foreach (KeyCodeObject obj in _inputSO.GetInputs)
@@ -60,20 +62,7 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
     public void ChangeKeyCode()
     {
         StartCoroutine(WaitForKeyPress());
-        // check if the keycode is blacklisted.
-        if (CheckForBlacklist() == true) return;
-
-        // Check if the key is already set to something else.
-        CheckForSharedKeyCode();
-
-        // Set obj keycode to the temp keycode.
-        _keyCodeObject.GetSetKeyCode = _tempKeyCode;
-
-        // Update the text on all the KBM to reflect changes.
-        foreach(KeybindsMenu kbm in _keybindsMenus)
-        {
-            kbm.UpdateKeybindsUI();
-        }
+        Apply();
     }
 
     public void UpdateKeybindsUI()
@@ -94,16 +83,42 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
 
     private IEnumerator WaitForKeyPress()
     {
-        Event e = Event.current;
         while (true)
         {
-            if (e.isKey)
+            yield return new WaitUntil(() => Input.anyKeyDown);
+
+            _tempKeyCode = DetectKeyPressed();
+
+            // check if the keycode is blacklisted.
+            if (CheckForBlacklist() == true) break;
+
+            // Check if the key is already set to something else.
+            CheckForSharedKeyCode();
+
+            // Set obj keycode to the temp keycode.
+            _keyCodeObject.GetSetKeyCode = _tempKeyCode;
+
+            // Update the text on all the KBM to reflect changes.
+            foreach (KeybindsMenu kbm in _keybindsMenus)
             {
-                _tempKeyCode = e.keyCode;
-                break;
+                kbm.UpdateKeybindsUI();
             }
+
+            yield break;
         }
         yield return null;
+    }
+
+    private KeyCode DetectKeyPressed()
+    {
+        foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
+        {
+            if (Input.GetKeyDown(keyCode))
+            {
+                return keyCode;
+            }
+        }
+        return KeyCode.None;
     }
 
     private IEnumerator BlackListedKey()
