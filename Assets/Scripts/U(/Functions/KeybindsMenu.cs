@@ -59,10 +59,9 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
         RenameUIText();
     }
 
-    public void ChangeKeyCode()
+    public void InitiateChangeKey()
     {
-        StartCoroutine(WaitForKeyPress());
-        Apply();
+        StartCoroutine(ChangeKey());
     }
 
     public void UpdateKeybindsUI()
@@ -72,7 +71,10 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
 
     public void Apply()
     {
-        OnKeybindOptionsApplyEvent();
+        if (OnKeybindOptionsApplyEvent != null)
+        {
+            OnKeybindOptionsApplyEvent();
+        }
     }
 
     private void RenameUIText()
@@ -81,12 +83,12 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
         _enumText.text = _keyCodeObject.GetKeybindEnum.ToString();
     }
 
-    private IEnumerator WaitForKeyPress()
+    private IEnumerator ChangeKey()
     {
         while (true)
         {
             yield return new WaitUntil(() => Input.anyKeyDown);
-
+            
             _tempKeyCode = DetectKeyPressed();
 
             // check if the keycode is blacklisted.
@@ -103,6 +105,8 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
             {
                 kbm.UpdateKeybindsUI();
             }
+            
+            Apply();
 
             yield break;
         }

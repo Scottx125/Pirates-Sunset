@@ -23,4 +23,4 @@ MonoBehaviour:
     _keycode: 100
   - _keybindEnum: 4
     _keycode: 27
-  _blackList: 
+  _blackList: 4301000044010000

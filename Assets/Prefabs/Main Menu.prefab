@@ -186,7 +186,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Mein Menu
+  m_text: Main Menu
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 24b63bb22c445a6488338abed1962c16, type: 2}
   m_sharedMaterial: {fileID: 5345264816056684430, guid: 24b63bb22c445a6488338abed1962c16, type: 2}
