@@ -6,25 +6,23 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-public class KeybindsMenu : MonoBehaviour, IApplySettings
+public class KeybindsMenu : MonoBehaviour, IApplySettings, ISaveable
 {
     public static event Action OnKeybindOptionsApplyEvent;
+
+    public KeyCode KeyCode { get { return _keyCode; } set { _keyCode = value;} }
 
     [SerializeField]
     private InputSO _inputSO;
     [SerializeField]
-    public KeybindMenuEnums _keybindEnum;
-    [SerializeField]
     private TextMeshProUGUI _keybindText;
-    [SerializeField]
-    private TextMeshProUGUI _enumText;
     [SerializeField]
     private GameObject _blacklistedGameObjectText;
     [SerializeField]
     private float _blacklistTextMessageApperanceTime = 2.5f;
 
-    private KeyCodeObject _keyCodeObject;
     private KeyCode _tempKeyCode;
+    private KeyCode _keyCode;
     private KeybindsMenu[] _keybindsMenus;
 
     private void Awake()
@@ -35,22 +33,6 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
     private void Setup()
     {
         _keybindsMenus = transform.parent.GetComponentsInChildren<KeybindsMenu>();
-
-        // Match enum to object in _inputSO list and cache object.
-        // Load object data such as keycode name, enum name etc.
-        foreach (KeyCodeObject obj in _inputSO.GetInputs)
-        {
-            if (obj.GetKeybindEnum == _keybindEnum)
-            {
-                _keyCodeObject = obj;
-            }
-        }
-        if (_keyCodeObject == null)
-        {
-            Debug.LogError("{0} keycodeObject is null!", this.gameObject);
-            return;
-        }
-
         RenameUIText();
     }
 
@@ -79,8 +61,7 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
 
     private void RenameUIText()
     {
-        _keybindText.text = _keyCodeObject.GetSetKeyCode.ToString();
-        _enumText.text = _keyCodeObject.GetKeybindEnum.ToString();
+        _keybindText.text = _keyCode.ToString();
     }
 
     private IEnumerator ChangeKey()
@@ -98,7 +79,7 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
             CheckForSharedKeyCode();
 
             // Set obj keycode to the temp keycode.
-            _keyCodeObject.GetSetKeyCode = _tempKeyCode;
+            _keyCode = _tempKeyCode;
 
             // Update the text on all the KBM to reflect changes.
             foreach (KeybindsMenu kbm in _keybindsMenus)
@@ -136,12 +117,12 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
 
     private void CheckForSharedKeyCode()
     {
-        foreach (KeyCodeObject obj in _inputSO.GetInputs)
+        foreach (KeybindsMenu kbm in _keybindsMenus)
         {
-            if (_tempKeyCode == obj.GetSetKeyCode && obj != _keyCodeObject)
+            if (_tempKeyCode == kbm.KeyCode && kbm != this)
             {
                 // Change original to be the current keycode of this object.
-                obj.GetSetKeyCode = _keyCodeObject.GetSetKeyCode;
+                kbm.KeyCode = _keyCode;
             }
         }
     }
@@ -157,5 +138,15 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
             }
         }
         return false;
+    }
+
+    public object CaptureState()
+    {
+        return _keyCode;
+    }
+
+    public void RestoreState(object state)
+    {
+        _keyCode = (KeyCode)state;
     }
 }

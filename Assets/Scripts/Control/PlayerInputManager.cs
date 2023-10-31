@@ -64,6 +64,8 @@ namespace PirateGame.Control{
             Fire();
         }
 
+        // FIND UNIQUE IDENTIFER TO LOAD CORRECT SETTINGS
+        // THEN STORE ALL THE KEYCODEOBJECTS IN A LIST AND DO WHAT WE'RE DOING BELOW.
         private void UpdateKeybindings()
         {
             // Setup keys, essentially overrides last key.
