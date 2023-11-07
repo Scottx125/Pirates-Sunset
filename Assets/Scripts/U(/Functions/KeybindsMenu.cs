@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-public class KeybindsMenu : MonoBehaviour, IApplySettings, ISaveable
+public class KeybindsMenu : MonoBehaviour, IApplySettings
 {
     public static event Action OnKeybindOptionsApplyEvent;
 
@@ -138,15 +138,5 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings, ISaveable
             }
         }
         return false;
-    }
-
-    public object CaptureState()
-    {
-        return _keyCode;
-    }
-
-    public void RestoreState(object state)
-    {
-        _keyCode = (KeyCode)state;
     }
 }

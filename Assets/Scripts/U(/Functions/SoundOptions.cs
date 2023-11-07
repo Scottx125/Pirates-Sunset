@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SoundOptions : MonoBehaviour, IApplySettings, ISaveable
+public class SoundOptions : MonoBehaviour, IApplySettings
 {
     public static event Action OnSoundOptionsApplyEvent;
 
@@ -34,15 +34,5 @@ public class SoundOptions : MonoBehaviour, IApplySettings, ISaveable
     {
         _soundLevel = _slider.value;
         OnSoundOptionsApplyEvent();
-    }
-
-    public object CaptureState()
-    {
-        return _soundLevel;
-    }
-
-    public void RestoreState(object state)
-    {
-        _soundLevel = (float)state;
     }
 }

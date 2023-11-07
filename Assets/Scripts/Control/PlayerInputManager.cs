@@ -16,19 +16,9 @@ namespace PirateGame.Control{
         [SerializeField]
         private IChangeAmmo _changeAmmo;
         [SerializeField]
-        private InputSO _inputSO;
-        [SerializeField]
         private GameObject _optionsMenu;
 
-        private Dictionary<KeybindMenuEnums, KeyCode> _inputKeysDict = new Dictionary<KeybindMenuEnums, KeyCode>
-        {
-            { KeybindMenuEnums.Accelerate , KeyCode.None },
-            { KeybindMenuEnums.Decelerate , KeyCode.None },
-            { KeybindMenuEnums.Left , KeyCode.None },
-            { KeybindMenuEnums.Right , KeyCode.None },
-            { KeybindMenuEnums.Options , KeyCode.None },
-        };
-
+        private SettingsSystem _settings;
         private bool _acceptGameplayInput = true;
         private bool _mouseVisible;
 
@@ -39,22 +29,9 @@ namespace PirateGame.Control{
             if (_cameraInterfaces == null) _cameraInterfaces = cameraInterfaces;
             if (_fireCannons == null) _fireCannons = fireCannons;
             if (_changeAmmo == null) _changeAmmo = changeAmmo;
-            if (_inputSO == null)
-            {
-                Debug.LogError("PlayerInputManager has no _inputSO!");
-                return;
-            }
-            UpdateKeybindings();
+            _settings = SettingsSystem.Instance;
         }
 
-        private void OnEnable()
-        {
-            KeybindsMenu.OnKeybindOptionsApplyEvent += UpdateKeybindings;
-        }
-        private void OnDisable()
-        {
-            KeybindsMenu.OnKeybindOptionsApplyEvent -= UpdateKeybindings;
-        }
 
         private void Update(){
             Input();
@@ -62,20 +39,6 @@ namespace PirateGame.Control{
             CameraState();
             ChangeAmmo();
             Fire();
-        }
-
-        // FIND UNIQUE IDENTIFER TO LOAD CORRECT SETTINGS
-        // THEN STORE ALL THE KEYCODEOBJECTS IN A LIST AND DO WHAT WE'RE DOING BELOW.
-        private void UpdateKeybindings()
-        {
-            // Setup keys, essentially overrides last key.
-            foreach (KeyCodeObject obj in _inputSO.GetInputs)
-            {
-                if (_inputKeysDict.ContainsKey(obj.GetKeybindEnum))
-                {
-                    _inputKeysDict[obj.GetKeybindEnum] = obj.GetSetKeyCode;
-                }
-            }
         }
 
         private void ChangeAmmo()
@@ -146,19 +109,19 @@ namespace PirateGame.Control{
         // Trigger movement.
         private void Input()
         {
-            if (UnityEngine.Input.GetKeyDown(_inputKeysDict[KeybindMenuEnums.Options])) 
+            if (UnityEngine.Input.GetKeyDown(_settings.keyCodeDict[KeybindMenuEnums.Options])) 
             {
                 if (_optionsMenu == null) return;
                 _optionsMenu.SetActive(!_optionsMenu.activeSelf);
                 EnableDisableInputs();
             }
             if (!_acceptGameplayInput) return;
-            if (UnityEngine.Input.GetKey(_inputKeysDict[KeybindMenuEnums.Accelerate])){ _movementManager.ChangeSpeed(null, true);}
-            if (UnityEngine.Input.GetKey(_inputKeysDict[KeybindMenuEnums.Decelerate])) { _movementManager.ChangeSpeed(null, false);}
-            if (UnityEngine.Input.GetKeyDown(_inputKeysDict[KeybindMenuEnums.Left])) { _movementManager.TurnLeft(true);}
-            if (UnityEngine.Input.GetKeyUp(_inputKeysDict[KeybindMenuEnums.Left])) { _movementManager.TurnLeft(false);}
-            if (UnityEngine.Input.GetKeyDown(_inputKeysDict[KeybindMenuEnums.Right])) { _movementManager.TurnRight(true);}
-            if (UnityEngine.Input.GetKeyUp(_inputKeysDict[KeybindMenuEnums.Right])) { _movementManager.TurnRight(false);}
+            if (UnityEngine.Input.GetKey(_settings.keyCodeDict[KeybindMenuEnums.Accelerate])){ _movementManager.ChangeSpeed(null, true);}
+            if (UnityEngine.Input.GetKey(_settings.keyCodeDict[KeybindMenuEnums.Decelerate])) { _movementManager.ChangeSpeed(null, false);}
+            if (UnityEngine.Input.GetKeyDown(_settings.keyCodeDict[KeybindMenuEnums.Left])) { _movementManager.TurnLeft(true);}
+            if (UnityEngine.Input.GetKeyUp(_settings.keyCodeDict[KeybindMenuEnums.Left])) { _movementManager.TurnLeft(false);}
+            if (UnityEngine.Input.GetKeyDown(_settings.keyCodeDict[KeybindMenuEnums.Right])) { _movementManager.TurnRight(true);}
+            if (UnityEngine.Input.GetKeyUp(_settings.keyCodeDict[KeybindMenuEnums.Right])) { _movementManager.TurnRight(false);}
         }
     }
 }

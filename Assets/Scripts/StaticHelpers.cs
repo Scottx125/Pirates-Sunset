@@ -26,5 +26,10 @@ namespace PirateGame.Helpers{
             }
             return null;
         }
+
+        public static T GetEnumFromString<T>(string value)
+        {
+            return (T)Enum.Parse(typeof(T), value);
+        }
     }
  }
