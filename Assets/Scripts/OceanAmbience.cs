@@ -1,4 +1,6 @@
+using Palmmedia.ReportGenerator.Core;
 using PirateGame.Helpers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,23 +8,13 @@ using UnityEngine;
 public class OceanAmbience : MonoBehaviour
 {
     [SerializeField]
-    private SoundSO _soundSO;
-    [SerializeField]
     private AudioSource _audioSource;
 
-    private SoundOptionObject _soundOptionObject;
-    private void Awake()
-    {
-        // Load sound setting and set it up.
-        if (_soundSO != null)
-        {
-            _soundOptionObject = StaticHelpers.GetRequiredSoundObject(_soundSO.GetSoundOptionsData, SoundOptionEnums.Ambient);
-        }
+    private SettingsSystem _settings;
 
-        if (_audioSource != null)
-        {
-            UpdateSoundSettings();
-        }
+    private void Start()
+    {
+        Setup();
     }
     private void OnEnable()
     {
@@ -34,8 +26,16 @@ public class OceanAmbience : MonoBehaviour
         SoundOptions.OnSoundOptionsApplyEvent -= UpdateSoundSettings;
     }
 
+    private void Setup()
+    {
+        _settings = SettingsSystem.Instance;
+        if (_audioSource != null)
+        {
+            _audioSource.volume = _settings.soundDict[SoundOptionEnums.Ambient];
+        }
+    }
     private void UpdateSoundSettings()
     {
-        _audioSource.volume = _soundOptionObject.GetSetSoundLevel;
+        _audioSource.volume = _settings.soundDict[SoundOptionEnums.Ambient];
     }
 }

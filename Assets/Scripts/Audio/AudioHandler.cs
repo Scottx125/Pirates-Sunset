@@ -4,15 +4,13 @@ using UnityEngine;
 public class AudioHandler : MonoBehaviour
 {
     [SerializeField]
-    private SoundSO _soundSO;
-    [SerializeField]
     private AudioClip[] _clips;
     [SerializeField]
     private SoundOptionEnums _soundOptionsEnum;
     [SerializeField]
     private AudioSource _audioSource;
 
-    private SoundOptionObject _soundOptionObject;
+    private SettingsSystem _settings;
     private void OnEnable()
     {
         SoundOptions.OnSoundOptionsApplyEvent += UpdateSoundSettings;
@@ -23,25 +21,20 @@ public class AudioHandler : MonoBehaviour
         SoundOptions.OnSoundOptionsApplyEvent -= UpdateSoundSettings;
     }
 
-    private void Awake()
+    private void Start()
     {
         Setup();
     }
 
     private void Setup()
     {
+        _settings = SettingsSystem.Instance;
         if (_audioSource == null)
         {
             Debug.LogError("AudioHandler has no AudioSource.");
             return;
         }
-        if (_soundSO == null)
-        {
-            Debug.LogError("AudioHandler has no SoundSO.");
-            return;
-        }
-        else { _soundOptionObject = StaticHelpers.GetRequiredSoundObject(_soundSO.GetSoundOptionsData, _soundOptionsEnum); }
-
+        _audioSource.volume = _settings.soundDict[_soundOptionsEnum];
         // After every dependency is accounted for set sound options to initial.
         UpdateSoundSettings();
     }
@@ -60,6 +53,6 @@ public class AudioHandler : MonoBehaviour
 
     private void UpdateSoundSettings()
     {
-        _audioSource.volume = _soundOptionObject.GetSetSoundLevel;
+        _audioSource.volume = _settings.soundDict[_soundOptionsEnum];
     }
 }

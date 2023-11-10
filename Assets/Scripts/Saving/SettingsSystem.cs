@@ -9,17 +9,20 @@ public class SettingsSystem : MonoBehaviour
 {
     public static SettingsSystem Instance { get; private set; }
 
-    public float ambientVolume;
-    public float combatVolume;
-    public float musicVolume;
+    public Dictionary<SoundOptionEnums, float> soundDict = new Dictionary<SoundOptionEnums, float>
+    {
+        { SoundOptionEnums.Ambient, .5f },
+        { SoundOptionEnums.Combat, .5f },
+        { SoundOptionEnums.Music, .5f }
+    };
 
     public Dictionary<KeybindMenuEnums, KeyCode> keyCodeDict = new Dictionary<KeybindMenuEnums, KeyCode>
     {
-        { KeybindMenuEnums.Accelerate, KeyCode.None },
-        { KeybindMenuEnums.Decelerate, KeyCode.None },
-        { KeybindMenuEnums.Left, KeyCode.None },
-        { KeybindMenuEnums.Right, KeyCode.None },
-        { KeybindMenuEnums.Options, KeyCode.None },
+        { KeybindMenuEnums.Accelerate, KeyCode.W },
+        { KeybindMenuEnums.Decelerate, KeyCode.S },
+        { KeybindMenuEnums.Left, KeyCode.A },
+        { KeybindMenuEnums.Right, KeyCode.D },
+        { KeybindMenuEnums.Options, KeyCode.Escape },
     };
 
     private void Awake()
@@ -46,10 +49,11 @@ public class SettingsSystem : MonoBehaviour
     {
         // Save keybinds based on enum list from dict.
         string fileContent =
+            "PLEASE ENSURE EVERYTHING IS CORRECTLY FORMATTED WHEN EDITING THIS FILE AS IT MAY CAUSE ERRORS!\n" +
             "---Sound---\n" +
-            "[Sound] Ambient = " + ambientVolume + "\n" +
-            "[Sound] Combat = " + combatVolume + "\n" +
-            "[Sound] Music = " + musicVolume + "\n" +
+            "[Sound] Ambient = (" + SoundOptionEnums.Ambient + ") = " + soundDict[SoundOptionEnums.Ambient].ToString() + "\n" +
+            "[Sound] Combat = (" + SoundOptionEnums.Combat + ") = " + soundDict[SoundOptionEnums.Combat].ToString() + "\n" +
+            "[Sound] Music = (" + SoundOptionEnums.Music + ") = " + soundDict[SoundOptionEnums.Music].ToString() + "\n" +
             "---Keybinds---\n" +
             "[Keybind] Accelerate (" + KeybindMenuEnums.Accelerate + ") = " + keyCodeDict[KeybindMenuEnums.Accelerate].ToString() + "\n" +
             "[Keybind] Decelerate (" + KeybindMenuEnums.Decelerate + ") = " + keyCodeDict[KeybindMenuEnums.Decelerate].ToString() + "\n" +
@@ -95,7 +99,7 @@ public class SettingsSystem : MonoBehaviour
                 // Get Value.
                 string dictValue = parts[2].Trim();
                 KeyCode keyCode = StaticHelpers.GetEnumFromString<KeyCode>(dictValue);
-
+                
                 // Apply.
                 if (keyCodeDict.ContainsKey(key))
                 {
@@ -108,24 +112,28 @@ public class SettingsSystem : MonoBehaviour
 
     private void ParseSoundSettings(string line)
     {
+        // Splits the string
         string[] parts = line.Split('=');
-
         if (parts.Length == 2)
         {
-            string key = parts[0].Trim();
-            float value = float.Parse(parts[1].Trim());
-
-            switch (key)
+            // Split at ( gives name and key value of for example 1)
+            string[] keyParts = parts[0].Split('(');
+            if (keyParts.Length == 2)
             {
-                case "Ambient":
-                    ambientVolume = value;
-                    break;
-                case "Combat":
-                    combatVolume = value;
-                    break;
-                case "Music":
-                    musicVolume = value;
-                    break;
+                // Get key.
+                string dictKeyString = keyParts[1].Trim();
+                dictKeyString = dictKeyString.Substring(0, dictKeyString.Length - 1);
+                SoundOptionEnums key = StaticHelpers.GetEnumFromString<SoundOptionEnums>(dictKeyString);
+
+                // Get Value.
+                string dictValueString = parts[2].Trim();
+                float dictValue = float.Parse(dictValueString);
+                // Apply.
+                if (soundDict.ContainsKey(key))
+                {
+                    soundDict[key] = dictValue;
+                }
+
             }
         }
 
