@@ -8,26 +8,28 @@ public class Apply : MonoBehaviour
     [SerializeField]
     List<GameObject> _settingsObjects;
 
-    private List<SoundOptions> _soundOptions = new List<SoundOptions>();
-
-    private void Awake()
+    private List<ISaveSettings> _settingOptions = new List<ISaveSettings>();
+    private SettingsSystem _settingsSystem;
+    private void Start()
     {
         Setup();
     }
 
     private void Setup()
     {
+        _settingsSystem = SettingsSystem.Instance;
         foreach(GameObject gameObject in _settingsObjects)
         {
-            _soundOptions.Add(gameObject.GetComponentInChildren<SoundOptions>());
+            _settingOptions.Add(gameObject.GetComponentInChildren<ISaveSettings>());
         }
     }
 
     public void ApplySettings()
     {
-        foreach (IApplySettings obj in _soundOptions)
+        foreach (ISaveSettings obj in _settingOptions)
         {
-            obj.Apply();
+            obj.SaveSettings();
         }
+        _settingsSystem.SaveSettings();
     }
 }

@@ -25,6 +25,8 @@ public class SettingsSystem : MonoBehaviour
         { KeybindMenuEnums.Options, KeyCode.Escape },
     };
 
+    private string _filepath = AppDomain.CurrentDomain.BaseDirectory + "Settings.txt";
+
     private void Awake()
     {
         Setup();
@@ -32,6 +34,7 @@ public class SettingsSystem : MonoBehaviour
 
     private void Setup()
     {
+        Debug.Log(_filepath);
         if (Instance == null)
         {
             Instance = this;
@@ -41,8 +44,14 @@ public class SettingsSystem : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        LoadSettings();
+        if (File.Exists(_filepath))
+        {
+            LoadSettings();
+        } else
+        {
+            SaveSettings();
+            LoadSettings();
+        }
     }
 
     public void SaveSettings()
@@ -51,22 +60,22 @@ public class SettingsSystem : MonoBehaviour
         string fileContent =
             "PLEASE ENSURE EVERYTHING IS CORRECTLY FORMATTED WHEN EDITING THIS FILE AS IT MAY CAUSE ERRORS!\n" +
             "---Sound---\n" +
-            "[Sound] Ambient = (" + SoundOptionEnums.Ambient + ") = " + soundDict[SoundOptionEnums.Ambient].ToString() + "\n" +
-            "[Sound] Combat = (" + SoundOptionEnums.Combat + ") = " + soundDict[SoundOptionEnums.Combat].ToString() + "\n" +
-            "[Sound] Music = (" + SoundOptionEnums.Music + ") = " + soundDict[SoundOptionEnums.Music].ToString() + "\n" +
+            SoundOptionEnums.Ambient.ToString() + " = " + soundDict[SoundOptionEnums.Ambient].ToString() + "\n" +
+            SoundOptionEnums.Combat.ToString() + " = " + soundDict[SoundOptionEnums.Combat].ToString() + "\n" +
+            SoundOptionEnums.Music.ToString() + " = " + soundDict[SoundOptionEnums.Music].ToString() + "\n" +
             "---Keybinds---\n" +
-            "[Keybind] Accelerate (" + KeybindMenuEnums.Accelerate + ") = " + keyCodeDict[KeybindMenuEnums.Accelerate].ToString() + "\n" +
-            "[Keybind] Decelerate (" + KeybindMenuEnums.Decelerate + ") = " + keyCodeDict[KeybindMenuEnums.Decelerate].ToString() + "\n" +
-            "[Keybind] Left (" + KeybindMenuEnums.Left + ") = " + keyCodeDict[KeybindMenuEnums.Left].ToString() + "\n" +
-            "[Keybind] Right (" + KeybindMenuEnums.Right + ") = " + keyCodeDict[KeybindMenuEnums.Right].ToString() + "\n" +
-            "[Keybind] Options (" + KeybindMenuEnums.Options + ") = " + keyCodeDict[KeybindMenuEnums.Options].ToString();
+            KeybindMenuEnums.Accelerate.ToString() + " = " + keyCodeDict[KeybindMenuEnums.Accelerate].ToString() + "\n" +
+            KeybindMenuEnums.Decelerate.ToString() + " = " + keyCodeDict[KeybindMenuEnums.Decelerate].ToString() + "\n" +
+            KeybindMenuEnums.Left.ToString() + " = " + keyCodeDict[KeybindMenuEnums.Left].ToString() + "\n" +
+            KeybindMenuEnums.Right.ToString() + " = " + keyCodeDict[KeybindMenuEnums.Right].ToString() + "\n" +
+            KeybindMenuEnums.Options.ToString() + " = " + keyCodeDict[KeybindMenuEnums.Options].ToString();
 
-        System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "Settings.txt", fileContent);
+        System.IO.File.WriteAllText(_filepath, fileContent);
     }
     
     private void LoadSettings()
     {
-        string[] lines = System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "Settings.txt");
+        string[] lines = System.IO.File.ReadAllLines(_filepath);
 
         foreach(string line in lines)
         {
@@ -77,7 +86,7 @@ public class SettingsSystem : MonoBehaviour
             if (line.StartsWith("[Keybind]"))
             {
                 ParseKeybindSettings(line);
-            } else { Debug.LogError("Settings file not found!"); }
+            }
         }
     }
 
@@ -85,28 +94,19 @@ public class SettingsSystem : MonoBehaviour
     {
         // Splits the string
         string[] parts = line.Split('=');
-        if (parts.Length == 2)
-        {
-            // Split at ( gives name and key value of for example 1)
-            string[] keyParts = parts[0].Split('(');
-            if (keyParts.Length == 2)
-            {
-                // Get key.
-                string dictKeyString = keyParts[1].Trim();
-                dictKeyString = dictKeyString.Substring(0, dictKeyString.Length  - 1);
-                KeybindMenuEnums key = StaticHelpers.GetEnumFromString<KeybindMenuEnums>(dictKeyString);
+        string stringKey = parts[0].Trim();
+        string stringValue = parts[1].Trim();
 
-                // Get Value.
-                string dictValue = parts[2].Trim();
-                KeyCode keyCode = StaticHelpers.GetEnumFromString<KeyCode>(dictValue);
+        // Get key.
+        KeybindMenuEnums key = StaticHelpers.GetEnumFromString<KeybindMenuEnums>(stringKey);
+
+        // Get Value.
+        KeyCode keyCode = StaticHelpers.GetEnumFromString<KeyCode>(stringValue);
                 
-                // Apply.
-                if (keyCodeDict.ContainsKey(key))
-                {
-                    keyCodeDict[key] = keyCode;
-                }
-
-            }
+        // Apply.
+        if (keyCodeDict.ContainsKey(key))
+        {
+            keyCodeDict[key] = keyCode;
         }
     }
 
@@ -114,28 +114,22 @@ public class SettingsSystem : MonoBehaviour
     {
         // Splits the string
         string[] parts = line.Split('=');
-        if (parts.Length == 2)
+        string stringKey = parts[0].Trim();
+        string stringValue = parts[1].Trim();
+
+        // Get key.
+        SoundOptionEnums key = StaticHelpers.GetEnumFromString<SoundOptionEnums>(stringKey);
+
+        // Get Value.
+        float volume = float.Parse(stringValue);
+
+        // Apply.
+        if (soundDict.ContainsKey(key))
         {
-            // Split at ( gives name and key value of for example 1)
-            string[] keyParts = parts[0].Split('(');
-            if (keyParts.Length == 2)
-            {
-                // Get key.
-                string dictKeyString = keyParts[1].Trim();
-                dictKeyString = dictKeyString.Substring(0, dictKeyString.Length - 1);
-                SoundOptionEnums key = StaticHelpers.GetEnumFromString<SoundOptionEnums>(dictKeyString);
-
-                // Get Value.
-                string dictValueString = parts[2].Trim();
-                float dictValue = float.Parse(dictValueString);
-                // Apply.
-                if (soundDict.ContainsKey(key))
-                {
-                    soundDict[key] = dictValue;
-                }
-
-            }
+            soundDict[key] = volume;
         }
+
+
 
     }
 }

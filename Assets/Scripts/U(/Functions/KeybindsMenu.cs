@@ -6,12 +6,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-public class KeybindsMenu : MonoBehaviour, IApplySettings
+public class KeybindsMenu : MonoBehaviour, ISaveSettings
 {
-    public static event Action OnKeybindOptionsApplyEvent;
-
     public KeyCode KeyCode { get { return _keyCode; } set { _keyCode = value;} }
 
+    [SerializeField]
+    private KeybindMenuEnums _desiredKeyForThisObj;
     [SerializeField]
     private InputSO _inputSO;
     [SerializeField]
@@ -24,14 +24,17 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
     private KeyCode _tempKeyCode;
     private KeyCode _keyCode;
     private KeybindsMenu[] _keybindsMenus;
+    private SettingsSystem _settingsSystem;
 
-    private void Awake()
+    private void Start()
     {
         Setup();
     }
 
     private void Setup()
     {
+        _settingsSystem = SettingsSystem.Instance;
+        _settingsSystem.keyCodeDict.TryGetValue(_desiredKeyForThisObj, out _keyCode);
         _keybindsMenus = transform.parent.GetComponentsInChildren<KeybindsMenu>();
         RenameUIText();
     }
@@ -51,12 +54,9 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
         RenameUIText();
     }
 
-    public void Apply()
+    public void SaveSettings()
     {
-        if (OnKeybindOptionsApplyEvent != null)
-        {
-            OnKeybindOptionsApplyEvent();
-        }
+        _settingsSystem.keyCodeDict[_desiredKeyForThisObj] = _keyCode;
     }
 
     private void RenameUIText()
@@ -81,13 +81,8 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
             // Set obj keycode to the temp keycode.
             _keyCode = _tempKeyCode;
 
-            // Update the text on all the KBM to reflect changes.
-            foreach (KeybindsMenu kbm in _keybindsMenus)
-            {
-                kbm.UpdateKeybindsUI();
-            }
-            
-            Apply();
+            // Update the text.
+            UpdateKeybindsUI();
 
             yield break;
         }
@@ -123,6 +118,7 @@ public class KeybindsMenu : MonoBehaviour, IApplySettings
             {
                 // Change original to be the current keycode of this object.
                 kbm.KeyCode = _keyCode;
+                kbm.UpdateKeybindsUI();
             }
         }
     }
