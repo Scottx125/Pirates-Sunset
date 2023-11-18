@@ -30,6 +30,6 @@ public class Apply : MonoBehaviour
         {
             obj.SaveSettings();
         }
-        _settingsSystem.SaveSettings();
+        _settingsSystem.SaveSettings(false);
     }
 }

@@ -29,7 +29,26 @@ namespace PirateGame.Helpers{
 
         public static T GetEnumFromString<T>(string value)
         {
-            return (T)Enum.Parse(typeof(T), value);
+            return (T)Enum.Parse(typeof(T), value, true);
+        }
+        
+        public static bool IsDefinedIgnoreCase(Type enumType, string value)
+        {
+            if (!enumType.IsEnum)
+            {
+                throw new ArgumentException("Type provided is not an enum!");
+            }
+
+            string[] names = Enum.GetNames(enumType);
+
+            foreach(string name in names)
+            {
+                if (string.Equals(name, value, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
  }
