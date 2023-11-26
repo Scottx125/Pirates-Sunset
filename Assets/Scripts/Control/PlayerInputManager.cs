@@ -18,18 +18,24 @@ namespace PirateGame.Control{
         [SerializeField]
         private GameObject _optionsMenu;
 
-        private SettingsSystem _settings;
+        private IGetData _systemSettingGetData;
         private bool _acceptGameplayInput = true;
         private bool _mouseVisible;
 
         public void SetGameplayInput(bool x) => _acceptGameplayInput = x;
         public void Setup(MovementManager movementManager, ICameraInterfaces cameraInterfaces, IFireCannons fireCannons, IChangeAmmo changeAmmo)
         {
+            SettingsSystem settingsSystem = FindFirstObjectByType<SettingsSystem>();
+            if (settingsSystem == null)
+            {
+                Debug.LogError("Cannot find SettingsSystem!");
+                return;
+            }
+            _systemSettingGetData = settingsSystem;
             if (_movementManager == null) _movementManager = movementManager;
             if (_cameraInterfaces == null) _cameraInterfaces = cameraInterfaces;
             if (_fireCannons == null) _fireCannons = fireCannons;
             if (_changeAmmo == null) _changeAmmo = changeAmmo;
-            _settings = SettingsSystem.Instance;
         }
 
 
@@ -109,19 +115,19 @@ namespace PirateGame.Control{
         // Trigger movement.
         private void Input()
         {
-            if (UnityEngine.Input.GetKeyDown(_settings.keyCodeDict[KeybindMenuEnums.Options])) 
+            if (UnityEngine.Input.GetKeyDown(_systemSettingGetData.GetData<KeybindMenuEnums, KeyCode>(KeybindMenuEnums.Options))) 
             {
                 if (_optionsMenu == null) return;
                 _optionsMenu.SetActive(!_optionsMenu.activeSelf);
                 EnableDisableInputs();
             }
             if (!_acceptGameplayInput) return;
-            if (UnityEngine.Input.GetKey(_settings.keyCodeDict[KeybindMenuEnums.Accelerate])){ _movementManager.ChangeSpeed(null, true);}
-            if (UnityEngine.Input.GetKey(_settings.keyCodeDict[KeybindMenuEnums.Decelerate])) { _movementManager.ChangeSpeed(null, false);}
-            if (UnityEngine.Input.GetKeyDown(_settings.keyCodeDict[KeybindMenuEnums.Left])) { _movementManager.TurnLeft(true);}
-            if (UnityEngine.Input.GetKeyUp(_settings.keyCodeDict[KeybindMenuEnums.Left])) { _movementManager.TurnLeft(false);}
-            if (UnityEngine.Input.GetKeyDown(_settings.keyCodeDict[KeybindMenuEnums.Right])) { _movementManager.TurnRight(true);}
-            if (UnityEngine.Input.GetKeyUp(_settings.keyCodeDict[KeybindMenuEnums.Right])) { _movementManager.TurnRight(false);}
+            if (UnityEngine.Input.GetKey(_systemSettingGetData.GetData<KeybindMenuEnums, KeyCode>(KeybindMenuEnums.Accelerate))){ _movementManager.ChangeSpeed(null, true);}
+            if (UnityEngine.Input.GetKey(_systemSettingGetData.GetData<KeybindMenuEnums, KeyCode>(KeybindMenuEnums.Decelerate))) { _movementManager.ChangeSpeed(null, false);}
+            if (UnityEngine.Input.GetKeyDown(_systemSettingGetData.GetData<KeybindMenuEnums, KeyCode>(KeybindMenuEnums.Left))) { _movementManager.TurnLeft(true);}
+            if (UnityEngine.Input.GetKeyUp(_systemSettingGetData.GetData<KeybindMenuEnums, KeyCode>(KeybindMenuEnums.Left))) { _movementManager.TurnLeft(false);}
+            if (UnityEngine.Input.GetKeyDown(_systemSettingGetData.GetData<KeybindMenuEnums, KeyCode>(KeybindMenuEnums.Right))) { _movementManager.TurnRight(true);}
+            if (UnityEngine.Input.GetKeyUp(_systemSettingGetData.GetData<KeybindMenuEnums, KeyCode>(KeybindMenuEnums.Right))) { _movementManager.TurnRight(false);}
         }
     }
 }

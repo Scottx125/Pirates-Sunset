@@ -9,7 +9,7 @@ public class Apply : MonoBehaviour
     List<GameObject> _settingsObjects;
 
     private List<ISaveSettings> _settingOptions = new List<ISaveSettings>();
-    private SettingsSystem _settingsSystem;
+    private ISaveSettingsToFile _settingsSystem;
     private void Start()
     {
         Setup();
@@ -17,7 +17,7 @@ public class Apply : MonoBehaviour
 
     private void Setup()
     {
-        _settingsSystem = SettingsSystem.Instance;
+        _settingsSystem = FindFirstObjectByType<SettingsSystem>();
         foreach(GameObject gameObject in _settingsObjects)
         {
             _settingOptions.Add(gameObject.GetComponentInChildren<ISaveSettings>());
@@ -30,6 +30,6 @@ public class Apply : MonoBehaviour
         {
             obj.SaveSettings();
         }
-        _settingsSystem.SaveSettings(false);
+        _settingsSystem.SaveSettingsToFile(false);
     }
 }

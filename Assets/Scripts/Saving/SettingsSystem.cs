@@ -1,23 +1,22 @@
 using PirateGame.Helpers;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
+using Object = System.Object;
 
-public class SettingsSystem : MonoBehaviour
+public class SettingsSystem : MonoBehaviour, ISaveSettingsToFile, IGetData, ISetData
 {
     public static SettingsSystem Instance { get; private set; }
 
-    public Dictionary<SoundOptionEnums, float> soundDict = new Dictionary<SoundOptionEnums, float>
+    private Dictionary<SoundOptionEnums, float> soundDict = new Dictionary<SoundOptionEnums, float>
     {
         { SoundOptionEnums.Ambient, 0f },
         { SoundOptionEnums.Combat, 0f },
         { SoundOptionEnums.Music, 0f }
     };
 
-    public Dictionary<KeybindMenuEnums, KeyCode> keyCodeDict = new Dictionary<KeybindMenuEnums, KeyCode>
+    private Dictionary<KeybindMenuEnums, KeyCode> keyCodeDict = new Dictionary<KeybindMenuEnums, KeyCode>
     {
         { KeybindMenuEnums.Accelerate, KeyCode.None },
         { KeybindMenuEnums.Decelerate, KeyCode.None },
@@ -62,13 +61,13 @@ public class SettingsSystem : MonoBehaviour
             LoadSettings();
         } else
         {
-            SaveSettings(true);
+            SaveSettingsToFile(true);
             LoadSettings();
         }
     }
 
 
-    public void SaveSettings(bool createDefault)
+    public void SaveSettingsToFile(bool createDefault)
     {
         string fileContent;
         if (createDefault)
@@ -154,8 +153,34 @@ public class SettingsSystem : MonoBehaviour
         {
             soundDict[key] = Mathf.Clamp01(volume);
         }
+    }
 
+    public void SetData<T, TData>(T key, object value) where T : Enum where TData : struct
+    {
+        if (typeof(T) == typeof(KeybindMenuEnums) && typeof(TData) == typeof(KeyCode))
+        {
+            KeybindMenuEnums accessor = (KeybindMenuEnums)(object)key;
+            keyCodeDict[accessor] = (KeyCode)value;
+        }
+        else
+        if (typeof(T) == typeof(SoundOptionEnums) && typeof(TData) == typeof(float))
+        {
+            SoundOptionEnums accessor = (SoundOptionEnums)(object)key;
+            soundDict[accessor] = (float)value;
+        }
+    }
 
-
+    public TData GetData<T, TData>(T key) where T : Enum where TData : struct
+    {
+        if (typeof(T) == typeof(KeybindMenuEnums))
+        {
+            KeybindMenuEnums accessor = (KeybindMenuEnums)(object)key;
+            return (TData)(object)keyCodeDict[accessor];
+        } else
+        if (typeof(T) == typeof(SoundOptionEnums))
+        {
+            SoundOptionEnums accessor = (SoundOptionEnums)(object)key;
+            return (TData)(object)soundDict[accessor];
+        } else { return (TData)(object)null; }
     }
 }

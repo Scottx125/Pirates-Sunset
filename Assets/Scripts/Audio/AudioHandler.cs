@@ -6,11 +6,12 @@ public class AudioHandler : MonoBehaviour
     [SerializeField]
     private AudioClip[] _clips;
     [SerializeField]
-    private SoundOptionEnums _soundOptionsEnum;
+    private SoundOptionEnums _desiredKeyForThisObj;
     [SerializeField]
     private AudioSource _audioSource;
 
-    private SettingsSystem _settings;
+    private IGetData _systemSettingsGetData;
+
     private void OnEnable()
     {
         SoundOptions.OnSoundOptionsApplyEvent += UpdateSoundSettings;
@@ -28,13 +29,17 @@ public class AudioHandler : MonoBehaviour
 
     private void Setup()
     {
-        _settings = SettingsSystem.Instance;
+        SettingsSystem settingsSystem = FindFirstObjectByType<SettingsSystem>();
+        if (settingsSystem == null)
+        {
+            Debug.LogError("Cannot find SettingsSystem!");
+            return;
+        }
         if (_audioSource == null)
         {
             Debug.LogError("AudioHandler has no AudioSource.");
             return;
         }
-        _audioSource.volume = _settings.soundDict[_soundOptionsEnum];
         // After every dependency is accounted for set sound options to initial.
         UpdateSoundSettings();
     }
@@ -53,6 +58,6 @@ public class AudioHandler : MonoBehaviour
 
     private void UpdateSoundSettings()
     {
-        _audioSource.volume = _settings.soundDict[_soundOptionsEnum];
+        _audioSource.volume = _systemSettingsGetData.GetData<SoundOptionEnums, float>(_desiredKeyForThisObj);
     }
 }

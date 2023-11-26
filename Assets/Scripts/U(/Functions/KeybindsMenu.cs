@@ -26,7 +26,8 @@ public class KeybindsMenu : MonoBehaviour, ISaveSettings
     private KeyCode _tempKeyCode;
     private KeyCode _keyCode;
     private KeybindsMenu[] _keybindsMenus;
-    private SettingsSystem _settingsSystem;
+    private IGetData _systemSettingsGetData;
+    private ISetData _systemSettingsSetData;
 
     private void Start()
     {
@@ -35,8 +36,15 @@ public class KeybindsMenu : MonoBehaviour, ISaveSettings
 
     private void Setup()
     {
-        _settingsSystem = SettingsSystem.Instance;
-        _settingsSystem.keyCodeDict.TryGetValue(_desiredKeyForThisObj, out _keyCode);
+        SettingsSystem settingsSystem = FindFirstObjectByType<SettingsSystem>();
+        if (settingsSystem == null)
+        {
+            Debug.LogError("Cannot find SettingsSystem!");
+            return;
+        }
+        _systemSettingsGetData = settingsSystem;
+        _systemSettingsSetData = settingsSystem;
+        _keyCode = _systemSettingsGetData.GetData<KeybindMenuEnums,KeyCode>(_desiredKeyForThisObj);
         _keybindsMenus = transform.parent.GetComponentsInChildren<KeybindsMenu>();
         _actionText.text = _desiredKeyForThisObj.ToString();
         _tempKeyCode = _keyCode;
@@ -59,7 +67,7 @@ public class KeybindsMenu : MonoBehaviour, ISaveSettings
         {
             _keyCode = _tempKeyCode;
         }
-        _settingsSystem.keyCodeDict[_desiredKeyForThisObj] = _keyCode;
+        _systemSettingsSetData.SetData<KeybindMenuEnums, KeyCode>(_desiredKeyForThisObj, _keyCode);
     }
 
     public void Reset()
