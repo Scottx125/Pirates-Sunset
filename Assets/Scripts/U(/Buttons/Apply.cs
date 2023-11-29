@@ -17,7 +17,7 @@ public class Apply : MonoBehaviour
 
     private void Setup()
     {
-        _settingsSystem = FindFirstObjectByType<SettingsSystem>();
+        _settingsSystem = SettingsSystem.Instance;
         foreach(GameObject gameObject in _settingsObjects)
         {
             _settingOptions.Add(gameObject.GetComponentInChildren<ISaveSettings>());

@@ -29,12 +29,8 @@ public class AudioHandler : MonoBehaviour
 
     private void Setup()
     {
-        SettingsSystem settingsSystem = FindFirstObjectByType<SettingsSystem>();
-        if (settingsSystem == null)
-        {
-            Debug.LogError("Cannot find SettingsSystem!");
-            return;
-        }
+        _systemSettingsGetData = SettingsSystem.Instance;
+        _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null)
         {
             Debug.LogError("AudioHandler has no AudioSource.");
@@ -58,6 +54,6 @@ public class AudioHandler : MonoBehaviour
 
     private void UpdateSoundSettings()
     {
-        _audioSource.volume = _systemSettingsGetData.GetData<SoundOptionEnums, float>(_desiredKeyForThisObj);
+        _audioSource.volume = _systemSettingsGetData.GetSoundData(_desiredKeyForThisObj);
     }
 }

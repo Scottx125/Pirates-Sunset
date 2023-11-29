@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4521.649, g: 2938.9832, b: 2273.8088, a: 1}
+  m_IndirectSpecularColor: {r: 4610.602, g: 2945.4114, b: 2167.1658, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1368,8 +1368,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27774ed8183d77e479a87f22fcfcd0c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _clips: []
-  _soundOptionsEnum: 1
+  _clips:
+  - {fileID: 8300000, guid: 121a05926f33b6c468668ef1ced46669, type: 3}
+  _desiredKeyForThisObj: 0
   _audioSource: {fileID: 2104026925}
 --- !u!1 &2107165198
 GameObject:
@@ -2745,6 +2746,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1964409194}
     m_Modifications:
+    - target: {fileID: 259810291818127424, guid: 1869336ccaea51c49b7a99c92935acc6, type: 3}
+      propertyPath: _desiredKeyForThisObj
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 605788132307645986, guid: 1869336ccaea51c49b7a99c92935acc6, type: 3}
       propertyPath: m_Name
       value: Sound Settings
@@ -2828,6 +2833,10 @@ PrefabInstance:
     - target: {fileID: 3549975274874576389, guid: 1869336ccaea51c49b7a99c92935acc6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5573004790074028957, guid: 1869336ccaea51c49b7a99c92935acc6, type: 3}
+      propertyPath: _desiredKeyForThisObj
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

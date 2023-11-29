@@ -1,5 +1,8 @@
 using System;
+using UnityEngine;
+
 public interface IGetData 
 {
-    public TData GetData<T, TData>(T key) where T : Enum where TData : struct;
+    public KeyCode GetKeyCodeData(KeybindMenuEnums key);
+    public float GetSoundData(SoundOptionEnums key);
 }

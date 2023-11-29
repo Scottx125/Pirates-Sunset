@@ -20,7 +20,6 @@ public class SoundOptions : MonoBehaviour, ISaveSettings
     private IGetData _systemSettingsGetData;
     private ISetData _systemSettingsSetData;
 
-
     private void Start()
     {
         Setup();
@@ -28,17 +27,11 @@ public class SoundOptions : MonoBehaviour, ISaveSettings
 
     private void Setup()
     {
-        SettingsSystem settingsSystem = FindFirstObjectByType<SettingsSystem>();
-        if (settingsSystem == null)
-        {
-            Debug.LogError("Cannot find SettingsSystem!");
-            return;
-        }
-        _systemSettingsGetData = settingsSystem;
-        _systemSettingsSetData = settingsSystem;
+        _systemSettingsGetData = SettingsSystem.Instance;
+        _systemSettingsSetData = SettingsSystem.Instance;
         if (_slider != null)
         {
-            _soundLevel = _systemSettingsGetData.GetData<SoundOptionEnums, float>(_desiredKeyForThisObj);
+            _soundLevel = _systemSettingsGetData.GetSoundData(_desiredKeyForThisObj);
             _slider.value = _soundLevel;
         } else { Debug.LogError("SLIDER IN SOUND OPTIONS NOT SETUP!"); }
         
@@ -48,7 +41,7 @@ public class SoundOptions : MonoBehaviour, ISaveSettings
     {
         _soundLevel = _slider.value;
 
-        _systemSettingsSetData.SetData<SoundOptionEnums, float>(_desiredKeyForThisObj, _soundLevel);
+        _systemSettingsSetData.SetSoundData(_desiredKeyForThisObj, _soundLevel);
 
         OnSoundOptionsApplyEvent();
     }

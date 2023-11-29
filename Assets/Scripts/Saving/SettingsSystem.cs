@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using Object = System.Object;
 
 public class SettingsSystem : MonoBehaviour, ISaveSettingsToFile, IGetData, ISetData
 {
@@ -52,7 +51,7 @@ public class SettingsSystem : MonoBehaviour, ISaveSettingsToFile, IGetData, ISet
             Instance = this;
             DontDestroyOnLoad(this);
         }
-        else
+        if (Instance != this)
         {
             Destroy(gameObject);
         }
@@ -91,11 +90,11 @@ public class SettingsSystem : MonoBehaviour, ISaveSettingsToFile, IGetData, ISet
 
         System.IO.File.WriteAllText(_filepath, fileContent);
     }
-    
+
     private void LoadSettings()
     {
         string[] lines = System.IO.File.ReadAllLines(_filepath);
-        foreach(string line in lines)
+        foreach (string line in lines)
         {
             if (!line.Contains("=")) continue;
 
@@ -128,7 +127,7 @@ public class SettingsSystem : MonoBehaviour, ISaveSettingsToFile, IGetData, ISet
 
         // Get Value.
         KeyCode keyCode = StaticHelpers.GetEnumFromString<KeyCode>(parts[1]);
-                
+
         // Apply.
         // Check added to prevent duplicate keys.
         if (keyCodeDict.ContainsKey(key) && !keyCodeDict.ContainsValue(keyCode))
@@ -155,32 +154,20 @@ public class SettingsSystem : MonoBehaviour, ISaveSettingsToFile, IGetData, ISet
         }
     }
 
-    public void SetData<T, TData>(T key, object value) where T : Enum where TData : struct
+    public void SetKeyCodeData(KeybindMenuEnums key, KeyCode value)
     {
-        if (typeof(T) == typeof(KeybindMenuEnums) && typeof(TData) == typeof(KeyCode))
-        {
-            KeybindMenuEnums accessor = (KeybindMenuEnums)(object)key;
-            keyCodeDict[accessor] = (KeyCode)value;
-        }
-        else
-        if (typeof(T) == typeof(SoundOptionEnums) && typeof(TData) == typeof(float))
-        {
-            SoundOptionEnums accessor = (SoundOptionEnums)(object)key;
-            soundDict[accessor] = (float)value;
-        }
+        keyCodeDict[key] = value;
     }
-
-    public TData GetData<T, TData>(T key) where T : Enum where TData : struct
+    public void SetSoundData(SoundOptionEnums key, float value)
     {
-        if (typeof(T) == typeof(KeybindMenuEnums))
-        {
-            KeybindMenuEnums accessor = (KeybindMenuEnums)(object)key;
-            return (TData)(object)keyCodeDict[accessor];
-        } else
-        if (typeof(T) == typeof(SoundOptionEnums))
-        {
-            SoundOptionEnums accessor = (SoundOptionEnums)(object)key;
-            return (TData)(object)soundDict[accessor];
-        } else { return (TData)(object)null; }
+        soundDict[key] = value;
+    }
+    public KeyCode GetKeyCodeData(KeybindMenuEnums key)
+    {
+        return keyCodeDict[key];
+    }
+    public float GetSoundData(SoundOptionEnums key)
+    {
+        return soundDict[key];
     }
 }

@@ -6,10 +6,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-public class KeybindsMenu : MonoBehaviour, ISaveSettings
+public class KeybindsMenu : MonoBehaviour, ISaveSettings, IChangeKey
 {
-    public KeyCode TempKeyCode { get { return _tempKeyCode; } set { _tempKeyCode = value; } }
-
     [SerializeField]
     private KeybindMenuEnums _desiredKeyForThisObj;
     [SerializeField]
@@ -25,7 +23,7 @@ public class KeybindsMenu : MonoBehaviour, ISaveSettings
 
     private KeyCode _tempKeyCode;
     private KeyCode _keyCode;
-    private KeybindsMenu[] _keybindsMenus;
+    private List <IChangeKey> _keybindsMenus = new List<IChangeKey>();
     private IGetData _systemSettingsGetData;
     private ISetData _systemSettingsSetData;
 
@@ -36,16 +34,16 @@ public class KeybindsMenu : MonoBehaviour, ISaveSettings
 
     private void Setup()
     {
-        SettingsSystem settingsSystem = FindFirstObjectByType<SettingsSystem>();
-        if (settingsSystem == null)
+        _systemSettingsGetData = SettingsSystem.Instance;
+        _systemSettingsSetData = SettingsSystem.Instance;
+        _keyCode = _systemSettingsGetData.GetKeyCodeData(_desiredKeyForThisObj);
+        foreach(KeybindsMenu kbm in transform.parent.GetComponentsInChildren<KeybindsMenu>())
         {
-            Debug.LogError("Cannot find SettingsSystem!");
-            return;
+            if (kbm != this)
+            {
+                _keybindsMenus.Add(kbm);
+            }
         }
-        _systemSettingsGetData = settingsSystem;
-        _systemSettingsSetData = settingsSystem;
-        _keyCode = _systemSettingsGetData.GetData<KeybindMenuEnums,KeyCode>(_desiredKeyForThisObj);
-        _keybindsMenus = transform.parent.GetComponentsInChildren<KeybindsMenu>();
         _actionText.text = _desiredKeyForThisObj.ToString();
         _tempKeyCode = _keyCode;
         RenameUIText(_keyCode);
@@ -67,13 +65,7 @@ public class KeybindsMenu : MonoBehaviour, ISaveSettings
         {
             _keyCode = _tempKeyCode;
         }
-        _systemSettingsSetData.SetData<KeybindMenuEnums, KeyCode>(_desiredKeyForThisObj, _keyCode);
-    }
-
-    public void Reset()
-    {
-        _tempKeyCode = _keyCode;
-        RenameUIText(_keyCode);
+        _systemSettingsSetData.SetKeyCodeData(_desiredKeyForThisObj, _keyCode);
     }
 
     public void RenameUIText(KeyCode kC)
@@ -126,20 +118,12 @@ public class KeybindsMenu : MonoBehaviour, ISaveSettings
 
     private void CheckForSharedKeyCode()
     {
-        foreach (KeybindsMenu kbm in _keybindsMenus)
+        foreach (IChangeKey kbm in _keybindsMenus)
         {
-            if (_tempKeyCode == kbm.TempKeyCode && kbm != this)
+            if (_tempKeyCode == kbm.GetTempKeyCode())
             {
-                if (_keyCode == kbm.TempKeyCode)
-                {
-                    kbm.Reset();
-                } else
-                { 
-                    // Change original to be the current keycode of this object.
-                    kbm.TempKeyCode = _keyCode;
-                    kbm.RenameUIText(_keyCode);
-                }
-                
+                // Change original to be the current keycode of this object.
+                kbm.SetTempKeyCode(_keyCode);
             }
         }
     }
@@ -155,5 +139,22 @@ public class KeybindsMenu : MonoBehaviour, ISaveSettings
             }
         }
         return false;
+    }
+
+    public KeyCode GetTempKeyCode()
+    {
+        return _tempKeyCode;
+    }
+
+    public void ResetTempKeyCode()
+    {
+        _tempKeyCode = _keyCode;
+        RenameUIText(_keyCode);
+    }
+
+    public void SetTempKeyCode(KeyCode value)
+    {
+        _tempKeyCode = value;
+        RenameUIText(value);
     }
 }

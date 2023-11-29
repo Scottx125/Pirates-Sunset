@@ -1,18 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
-public class IChangeKey : MonoBehaviour
+public interface IChangeKey
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public KeyCode GetTempKeyCode();
+    public void ResetTempKeyCode();
+    public void SetTempKeyCode(KeyCode value);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
