@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class InventoryObject : MonoBehaviour
 {
     [SerializeField]
-    protected bool bIsActivateable = false;
+    protected bool isActivateable = false;
     [SerializeField]
     protected bool repeatBehaviour = false;
     [SerializeField]
@@ -23,10 +23,12 @@ public abstract class InventoryObject : MonoBehaviour
     public void CheckBehaviour()
     {
         // Ensure object is activateable and is not currently active.
-        if (bIsActivateable == false) return;
-        if (bIsActive == true) return;
+        if (isActivateable == false) return ;
+        if (bIsActive == true) return ;
+        if (quantity <= 0) return ;
         // Begin coroutine.
         StartCoroutine(InitiateBehaviour());
+
     }
     private IEnumerator InitiateBehaviour()
     {

@@ -25,7 +25,7 @@ namespace PirateGame.Health{
 
         public abstract void RemoveReciever(string objName);
 
+        public abstract void Heal(int amount);
 
-        //public void Heal(int amount);
     }
 }

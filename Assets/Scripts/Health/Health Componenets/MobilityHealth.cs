@@ -40,6 +40,13 @@ public class MobilityHealth : HealthComponent
         NotifyRecievers();
     }
 
+    public override void Heal(int amount)
+    {
+        _currentHealth += amount;
+        System.Math.Clamp(_currentHealth, 0, _maxHealth);
+        NotifyRecievers();
+    }
+
     private void NotifyRecievers()
     {
 
