@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public abstract class InventoryObject : MonoBehaviour
@@ -16,7 +17,10 @@ public abstract class InventoryObject : MonoBehaviour
     protected float repeatTime = 0.25f;
     [SerializeField]
     protected int quantity = 0;
-
+    [SerializeField]
+    public string InvenObjName { get; private set; }
+    [SerializeField]
+    public Sprite InvenObjSprite { get; private set; }
 
     protected bool bIsActive = false;
 
@@ -28,7 +32,6 @@ public abstract class InventoryObject : MonoBehaviour
         if (quantity <= 0) return ;
         // Begin coroutine.
         StartCoroutine(InitiateBehaviour());
-
     }
     private IEnumerator InitiateBehaviour()
     {
