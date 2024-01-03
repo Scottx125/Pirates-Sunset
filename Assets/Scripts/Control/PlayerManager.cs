@@ -25,6 +25,8 @@ public class PlayerManager : MonoBehaviour
     private PlayerDeath _death;
     [SerializeField]
     private PlayerUIController _playerUIController;
+    [SerializeField]
+    private InventoryManager _inventoryManager;
 
 
     private void Awake()
@@ -45,5 +47,6 @@ public class PlayerManager : MonoBehaviour
                 _healthManager.Setup(corporealDamageModifiers, structuralDamageModifiers, mobilityDamageModifiers);
         }
         if (_damageHandler != null) _damageHandler.Setup(_healthManager);
+        if (_inventoryManager != null) _inventoryManager.Setup();
     }
 }

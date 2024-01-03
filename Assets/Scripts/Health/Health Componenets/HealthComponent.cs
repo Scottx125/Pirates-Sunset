@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PirateGame.Health{
 
-    public abstract class HealthComponent : MonoBehaviour, IAddEnemyReciever, IRemoveEnemeyReciever
+    public abstract class HealthComponent : MonoBehaviour, IAddEnemyReciever, IRemoveEnemeyReciever, IHeal
     {
         public IReadOnlyList<DamageTypeEnum> GetAssociatedDamageTypes => _associatedDamageTypes;
 

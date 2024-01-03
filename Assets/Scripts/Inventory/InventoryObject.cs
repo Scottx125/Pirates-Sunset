@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.UI;
 public abstract class InventoryObject : MonoBehaviour
 {
     [SerializeField]
@@ -18,12 +18,25 @@ public abstract class InventoryObject : MonoBehaviour
     [SerializeField]
     protected int quantity = 0;
     [SerializeField]
-    public string InvenObjName { get; private set; }
+    private TextMeshProUGUI _uiNameText;
     [SerializeField]
-    public Sprite InvenObjSprite { get; private set; }
+    private TextMeshProUGUI _uiQuantity;
+    [SerializeField]
+    private string _invenObjName;
+    [SerializeField]
+    private Image _invenObjimage;
+    [SerializeField]
+    private Button _uiButton;
+
 
     protected bool bIsActive = false;
 
+    private void Awake()
+    {
+        if (_uiButton != null) _uiButton.image = _invenObjimage;
+        if (_uiNameText != null) _uiNameText.text = _invenObjName;
+        if (_uiQuantity != null) _uiQuantity.text = quantity.ToString();
+    }
     public void CheckBehaviour()
     {
         // Ensure object is activateable and is not currently active.
@@ -62,6 +75,14 @@ public abstract class InventoryObject : MonoBehaviour
     }
 
     public int GetQuantity() { return quantity; }
-    public void SubtractQuantity(int subtractValue) { quantity -= subtractValue; }
-    public void AddQuantity(int addValue) { quantity += addValue; }
+    public void SubtractQuantity(int subtractValue) 
+    { 
+        quantity -= subtractValue;
+        _uiQuantity.text = quantity.ToString();
+    }
+    public void AddQuantity(int addValue) 
+    { 
+        quantity += addValue;
+        _uiQuantity.text = quantity.ToString();
+    }
 }

@@ -8,21 +8,21 @@ public class RepairObject : InventoryObject
     [SerializeField]
     int amountToHeal = 5;
     [SerializeField]
-    HealthComponent[] _healthComponenet;
+    IHeal[] _healableComponenets;
 
     private void Awake()
     {
-        if (_healthComponenet == null)
+        if (_healableComponenets == null)
         {
-            _healthComponenet = GetComponents<HealthComponent>();
+            _healableComponenets = GetComponents<HealthComponent>();
         }
     }
     protected override void ObjectBehaviour()
     {
         base.SubtractQuantity(1);
-        foreach (HealthComponent healthComponenet in _healthComponenet)
+        foreach (IHeal healableComponent in _healableComponenets)
         {
-            healthComponenet.Heal(amountToHeal);
+            healableComponent.Heal(amountToHeal);
         }
     }
 }
