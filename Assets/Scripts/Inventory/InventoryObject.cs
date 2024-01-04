@@ -28,11 +28,14 @@ public abstract class InventoryObject : MonoBehaviour
     [SerializeField]
     private Button _uiButton;
 
+    // USE SCRIPTABLE OBJECTS TO HOLD ABOVE DATA EXCLUDING THINGS THAT WILL DYNAMICALLY CHANGE LIKE QUANITTY.
+
 
     protected bool bIsActive = false;
 
     private void Awake()
     {
+        // Break this out so that if it's added later, we can assign it through the inven manager.
         if (_uiButton != null) _uiButton.image = _invenObjimage;
         if (_uiNameText != null) _uiNameText.text = _invenObjName;
         if (_uiQuantity != null) _uiQuantity.text = quantity.ToString();
