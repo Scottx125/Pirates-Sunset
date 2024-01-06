@@ -6,15 +6,7 @@ using UnityEngine.UI;
 public abstract class InventoryObject : MonoBehaviour
 {
     [SerializeField]
-    protected bool isActivateable = false;
-    [SerializeField]
-    protected bool repeatBehaviour = false;
-    [SerializeField]
-    protected float activeTime = 1f;
-    [SerializeField]
-    protected float cooldown = 1f;
-    [SerializeField]
-    protected float repeatTime = 0.25f;
+    private InventoryObjectSO _inventoryObjectData;
     [SerializeField]
     protected int quantity = 0;
     [SerializeField]
@@ -22,28 +14,21 @@ public abstract class InventoryObject : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _uiQuantity;
     [SerializeField]
-    private string _invenObjName;
-    [SerializeField]
-    private Image _invenObjimage;
-    [SerializeField]
-    private Button _uiButton;
-
-    // USE SCRIPTABLE OBJECTS TO HOLD ABOVE DATA EXCLUDING THINGS THAT WILL DYNAMICALLY CHANGE LIKE QUANITTY.
-
+    private Image _uiButtonImage;
 
     protected bool bIsActive = false;
 
     private void Awake()
     {
         // Break this out so that if it's added later, we can assign it through the inven manager.
-        if (_uiButton != null) _uiButton.image = _invenObjimage;
-        if (_uiNameText != null) _uiNameText.text = _invenObjName;
+        if (_uiButtonImage != null) _uiButtonImage.sprite = _inventoryObjectData.GetImage;
+        if (_uiNameText != null) _uiNameText.text = _inventoryObjectData.GetName;
         if (_uiQuantity != null) _uiQuantity.text = quantity.ToString();
     }
     public void CheckBehaviour()
     {
         // Ensure object is activateable and is not currently active.
-        if (isActivateable == false) return ;
+        if (_inventoryObjectData.GetIsActivateableBool == false) return ;
         if (bIsActive == true) return ;
         if (quantity <= 0) return ;
         // Begin coroutine.
@@ -53,14 +38,14 @@ public abstract class InventoryObject : MonoBehaviour
     {
         // Stops a new coroutine being fired and sets up variables.
         bIsActive = true;
-        float endTime = Time.time + activeTime;
+        float endTime = Time.time + _inventoryObjectData.GetActiveTimeFloat;
         // Handles repeat behaviours.
-        if (repeatBehaviour == true)
+        if (_inventoryObjectData.GetRepeatBehaviourBool == true)
         {
             while (Time.time < endTime)
             {
                 ObjectBehaviour();
-                yield return new WaitForSeconds(repeatTime);
+                yield return new WaitForSeconds(_inventoryObjectData.GetRepeatTimeFloat);
             }
         } else
         {
@@ -68,7 +53,7 @@ public abstract class InventoryObject : MonoBehaviour
             ObjectBehaviour();
         }
         // Waits for the cooldown to expire and then exists, fully resetting the behaviour.
-        yield return new WaitForSeconds(cooldown);
+        yield return new WaitForSeconds(_inventoryObjectData.GetCooldownFloat);
         bIsActive = false;
     }
 
