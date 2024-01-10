@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject _inventoryUIContentsParent;
     // This will hold the inventory
     [SerializeField]
     private List<InventoryObject> _inventory = new List<InventoryObject>();
@@ -14,10 +16,22 @@ public class InventoryManager : MonoBehaviour
     // IT WILL CREATE A NEW OBJECT AND PASS IN THAT OBJECT AND QUANTITY.
     public void Setup()
     {
+        if (_inventoryUIContentsParent == null) {
+            Debug.LogError("Need to assign the UI contents object!");
+            return;
+        }
     }
 
-    // Need a function to share current inventory with store.
-
+    // Returns the type and quantity of the objects in the inventory.
+    public (Type, int)[] GetInventoryCopy()
+    {
+        (Type, int)[] copy = new (Type, int)[_inventory.Count];
+        for(int i = 0; i < _inventory.Count; i++)
+        {
+            copy[i] = (_inventory[i].GetType(), _inventory[i].GetQuantity());
+        }
+        return copy;
+    }
     public void AddToInventory(InventoryObject inventoryObject, int amountToAdd)
     {
         InventoryObject existingItem = CheckInventoryForExistingItem(inventoryObject);

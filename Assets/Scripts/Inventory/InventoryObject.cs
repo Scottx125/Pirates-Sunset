@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -63,6 +64,7 @@ public abstract class InventoryObject : MonoBehaviour
     }
 
     public int GetQuantity() { return quantity; }
+
     public void SubtractQuantity(int subtractValue) 
     { 
         quantity -= subtractValue;
