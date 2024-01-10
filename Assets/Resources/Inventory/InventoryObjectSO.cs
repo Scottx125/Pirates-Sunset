@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,13 +20,19 @@ public class InventoryObjectSO : ScriptableObject
     [SerializeField]
     private string _invenObjName;
     [SerializeField]
-    private Sprite _invenObjimage;
+    private Sprite _invenObjSprite;
+    [SerializeField]
+    private GameObject _prefab;
+    [SerializeField]
+    private InventoryObject _inventoryObjectType;
 
+    public GameObject GetPrefab => _prefab;
+    public Type GetInventoryObjectType => _inventoryObjectType.GetType();
     public bool GetIsActivateableBool => _isActivateable;
     public bool GetRepeatBehaviourBool => _repeatBehaviour;
     public float GetActiveTimeFloat => _activeTime;
     public float GetCooldownFloat => _cooldown;
     public float GetRepeatTimeFloat => _repeatTime;
     public string GetName => _invenObjName;
-    public Sprite GetImage => _invenObjimage;
+    public Sprite GetImage => _invenObjSprite;
 }

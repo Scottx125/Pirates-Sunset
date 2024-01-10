@@ -63,6 +63,9 @@ public abstract class InventoryObject : MonoBehaviour
         // Implement in child classes.
     }
 
+    public string GetName() { return _inventoryObjectData.GetName; }
+
+    public Sprite GetSprite() { return _inventoryObjectData.GetImage; }
     public int GetQuantity() { return quantity; }
 
     public void SubtractQuantity(int subtractValue) 
