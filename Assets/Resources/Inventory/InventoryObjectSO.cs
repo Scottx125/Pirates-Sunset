@@ -22,10 +22,17 @@ public class InventoryObjectSO : ScriptableObject
     [SerializeField]
     private Sprite _invenObjSprite;
     [SerializeField]
+    private int _sellPrice;
+    [SerializeField]
+    private int _buyPrice;
+    [SerializeField]
     private GameObject _prefab;
     [SerializeField]
     private InventoryObject _inventoryObjectType;
 
+
+    public int GetSellPrice => _sellPrice;
+    public int GetBuyPrice => _buyPrice;
     public GameObject GetPrefab => _prefab;
     public Type GetInventoryObjectType => _inventoryObjectType.GetType();
     public bool GetIsActivateableBool => _isActivateable;

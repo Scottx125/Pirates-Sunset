@@ -62,9 +62,9 @@ public abstract class InventoryObject : MonoBehaviour
     {
         // Implement in child classes.
     }
-
+    public int GetBuyPrice() { return _inventoryObjectData.GetBuyPrice; }
+    public int GetSellPrice() { return _inventoryObjectData.GetSellPrice; }
     public string GetName() { return _inventoryObjectData.GetName; }
-
     public Sprite GetSprite() { return _inventoryObjectData.GetImage; }
     public int GetQuantity() { return quantity; }
 

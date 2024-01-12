@@ -10,12 +10,10 @@ public class InventoryManager : MonoBehaviour
     [SerializeField]
     private GameObject _inventoryUIContentsParent;
     [SerializeField]
-    private List<InventoryObjectSO> _inventoryObjectsData;
-    [SerializeField]
     private List<InventoryObject> _inventory = new List<InventoryObject>();
 
-    // Store will create it's own objects for it's own UI.
     // Store will have a SO of Data that will contain a List of all the InventoryObjects, and a nested List of buy/sell prices.
+    // When we send the info. We'll compare the Type to get the relevant price.
 
     // Inventory will do the same. However, this will hold a list of all the inventorydata.
     // If a new object needs to be made, it'll compare against them to find a match, once it has. It'll instantiate the prefab and get the InventoryObject attatched and add it to the list.
@@ -25,20 +23,15 @@ public class InventoryManager : MonoBehaviour
             Debug.LogError("Need to assign the UI contents object!");
             return;
         }
-        if (_inventoryObjectsData == null)
-        {
-            Debug.LogError("Need to assign UI contents to list!");
-            return;
-        }
     }
 
     // Returns the type and quantity of the objects in the inventory.
-    public (Type, int, string, Sprite)[] GetInventoryCopy()
+    public (Type, int, int, int, string, Sprite)[] GetInventoryCopy()
     {
-        (Type, int, string, Sprite)[] copy = new (Type, int, string, Sprite)[_inventory.Count];
+        (Type, int, int, int, string, Sprite)[] copy = new (Type, int, int, int, string, Sprite)[_inventory.Count];
         for(int i = 0; i < _inventory.Count; i++)
         {
-            copy[i] = (_inventory[i].GetType(), _inventory[i].GetQuantity(), _inventory[i].GetName(), _inventory[i].GetSprite());
+            copy[i] = (_inventory[i].GetType(), _inventory[i].GetQuantity(), _inventory[i].GetBuyPrice(), _inventory[i].GetSellPrice(), _inventory[i].GetName(), _inventory[i].GetSprite());
         }
         return copy;
     }
@@ -50,7 +43,8 @@ public class InventoryManager : MonoBehaviour
         {
 
             //_inventory.Add(inventoryObject);
-            //AddToInventoryQuantity(inventoryObject, amountToAdd);
+            // Setuo the UI
+            // AddToInventoryQuantity(inventoryObject, amountToAdd);
         }
         else
         {
@@ -82,13 +76,11 @@ public class InventoryManager : MonoBehaviour
     private void AddToInventoryQuantity(InventoryObject existingItem, int amountToAdd)
     {
         existingItem.AddQuantity(amountToAdd);
-        // add update to reflect change in quantity
     }
 
     private void RemoveFromInventoryQuantity(InventoryObject existingItem, int amountToSubtract)
     {
         existingItem.SubtractQuantity(amountToSubtract);
-        // add update to reflect change in quantity
         if (existingItem.GetQuantity() <= 0)
         {
             _inventory.Remove(existingItem);
