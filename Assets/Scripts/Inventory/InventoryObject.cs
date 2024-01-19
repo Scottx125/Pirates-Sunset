@@ -18,17 +18,16 @@ public abstract class InventoryObject : MonoBehaviour
     private TextMeshProUGUI _uiQuantity;
     [SerializeField]
     private Image _uiButtonImage;
+    // This will get the cooldown object from the prefab and cache it.
     [SerializeField]
-    private Image _uiActiveImage;
-    [SerializeField]
-    private Image _uiCooldownImage;
+    private Cooldown _uiCooldownScript;
 
 
     protected bool bIsActive = false;
 
     private Color _transparent = new Color(1f,1f,1f,0f);
     private Color _visible = new Color(1f, 1f, 1f, 1f);
-    private void Awake()
+    public void Setup(GameObject inventoryUIAsset, GameObject abilityUIAsset)
     {
         // Break this out so that if it's added later, we can assign it through the inven manager.
         if (_uiButtonImage != null) _uiButtonImage.sprite = _inventoryObjectData.GetImage;
