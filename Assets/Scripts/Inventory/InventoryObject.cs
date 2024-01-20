@@ -12,29 +12,29 @@ public abstract class InventoryObject : MonoBehaviour
     [SerializeField]
     protected int quantity = 0;
     // UI stuff
-    [SerializeField]
-    private TextMeshProUGUI _uiNameText;
-    [SerializeField]
-    private TextMeshProUGUI _uiQuantity;
-    [SerializeField]
-    private Image _uiButtonImage;
-    // This will get the cooldown object from the prefab and cache it.
-    [SerializeField]
-    private Cooldown _uiCooldownScript;
+    private InventoryUI _inventoryUI;
+    private InventoryUI _abilityHUD;
+    private GameObject _inventoryUIAsset;
+    private GameObject _abilityHUDAsset;
+
 
 
     protected bool bIsActive = false;
-
-    private Color _transparent = new Color(1f,1f,1f,0f);
-    private Color _visible = new Color(1f, 1f, 1f, 1f);
     public void Setup(GameObject inventoryUIAsset, GameObject abilityUIAsset)
     {
-        // Break this out so that if it's added later, we can assign it through the inven manager.
-        if (_uiButtonImage != null) _uiButtonImage.sprite = _inventoryObjectData.GetImage;
-        if (_uiNameText != null) _uiNameText.text = _inventoryObjectData.GetName;
-        if (_uiQuantity != null) _uiQuantity.text = quantity.ToString();
-        _uiActiveImage.color = _transparent;
-        _uiCooldownImage.color = _transparent;
+        // Setup cached variables.
+        _inventoryUIAsset = inventoryUIAsset;
+        _abilityHUDAsset = abilityUIAsset;
+        _inventoryUI = inventoryUIAsset.GetComponent<InventoryUI>();
+        _abilityHUD = inventoryUIAsset.GetComponent<InventoryUI>();
+
+        // Set text of these variables.
+        _inventoryUI.Name.text = _inventoryObjectData.GetName;
+        _inventoryUI.UIImage.sprite = _inventoryObjectData.GetImage;
+        _inventoryUI.Quantity.text = quantity.ToString();
+        _inventoryUI.UICooldownImage.fillAmount = 0;
+        _abilityHUD.UIImage.sprite = _inventoryObjectData.GetImage;
+        _abilityHUD.UICooldownImage.fillAmount = 0;
     }
     public void CheckBehaviour()
     {
@@ -50,8 +50,6 @@ public abstract class InventoryObject : MonoBehaviour
         // Stops a new coroutine being fired and sets up variables.
         bIsActive = true;
         float endTime = Time.time + _inventoryObjectData.GetActiveTimeFloat;
-        _uiActiveImage.color = _visible;
-        _uiButtonImage.color = _transparent;
         // Handles repeat behaviours.
         if (_inventoryObjectData.GetRepeatBehaviourBool == true)
         {
@@ -74,12 +72,15 @@ public abstract class InventoryObject : MonoBehaviour
             // Single-Fire behaviours.
             ObjectBehaviour();
         }
-        _uiCooldownImage.color = _visible;
-        _uiActiveImage.color = _transparent;
         // Waits for the cooldown to expire and then exits, fully resetting the behaviour.
-        yield return new WaitForSeconds(_inventoryObjectData.GetCooldownFloat);
-        _uiButtonImage.color = _visible;
-        _uiCooldownImage.color = _transparent;
+        float cooldownTime = Time.time + _inventoryObjectData.GetCooldownFloat;
+        while (Time.time < cooldownTime)
+        {
+            float timeRemaining = cooldownTime - Time.time;
+            _inventoryUI.UICooldownImage.fillAmount = Mathf.Lerp(1, 0, timeRemaining / _inventoryObjectData.GetCooldownFloat);
+            yield return null;
+        }
+        
         bIsActive = false;
     }
 
@@ -96,11 +97,16 @@ public abstract class InventoryObject : MonoBehaviour
     public void SubtractQuantity(int subtractValue) 
     { 
         quantity -= subtractValue;
-        _uiQuantity.text = quantity.ToString();
+        UpdateUI();
     }
     public void AddQuantity(int addValue) 
     { 
         quantity += addValue;
-        _uiQuantity.text = quantity.ToString();
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
+        _inventoryUI.Quantity.text = quantity.ToString();
     }
 }
