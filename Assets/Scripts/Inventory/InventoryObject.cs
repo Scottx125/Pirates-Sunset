@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Android.Types;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 public abstract class InventoryObject : MonoBehaviour
 {
@@ -35,6 +36,9 @@ public abstract class InventoryObject : MonoBehaviour
         _inventoryUI.UICooldownImage.fillAmount = 0;
         _abilityHUD.UIImage.sprite = _inventoryObjectData.GetImage;
         _abilityHUD.UICooldownImage.fillAmount = 0;
+
+        // Disable ability object as it's not being used.
+        _abilityHUDAsset.SetActive(false);
     }
     public void CheckBehaviour()
     {
@@ -49,39 +53,69 @@ public abstract class InventoryObject : MonoBehaviour
     {
         // Stops a new coroutine being fired and sets up variables.
         bIsActive = true;
-        float endTime = Time.time + _inventoryObjectData.GetActiveTimeFloat;
         // Handles repeat behaviours.
         if (_inventoryObjectData.GetRepeatBehaviourBool == true)
         {
-            // Repeat behaviours.
-            while (Time.time < endTime)
-            {
-                ObjectBehaviour();
-                yield return new WaitForSeconds(_inventoryObjectData.GetRepeatTimeFloat);
-            }
+            yield return StartCoroutine(RepeatBehaviours());
         } else
         {
             // For duration behaviours only.
             if (_inventoryObjectData.GetRepeatBehaviourBool == false && _inventoryObjectData.GetActiveTimeFloat > 0f)
             {
-                // Objects that are duration behaviours will be a toggle like system. Activating and then deactivating when called twice.
-                ObjectBehaviour();
-                yield return new WaitForSeconds(_inventoryObjectData.GetActiveTimeFloat);
-                ObjectBehaviour();
+                yield return StartCoroutine(DurationBehaviours());
             }
             // Single-Fire behaviours.
             ObjectBehaviour();
         }
+        
+        yield return StartCoroutine(Cooldown());
+
+        bIsActive = false;
+    }
+
+    private IEnumerator RepeatBehaviours()
+    {
+        float duration = Time.time + _inventoryObjectData.GetActiveTimeFloat;
+        // Repeat behaviours.
+        while (Time.time < duration)
+        {
+            float timeRemaining = duration - Time.time;
+            ObjectBehaviour();
+            UIImageFillAmount(_abilityHUD.UICooldownImage, timeRemaining, _inventoryObjectData.GetActiveTimeFloat);
+            yield return new WaitForSeconds(_inventoryObjectData.GetRepeatTimeFloat);
+        }
+        _abilityHUDAsset.SetActive(false);
+    }
+    private IEnumerator DurationBehaviours()
+    {
+        // Objects that are duration behaviours will be a toggle like system. Activating and then deactivating when called twice.
+        float duration = Time.time + _inventoryObjectData.GetActiveTimeFloat;
+        ObjectBehaviour();
+        _abilityHUDAsset.SetActive(true);
+        while (Time.time < duration)
+        {
+            float timeRemaining = duration - Time.time;
+            UIImageFillAmount(_abilityHUD.UICooldownImage, timeRemaining, _inventoryObjectData.GetActiveTimeFloat);
+            yield return null;
+        }
+        ObjectBehaviour();
+        _abilityHUDAsset.SetActive(false);
+    }
+    private IEnumerator Cooldown()
+    {
         // Waits for the cooldown to expire and then exits, fully resetting the behaviour.
         float cooldownTime = Time.time + _inventoryObjectData.GetCooldownFloat;
         while (Time.time < cooldownTime)
         {
             float timeRemaining = cooldownTime - Time.time;
-            _inventoryUI.UICooldownImage.fillAmount = Mathf.Lerp(1, 0, timeRemaining / _inventoryObjectData.GetCooldownFloat);
+            UIImageFillAmount(_inventoryUI.UICooldownImage, timeRemaining, _inventoryObjectData.GetCooldownFloat);
             yield return null;
         }
-        
-        bIsActive = false;
+    }
+
+    private void UIImageFillAmount(Image image,float timeRemaining, float totalTime)
+    {
+        image.fillAmount = Mathf.Lerp(1, 0, timeRemaining / totalTime);
     }
 
     protected virtual void ObjectBehaviour()
