@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,42 +10,31 @@ public class InventoryUI : MonoBehaviour
     [SerializeField]
     private TMP_Text _inventoryUIName;
     [SerializeField]
-    private bool _inventoryUINameRequired = false;
-    [SerializeField]
     private TMP_Text _inventoryUIQuantity;
-    [SerializeField]
-    private bool _inventoryUIQuantityRequired = false;
     [SerializeField]
     private Image _inventoryUIImage;
     [SerializeField]
     private Image _inventoryUICooldown;
-    public TMP_Text Name { get;private set; }
-    public TMP_Text Quantity { get; private set; }
-    public Image UIImage { get; private set; }
-    public Image UICooldownImage { get; private set; }
-    private void Awake()
+    public void Setup(string name, int quantity, Sprite mainImage)
     {
-        if(_inventoryUIName != null && _inventoryUINameRequired == true)
-        {
-            Name = _inventoryUIName;
-        } else { Debug.LogError("InventoryUI fields not setup correctly!"); }
+        _inventoryUIName.text = name;
+        _inventoryUIQuantity.text = quantity.ToString();
+        _inventoryUIImage.sprite = mainImage;
+        _inventoryUICooldown.fillAmount = 0f;
+    }
 
-        if (_inventoryUIQuantity != null && _inventoryUIQuantityRequired == true)
-        {
-            Quantity = _inventoryUIQuantity;
-        }
-        else { Debug.LogError("InventoryUI fields not setup correctly!"); }
+    public void UpdateUIQuantity(int quantity)
+    {
+        _inventoryUIQuantity.text = quantity.ToString();
+    }
 
-        if (_inventoryUIImage != null)
+    public IEnumerator UILerpFill(float duration, float abilityLength)
+    {
+        while (Time.time < duration)
         {
-            UIImage = _inventoryUIImage;
+            float timeRemaining = duration - Time.time;
+            _inventoryUICooldown.fillAmount = Mathf.Lerp(1, 0, timeRemaining / abilityLength);
+            yield return null;
         }
-        else { Debug.LogError("InventoryUI fields not setup correctly!"); }
-
-        if (_inventoryUICooldown != null)
-        {
-            UICooldownImage = _inventoryUICooldown;
-        }
-        else { Debug.LogError("InventoryUI fields not setup correctly!"); }
     }
 }

@@ -18,8 +18,6 @@ public abstract class InventoryObject : MonoBehaviour
     private GameObject _inventoryUIAsset;
     private GameObject _abilityHUDAsset;
 
-
-
     protected bool bIsActive = false;
     public void Setup(GameObject inventoryUIAsset, GameObject abilityUIAsset)
     {
@@ -30,12 +28,8 @@ public abstract class InventoryObject : MonoBehaviour
         _abilityHUD = inventoryUIAsset.GetComponent<InventoryUI>();
 
         // Set text of these variables.
-        _inventoryUI.Name.text = _inventoryObjectData.GetName;
-        _inventoryUI.UIImage.sprite = _inventoryObjectData.GetImage;
-        _inventoryUI.Quantity.text = quantity.ToString();
-        _inventoryUI.UICooldownImage.fillAmount = 0;
-        _abilityHUD.UIImage.sprite = _inventoryObjectData.GetImage;
-        _abilityHUD.UICooldownImage.fillAmount = 0;
+        _inventoryUI.Setup(_inventoryObjectData.GetName, quantity, _inventoryObjectData.GetImage);
+        _abilityHUD.Setup(_inventoryObjectData.GetName, quantity, _inventoryObjectData.GetImage);
 
         // Disable ability object as it's not being used.
         _abilityHUDAsset.SetActive(false);
@@ -76,12 +70,12 @@ public abstract class InventoryObject : MonoBehaviour
     private IEnumerator RepeatBehaviours()
     {
         float duration = Time.time + _inventoryObjectData.GetActiveTimeFloat;
+        _abilityHUDAsset.SetActive(true);
+        StartCoroutine(_abilityHUD.UILerpFill(duration, _inventoryObjectData.GetActiveTimeFloat));
         // Repeat behaviours.
         while (Time.time < duration)
         {
-            float timeRemaining = duration - Time.time;
             ObjectBehaviour();
-            UIImageFillAmount(_abilityHUD.UICooldownImage, timeRemaining, _inventoryObjectData.GetActiveTimeFloat);
             yield return new WaitForSeconds(_inventoryObjectData.GetRepeatTimeFloat);
         }
         _abilityHUDAsset.SetActive(false);
@@ -90,32 +84,22 @@ public abstract class InventoryObject : MonoBehaviour
     {
         // Objects that are duration behaviours will be a toggle like system. Activating and then deactivating when called twice.
         float duration = Time.time + _inventoryObjectData.GetActiveTimeFloat;
-        ObjectBehaviour();
+        // Toggle on
         _abilityHUDAsset.SetActive(true);
-        while (Time.time < duration)
-        {
-            float timeRemaining = duration - Time.time;
-            UIImageFillAmount(_abilityHUD.UICooldownImage, timeRemaining, _inventoryObjectData.GetActiveTimeFloat);
-            yield return null;
-        }
+        ObjectBehaviour();
+        StartCoroutine(_abilityHUD.UILerpFill(duration, _inventoryObjectData.GetActiveTimeFloat));
+        // Wait
+        yield return new WaitForSeconds(_inventoryObjectData.GetActiveTimeFloat);
+        // Toggle off
         ObjectBehaviour();
         _abilityHUDAsset.SetActive(false);
     }
     private IEnumerator Cooldown()
     {
         // Waits for the cooldown to expire and then exits, fully resetting the behaviour.
-        float cooldownTime = Time.time + _inventoryObjectData.GetCooldownFloat;
-        while (Time.time < cooldownTime)
-        {
-            float timeRemaining = cooldownTime - Time.time;
-            UIImageFillAmount(_inventoryUI.UICooldownImage, timeRemaining, _inventoryObjectData.GetCooldownFloat);
-            yield return null;
-        }
-    }
-
-    private void UIImageFillAmount(Image image,float timeRemaining, float totalTime)
-    {
-        image.fillAmount = Mathf.Lerp(1, 0, timeRemaining / totalTime);
+        float duration = Time.time + _inventoryObjectData.GetCooldownFloat;
+        StartCoroutine(_inventoryUI.UILerpFill(duration, _inventoryObjectData.GetActiveTimeFloat));
+        yield return new WaitForSeconds(_inventoryObjectData.GetCooldownFloat);
     }
 
     protected virtual void ObjectBehaviour()
@@ -131,16 +115,17 @@ public abstract class InventoryObject : MonoBehaviour
     public void SubtractQuantity(int subtractValue) 
     { 
         quantity -= subtractValue;
-        UpdateUI();
+        _inventoryUI.UpdateUIQuantity(quantity);
     }
     public void AddQuantity(int addValue) 
     { 
         quantity += addValue;
-        UpdateUI();
+        _inventoryUI.UpdateUIQuantity(quantity);
     }
 
-    private void UpdateUI()
+    private void OnDestroy()
     {
-        _inventoryUI.Quantity.text = quantity.ToString();
+        Destroy(_inventoryUIAsset.gameObject);
+        Destroy(_abilityHUDAsset.gameObject);
     }
 }
