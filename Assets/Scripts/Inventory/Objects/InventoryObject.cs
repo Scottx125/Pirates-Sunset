@@ -13,23 +13,21 @@ public abstract class InventoryObject : MonoBehaviour
     [SerializeField]
     protected int quantity = 0;
     // UI stuff
-    private InventoryUI _inventoryUI;
-    private InventoryUI _abilityHUD;
     private GameObject _inventoryUIAsset;
     private GameObject _abilityHUDAsset;
+    private InventoryUI _inventoryUI;
+    private InventoryUI _abilityHUD;
+
 
     protected bool bIsActive = false;
+    // PAss in abilityTracker and interface for UI setup and updating.
     public void Setup(GameObject inventoryUIAsset, GameObject abilityUIAsset)
     {
-        // Setup cached variables.
+        // CacheUI
         _inventoryUIAsset = inventoryUIAsset;
         _abilityHUDAsset = abilityUIAsset;
         _inventoryUI = inventoryUIAsset.GetComponent<InventoryUI>();
         _abilityHUD = inventoryUIAsset.GetComponent<InventoryUI>();
-
-        // Set text of these variables.
-        _inventoryUI.Setup(_inventoryObjectData.GetName, quantity, _inventoryObjectData.GetImage);
-        _abilityHUD.Setup(_inventoryObjectData.GetName, quantity, _inventoryObjectData.GetImage);
 
         // Disable ability object as it's not being used.
         _abilityHUDAsset.SetActive(false);

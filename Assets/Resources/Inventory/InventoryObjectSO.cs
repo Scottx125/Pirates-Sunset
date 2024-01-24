@@ -26,17 +26,13 @@ public class InventoryObjectSO : ScriptableObject
     [SerializeField]
     private int _buyPrice;
     [SerializeField]
-    private GameObject _inventoryUIPrefab;
-    [SerializeField]
-    private GameObject _abilityUIPrefab;
-    [SerializeField]
     private InventoryObject _inventoryObjectType;
+    [SerializeField]
+    private AbilityType _abilityType;
 
-
+    public AbilityType GetAbilityType => _abilityType;
     public int GetSellPrice => _sellPrice;
     public int GetBuyPrice => _buyPrice;
-    public GameObject GetInventoryUIPrefab => _inventoryUIPrefab;
-    public GameObject GetAbilityUIPrefab => _abilityUIPrefab;
     public InventoryObject GetInventoryObjectType => _inventoryObjectType;
     public bool GetIsActivateableBool => _isActivateable;
     public bool GetRepeatBehaviourBool => _repeatBehaviour;

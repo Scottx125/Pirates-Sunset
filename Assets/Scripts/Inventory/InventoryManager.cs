@@ -8,13 +8,12 @@ using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _inventoryUIContents;
+    private InventoryUIBuilder _inventoryUIBuilder;
     [SerializeField]
-    private GameObject _abilityActiveContents;
+    private Inventory _inventory;
     [SerializeField]
-    private List<InventoryObject> _inventory = new List<InventoryObject>();
+    private AbilityTracker _abilityTracker;
 
-    private Dictionary<InventoryObject ,InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<InventoryObject, InventoryObjectSO>();
 
     // Store will have a SO of Data that will contain a List of all the InventoryObjects, and a nested List of buy/sell prices.
     // When we send the info. We'll compare the Type to get the relevant price.
@@ -23,13 +22,7 @@ public class InventoryManager : MonoBehaviour
     // If a new object needs to be made, it'll compare against them to find a match, once it has. It'll instantiate the prefab and get the InventoryObject attatched and add it to the list.
     public void Setup()
     {
-        if (_inventoryUIContents == null) {
-            Debug.LogError("Need to assign the UI contents object!");
-            return;
-        }
-        // Load IOSO's into the dict so that if we have an object we don't know of we can search for it.
-        InventoryObjectSO []inventoryObjectSOsArray = Resources.LoadAll<InventoryObjectSO>("ScriptableObjects/Inventory");
-        _inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetInventoryObjectType, item => item);
+        // SEtup inventory
     }
 
     // Returns the type and quantity of the objects in the inventory.
@@ -44,24 +37,31 @@ public class InventoryManager : MonoBehaviour
     }
     public void AddToInventory(InventoryObject inventoryType, int amountToAdd)
     {
-        InventoryObject existingItem = CheckInventoryForExistingItem(inventoryType);
+        InventoryObject existingItem = _inventory.CheckInventoryForExistingItem(inventoryType);
 
         if (existingItem == null && _inventoryObjectsSOsDict.ContainsKey(inventoryType))
         {
             // Spawn UI prefabs. Pass itself in the inventory and the ability UI.
-            GameObject inventoryUIInstance = Instantiate(_inventoryObjectsSOsDict[inventoryType].GetInventoryUIPrefab, _inventoryUIContents.transform);
-            GameObject abilityUIInstance = Instantiate(_inventoryObjectsSOsDict[inventoryType].GetAbilityUIPrefab, _abilityActiveContents.transform);
-            InventoryObject instanceInventoryObject = inventoryUIInstance.GetComponent<InventoryObject>();
-            instanceInventoryObject.Setup(inventoryUIInstance, abilityUIInstance);
-            // Add reference to instance via inventory.
-            //_inventory.Add();
-            // AddToInventoryQuantity(inventoryObject, amountToAdd);
+            InventoryObject obj = CreateInventoryObject(inventoryType);
+            _inventory.Add(obj);
+            _inventory.AddToInventoryQuantity(obj, amountToAdd);
         }
         else
         {
-            AddToInventoryQuantity(existingItem, amountToAdd);
+            _inventory.AddToInventoryQuantity(existingItem, amountToAdd);
         }
     }
+
+    private InventoryObject CreateInventoryObject(InventoryObject inventoryType)
+    {
+        // Create the UI aspects and then give the IO the refernces to the UI objects.
+        GameObject inventoryUIInstance = _inventoryUIBuilder.CreateInventoryUIPrefab(_inventoryObjectsSOsDict[inventoryType].GetName, _inventoryObjectsSOsDict[inventoryType].GetImage);
+        GameObject abilityUIInstance = _inventoryUIBuilder.CreateAbilityHUDPrefab(_inventoryObjectsSOsDict[inventoryType].GetName, _inventoryObjectsSOsDict[inventoryType].GetImage);
+        InventoryObject instanceInventoryObject = inventoryUIInstance.GetComponent<InventoryObject>();
+        instanceInventoryObject.Setup(inventoryUIInstance, abilityUIInstance);
+        return instanceInventoryObject;
+    }
+
     public void RemoveFromInventory(InventoryObject inventoryType, int amountToSubtract)
     {
         InventoryObject existingItem = CheckInventoryForExistingItem(inventoryType);
@@ -78,26 +78,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private InventoryObject CheckInventoryForExistingItem(InventoryObject inventoryType)
-    {
-        // Get the type of the item if it's in the list.
-        return _inventory.FirstOrDefault(existing => existing == inventoryType);
-    }
-
-    private void AddToInventoryQuantity(InventoryObject existingItem, int amountToAdd)
-    {
-        existingItem.AddQuantity(amountToAdd);
-    }
-
-    private void RemoveFromInventoryQuantity(InventoryObject existingItem, int amountToSubtract)
-    {
-        existingItem.SubtractQuantity(amountToSubtract);
-        if (existingItem.GetQuantity() <= 0)
-        {
-            _inventory.Remove(existingItem);
-            Destroy(existingItem.gameObject);
-        }
-    }
 
     // This will deal with interactions between the store and the inventory objects. Such as adding/removing. Finding items in the inventory etc.
 }
