@@ -21,13 +21,13 @@ public abstract class InventoryObject : MonoBehaviour
 
     protected bool bIsActive = false;
     // PAss in abilityTracker and interface for UI setup and updating.
-    public void Setup(GameObject inventoryUIAsset, GameObject abilityUIAsset)
+    public void SetupForPlayerUI(GameObject inventoryUIAsset, GameObject abilityUIAsset)
     {
         // CacheUI
         _inventoryUIAsset = inventoryUIAsset;
         _abilityHUDAsset = abilityUIAsset;
         _inventoryUI = inventoryUIAsset.GetComponent<InventoryUI>();
-        _abilityHUD = inventoryUIAsset.GetComponent<InventoryUI>();
+        _abilityHUD = abilityUIAsset.GetComponent<InventoryUI>();
 
         // Disable ability object as it's not being used.
         _abilityHUDAsset.SetActive(false);

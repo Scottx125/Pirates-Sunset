@@ -6,21 +6,22 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     [SerializeField]
-    private bool _isStore = false;
+    private Transform _inventoryObjectStorage;
+    [SerializeField]
+    private GameObject _inventoryObjectPrefab;
     [SerializeField]
     private List<InventoryObject> _inventory = new List<InventoryObject>();
 
     private Dictionary<InventoryObject, InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<InventoryObject, InventoryObjectSO>();
-
-    private InventoryUIBuilder _inventoryUIBuilder = null;
   
-    public void Setup(bool isStore, InventoryUIBuilder _uiBuilder = null)
+    private InventoryUIBuilder _inventoryUIBuilder;
+    public void Setup(InventoryUIBuilder inventoryUIBuilder = null)
     {
+        if (_inventoryObjectStorage == null) Debug.LogError("No inventoryStorage set!");
         // Load IOSO's into the dict so that if we have an object we don't know of we can search for it.
         InventoryObjectSO[] inventoryObjectSOsArray = Resources.LoadAll<InventoryObjectSO>("ScriptableObjects/Inventory");
         _inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetInventoryObjectType, item => item);
-        _isStore = isStore;
-        _inventoryUIBuilder = _uiBuilder;
+        _inventoryUIBuilder = inventoryUIBuilder;
     }
 
     // Returns the type and quantity of the objects in the inventory.
@@ -67,10 +68,13 @@ public class Inventory : MonoBehaviour
     private InventoryObject CreateInventoryObject(InventoryObject inventoryType)
     {
         // Create the UI aspects and then give the IO the refernces to the UI objects.
-        GameObject inventoryUIInstance = _inventoryUIBuilder.CreateInventoryUIPrefab(_inventoryObjectsSOsDict[inventoryType].GetName, _inventoryObjectsSOsDict[inventoryType].GetImage);
-        GameObject abilityUIInstance = _inventoryUIBuilder.CreateAbilityHUDPrefab(_inventoryObjectsSOsDict[inventoryType].GetName, _inventoryObjectsSOsDict[inventoryType].GetImage);
-        InventoryObject instanceInventoryObject = inventoryUIInstance.GetComponent<InventoryObject>();
-        instanceInventoryObject.Setup(inventoryUIInstance, abilityUIInstance);
+        InventoryObject instanceInventoryObject = Instantiate(_inventoryObjectPrefab, _inventoryObjectStorage).GetComponent<InventoryObject>();
+        if (_inventoryUIBuilder != null)
+        {
+            GameObject inventoryUIInstance = _inventoryUIBuilder.CreateInventoryUIPrefab(_inventoryObjectsSOsDict[inventoryType].GetName, _inventoryObjectsSOsDict[inventoryType].GetImage);
+            GameObject abilityUIInstance = _inventoryUIBuilder.CreateAbilityHUDPrefab(_inventoryObjectsSOsDict[inventoryType].GetName, _inventoryObjectsSOsDict[inventoryType].GetImage);
+            instanceInventoryObject.SetupForPlayerUI(inventoryUIInstance, abilityUIInstance);
+        }
         return instanceInventoryObject;
     }
     private InventoryObject CheckInventoryForExistingItem(InventoryObject inventoryType)
