@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,14 +27,14 @@ public class InventoryObjectSO : ScriptableObject
     [SerializeField]
     private int _buyPrice;
     [SerializeField]
-    private InventoryObject _inventoryObjectType;
+    private InventoryObject _inventoryObject;
     [SerializeField]
-    private AbilityType _abilityType;
+    private AbilityObject _abilityObject;
 
-    public AbilityType GetAbilityType => _abilityType;
+    public InventoryObject GetInventoryObject => _inventoryObject;
+    public AbilityObject GetAbilityObject => _abilityObject;
     public int GetSellPrice => _sellPrice;
     public int GetBuyPrice => _buyPrice;
-    public InventoryObject GetInventoryObjectType => _inventoryObjectType;
     public bool GetIsActivateableBool => _isActivateable;
     public bool GetRepeatBehaviourBool => _repeatBehaviour;
     public float GetActiveTimeFloat => _activeTime;
