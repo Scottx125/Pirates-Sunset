@@ -69,11 +69,11 @@ public class Store : MonoBehaviour
         else
         {
             // Assemble the store dictionary.
-            StoreItemData[] temp = _storeInventoryManager.GetInventoryCopy();
-            for (int i = 0; i < temp.Length; i++)
-            {
-                _storeItems.Add(temp[i].ItemType, temp[i]);
-            }
+            //StoreItemData[] temp = _storeInventoryManager.GetInventoryCopy();
+            //for (int i = 0; i < temp.Length; i++)
+            //{
+            //    _storeItems.Add(temp[i].ItemType, temp[i]);
+            //}
         }
     }
 
@@ -87,11 +87,11 @@ public class Store : MonoBehaviour
         else
         {
             // Assemble the player dictionary.
-            StoreItemData[] temp = _playerInventoryManager.GetInventoryCopy();
-            for (int i = 0; i < temp.Length; i++)
-            {
-                _playerItems.Add(temp[i].ItemType, temp[i]);
-            }
+            //StoreItemData[] temp = _playerInventoryManager.GetInventoryCopy();
+            //for (int i = 0; i < temp.Length; i++)
+            //{
+            //    _playerItems.Add(temp[i].ItemType, temp[i]);
+            //}
         }
     }
 

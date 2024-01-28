@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RepairObject : InventoryObject
+public class RepairObject : AbilityObject
 {
     [SerializeField]
     int amountToHeal = 5;
@@ -19,7 +19,7 @@ public class RepairObject : InventoryObject
     }
     protected override void ObjectBehaviour()
     {
-        base.SubtractQuantity(1);
+        ConsumedQuantity(1);
         foreach (IHeal healableComponent in _healableComponenets)
         {
             healableComponent.Heal(amountToHeal);

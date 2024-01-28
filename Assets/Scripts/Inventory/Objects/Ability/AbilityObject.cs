@@ -115,4 +115,9 @@ public abstract class AbilityObject : MonoBehaviour
     {
         // Implement in child classes.
     }
+
+    protected void ConsumedQuantity(int i)
+    {
+        _inventoryObject.SubtractQuantity(i);
+    }
 }

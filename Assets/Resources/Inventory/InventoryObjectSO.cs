@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 using UnityEngine;
 using UnityEngine.UI;
 
-[CreateAssetMenu(fileName = "Inventory", menuName = "ScriptableObjects/Inventory", order = 2)]
+[CreateAssetMenu(fileName = "Inventory", menuName = "ScriptableObjects/InventoryObject", order = 2)]
 public class InventoryObjectSO : ScriptableObject
 {
     [SerializeField]
@@ -19,6 +19,8 @@ public class InventoryObjectSO : ScriptableObject
     [SerializeField]
     private float _repeatTime = 0.25f;
     [SerializeField]
+    private string _objectId;
+    [SerializeField]
     private string _invenObjName;
     [SerializeField]
     private Sprite _invenObjSprite;
@@ -31,6 +33,7 @@ public class InventoryObjectSO : ScriptableObject
     [SerializeField]
     private AbilityObject _abilityObject;
 
+    public string GetId => _objectId;
     public InventoryObject GetInventoryObject => _inventoryObject;
     public AbilityObject GetAbilityObject => _abilityObject;
     public int GetSellPrice => _sellPrice;
@@ -42,4 +45,16 @@ public class InventoryObjectSO : ScriptableObject
     public float GetRepeatTimeFloat => _repeatTime;
     public string GetName => _invenObjName;
     public Sprite GetImage => _invenObjSprite;
+
+    private void OnValidate()
+    {
+        if (string.IsNullOrEmpty(_objectId))
+        {
+            _objectId = Guid.NewGuid().ToString();
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
+            Debug.Log("Generated UUID for ScriptableObject: " + _objectId);
+        }
+    }
 }

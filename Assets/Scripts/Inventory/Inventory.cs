@@ -20,7 +20,7 @@ public abstract class Inventory : MonoBehaviour
         if (_inventoryObjectStorage == null) Debug.LogError("No inventoryStorage set!");
         // Load IOSO's into the dict so that if we have an object we don't know of we can search for it.
         InventoryObjectSO[] inventoryObjectSOsArray = Resources.LoadAll<InventoryObjectSO>("ScriptableObjects/Inventory");
-        _inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetInventoryObjectType, item => item);
+        //_inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetInventoryObjectType, item => item);
         _inventoryUIBuilder = inventoryUIBuilder;
     }
 
@@ -30,7 +30,7 @@ public abstract class Inventory : MonoBehaviour
         StoreItemData[] copy = new StoreItemData[_inventory.Count];
         for (int i = 0; i < _inventory.Count; i++)
         {
-            copy[i] = new StoreItemData(_inventory[i].GetQuantity(), _inventory[i], _inventory[i].GetBuyPrice(), _inventory[i].GetSellPrice(), _inventory[i].GetName(), _inventory[i].GetSprite());
+            //copy[i] = new StoreItemData(_inventory[i].GetQuantity(), _inventory[i], _inventory[i].GetBuyPrice(), _inventory[i].GetSellPrice(), _inventory[i].GetName(), _inventory[i].GetSprite());
         }
         return copy;
     }
@@ -73,7 +73,7 @@ public abstract class Inventory : MonoBehaviour
         {
             GameObject inventoryUIInstance = _inventoryUIBuilder.CreateInventoryUIPrefab(_inventoryObjectsSOsDict[inventoryType].GetName, _inventoryObjectsSOsDict[inventoryType].GetImage);
             GameObject abilityUIInstance = _inventoryUIBuilder.CreateAbilityHUDPrefab(_inventoryObjectsSOsDict[inventoryType].GetName, _inventoryObjectsSOsDict[inventoryType].GetImage);
-            instanceInventoryObject.SetupForPlayerUI(inventoryUIInstance, abilityUIInstance);
+            //instanceInventoryObject.Setup(inventoryUIInstance, abilityUIInstance);
         }
         return instanceInventoryObject;
     }
@@ -91,7 +91,7 @@ public abstract class Inventory : MonoBehaviour
     private void RemoveFromInventoryQuantity(InventoryObject existingItem, int amountToSubtract)
     {
         existingItem.SubtractQuantity(amountToSubtract);
-        if (existingItem.GetQuantity() <= 0)
+        if (existingItem.InventoryObjectQuantity <= 0)
         {
             _inventory.Remove(existingItem);
             Destroy(existingItem.gameObject);
