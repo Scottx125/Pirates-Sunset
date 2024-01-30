@@ -18,6 +18,10 @@ public class Store : MonoBehaviour
     [SerializeField]
     private GameObject _playerContentsSection;
     [SerializeField]
+    private string _playerGoldId;
+    [SerializeField]
+    private string _storeGoldId;
+    [SerializeField]
     private TextMeshProUGUI _playerGoldTextComponenet;
     [SerializeField]
     private TextMeshProUGUI _storeGoldTextComponenet;
@@ -29,18 +33,16 @@ public class Store : MonoBehaviour
 
     private InventoryManager _playerInventoryManager;
 
-    private StoreItemData _playerGold;
-    private StoreItemData _storeGold;
+    private ItemData _playerGold;
+    private ItemData _storeGold;
     
     // Objects currently displayed on screen in the store.
-    private Dictionary<InventoryObject, StoreItemData> _storeItems = new Dictionary<InventoryObject, StoreItemData>();
-    private Dictionary<InventoryObject, StoreItemData> _playerItems = new Dictionary<InventoryObject, StoreItemData>();
+    private Dictionary<string, ItemData> _storeItems = new Dictionary<string, ItemData>();
+    private Dictionary<string, ItemData> _playerItems = new Dictionary<string, ItemData>();
 
-    // Hold a list of all the types changed.
-    private List<InventoryObject> _changedItems = new List<InventoryObject>();
 
     // Use this for the selected Item, use it to populate UI to show what is currently being traded.
-    private StoreItemData _selectedItem;
+    private string _selectedItemId;
 
     private bool _storeOpen = false;
 

@@ -12,7 +12,7 @@ public abstract class Inventory : MonoBehaviour
     [SerializeField]
     private List<InventoryObject> _inventory = new List<InventoryObject>();
 
-    private Dictionary<InventoryObject, InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<InventoryObject, InventoryObjectSO>();
+    private Dictionary<string, InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<string, InventoryObjectSO>();
   
     private InventoryUIBuilder _inventoryUIBuilder;
     public void Setup(InventoryUIBuilder inventoryUIBuilder = null)
@@ -20,17 +20,17 @@ public abstract class Inventory : MonoBehaviour
         if (_inventoryObjectStorage == null) Debug.LogError("No inventoryStorage set!");
         // Load IOSO's into the dict so that if we have an object we don't know of we can search for it.
         InventoryObjectSO[] inventoryObjectSOsArray = Resources.LoadAll<InventoryObjectSO>("ScriptableObjects/Inventory");
-        //_inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetInventoryObjectType, item => item);
+        _inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetId, item => item);
         _inventoryUIBuilder = inventoryUIBuilder;
     }
 
     // Returns the type and quantity of the objects in the inventory.
-    public StoreItemData[] GetInventory()
+    public ItemData[] GetInventory()
     {
-        StoreItemData[] copy = new StoreItemData[_inventory.Count];
+        ItemData[] copy = new ItemData[_inventory.Count];
         for (int i = 0; i < _inventory.Count; i++)
         {
-            //copy[i] = new StoreItemData(_inventory[i].GetQuantity(), _inventory[i], _inventory[i].GetBuyPrice(), _inventory[i].GetSellPrice(), _inventory[i].GetName(), _inventory[i].GetSprite());
+            copy[i] = new ItemData(_inventory[i].InventoryObjectQuantity, _inventory[i].InventoryObjectId, _inventory[i].InventoryObjectBuyPrice, _inventory[i].InventoryObjectSellPrice, _inventory[i].InventoryObjectName, _inventory[i].InventoryObjectUIImage);
         }
         return copy;
     }

@@ -9,16 +9,18 @@ using UnityEngine.UI;
 public class InventoryObject : MonoBehaviour
 {
     public int InventoryObjectQuantity { get; private set; }
+    public string InventoryObjectId { get; private set; }
     public Sprite InventoryObjectUIImage { get; private set; }
     public String InventoryObjectName { get; private set; }
     public int InventoryObjectBuyPrice { get; private set; }
     public int InventoryObjectSellPrice { get; private set; }
 
 
-    public void Setup(int quantity, Sprite image, string name, int buyPrice, int sellPrice)
+    public void Setup(int quantity, string id, Sprite image, string name, int buyPrice, int sellPrice)
     {
         // Setup object variables.
         InventoryObjectQuantity = quantity;
+        InventoryObjectId = id;
         InventoryObjectUIImage = image;
         InventoryObjectName = name;
         InventoryObjectBuyPrice = buyPrice;
