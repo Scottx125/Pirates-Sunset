@@ -10,30 +10,31 @@ public class InventoryObject : MonoBehaviour
 {
     public int InventoryObjectQuantity { get; private set; }
     public string InventoryObjectId { get; private set; }
-    public Sprite InventoryObjectUIImage { get; private set; }
-    public String InventoryObjectName { get; private set; }
-    public int InventoryObjectBuyPrice { get; private set; }
-    public int InventoryObjectSellPrice { get; private set; }
 
+    private InventoryUI _inventoryUI;
 
-    public void Setup(int quantity, string id, Sprite image, string name, int buyPrice, int sellPrice)
+    public void Setup(int quantity, string id, InventoryUI inventoryUI)
     {
         // Setup object variables.
         InventoryObjectQuantity = quantity;
         InventoryObjectId = id;
-        InventoryObjectUIImage = image;
-        InventoryObjectName = name;
-        InventoryObjectBuyPrice = buyPrice;
-        InventoryObjectSellPrice = sellPrice;
+        _inventoryUI = inventoryUI;
+    }
+
+    private void UpdateUI()
+    {
+        _inventoryUI.UpdateUIQuantity(InventoryObjectQuantity);
     }
 
     public void SubtractQuantity(int subtractValue) 
     { 
          InventoryObjectQuantity -= subtractValue;
+        UpdateUI();
     }
 
     public void AddQuantity(int addValue)
     {
         InventoryObjectQuantity += addValue;
+        UpdateUI():
     }
 }

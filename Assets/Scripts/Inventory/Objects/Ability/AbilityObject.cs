@@ -22,7 +22,8 @@ public abstract class AbilityObject : MonoBehaviour
     // Other references.
     private InventoryObject _inventoryObject;
 
-    public void Setup(bool isActivateable, bool repeatsBehaviour, float activeTime, float cooldownTime, float repeatTime, GameObject abilityUIAsset, InventoryUI inventoryUI, InventoryObject inventoryObject)
+    public void Setup(bool isActivateable, bool repeatsBehaviour, float activeTime, float cooldownTime, float repeatTime, 
+        GameObject abilityUIAsset, InventoryUI inventoryUI, InventoryObject inventoryObject)
     {
         // Setup UI Stuff.
         _abilityHUDAsset = abilityUIAsset;
