@@ -5,23 +5,21 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventoryUI : MonoBehaviour
+public abstract class InventoryUI : MonoBehaviour
 {
     [SerializeField]
-    private TMP_Text _inventoryUIName;
+    protected TMP_Text _inventoryUIName;
     [SerializeField]
-    private TMP_Text _inventoryUIQuantity;
+    protected TMP_Text _inventoryUIQuantity;
     [SerializeField]
-    private Image _inventoryUIImage;
+    protected TMP_Text _inventoryUIBuyPrice;
     [SerializeField]
-    private Image _inventoryUICooldown;
-    public void Setup(string name, int quantity, Sprite mainImage)
-    {
-        _inventoryUIName.text = name;
-        _inventoryUIQuantity.text = quantity.ToString();
-        _inventoryUIImage.sprite = mainImage;
-        _inventoryUICooldown.fillAmount = 0f;
-    }
+    protected TMP_Text _inventoryUISellPrice;
+    [SerializeField]
+    protected Image _inventoryUIImage;
+    [SerializeField]
+    protected Image _inventoryUICooldown;
+    public abstract void Setup(string name, int quantity = 0, Sprite mainImage, int buyPrice = 0, int sellPrice = 0);
 
     public void UpdateUIQuantity(int quantity)
     {

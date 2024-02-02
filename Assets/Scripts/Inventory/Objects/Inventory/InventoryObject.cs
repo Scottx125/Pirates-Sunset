@@ -35,6 +35,6 @@ public class InventoryObject : MonoBehaviour
     public void AddQuantity(int addValue)
     {
         InventoryObjectQuantity += addValue;
-        UpdateUI():
+        UpdateUI();
     }
 }

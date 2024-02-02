@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,33 +14,27 @@ public abstract class Inventory : MonoBehaviour
     protected List<InventoryObject> _inventory = new List<InventoryObject>();
 
     protected Dictionary<string, InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<string, InventoryObjectSO>();
-  
-    protected InventoryUIBuilder _inventoryUIBuilder;
     public void Setup(InventoryUIBuilder inventoryUIBuilder = null)
     {
         if (_inventoryObjectStorage == null) Debug.LogError("No inventoryStorage set!");
         // Load IOSO's into the dict so that if we have an object we don't know of we can search for it.
         InventoryObjectSO[] inventoryObjectSOsArray = Resources.LoadAll<InventoryObjectSO>("ScriptableObjects/Inventory");
         _inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetId, item => item);
-        if (_inventoryUIBuilder != null)
-        {
-            _inventoryUIBuilder = inventoryUIBuilder;
-        }
     }
 
     // Returns the type and quantity of the objects in the inventory.
-    public ItemData[] GetInventory()
+    public List<Tuple<string, int>> GetInventory()
     {
-        ItemData[] copy = new ItemData[_inventory.Count];
-        for (int i = 0; i < _inventory.Count; i++)
+        List<Tuple<string, int>> copy = new List<Tuple<string, int>>();
+        foreach (InventoryObject obj in _inventory)
         {
-            copy[i] = new ItemData(_inventory[i].InventoryObjectQuantity, _inventory[i].InventoryObjectId, _inventory[i].InventoryObjectBuyPrice, _inventory[i].InventoryObjectSellPrice, _inventory[i].InventoryObjectName, _inventory[i].InventoryObjectUIImage);
+            copy.Add(Tuple.Create(obj.InventoryObjectId, obj.InventoryObjectQuantity));
         }
         return copy;
     }
-    public void RemoveFromInventory(InventoryObject inventoryType, int amountToSubtract)
+    public void RemoveFromInventory(string itemId, int amountToSubtract)
     {
-        InventoryObject existingItem = CheckInventoryForExistingItem(inventoryType);
+        InventoryObject existingItem = CheckInventoryForExistingItem(itemId);
 
         if (existingItem == null)
         {

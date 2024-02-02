@@ -39,18 +39,14 @@ public class InventoryUIBuilder : MonoBehaviour
         }
     }
 
-    public GameObject CreateInventoryUIPrefab(string name, Sprite image)
+    public GameObject CreateInventoryUIPrefab()
     {
         GameObject obj = Instantiate(_inventoryUIPrefab, _inventoryUIContents);
-        InventoryUI _inventoryUI = obj.GetComponent<InventoryUI>();
-        _inventoryUI.Setup(name, 0, image);
         return obj;
     }
-    public GameObject CreateAbilityHUDPrefab(string name, Sprite image)
+    public GameObject CreateAbilityHUDPrefab()
     {
         GameObject obj = Instantiate(_abilityHUDPrefab, _abilityActiveContents);
-        InventoryUI _abilityHUD = obj.GetComponent<InventoryUI>();
-        _abilityHUD.Setup(name, 0, image);
         return obj;
     }
 }
