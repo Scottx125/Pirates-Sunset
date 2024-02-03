@@ -1,26 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class InventoryUI : MonoBehaviour
+public class PlayerInventoryUI : MonoBehaviour
 {
     [SerializeField]
     protected TMP_Text _inventoryUIName;
     [SerializeField]
     protected TMP_Text _inventoryUIQuantity;
     [SerializeField]
-    protected TMP_Text _inventoryUIBuyPrice;
-    [SerializeField]
-    protected TMP_Text _inventoryUISellPrice;
-    [SerializeField]
     protected Image _inventoryUIImage;
     [SerializeField]
     protected Image _inventoryUICooldown;
-    public abstract void Setup(string name, int quantity = 0, Sprite mainImage, int buyPrice = 0, int sellPrice = 0);
-
+    public void Setup(string name, Sprite mainImage)
+    {
+        _inventoryUIName.text = name;
+        _inventoryUIQuantity.text = "0";
+        _inventoryUIImage.sprite = mainImage;
+        _inventoryUICooldown.fillAmount = 0f;
+    }
     public void UpdateUIQuantity(int quantity)
     {
         _inventoryUIQuantity.text = quantity.ToString();

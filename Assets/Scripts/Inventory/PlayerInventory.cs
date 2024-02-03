@@ -14,25 +14,30 @@ public class PlayerInventory : Inventory
     private GameObject _abilityHUDPrefab;
     protected override InventoryObject CreateInventoryObject(string itemId)
     {
-        // Create the UI aspects and then give the IO the refernces to the UI objects.
-        GameObject inventoryObjectGameObject = Instantiate(_inventoryObjectPrefab, _inventoryObjectStorage);
-        InventoryObject instanceInventoryObject = inventoryObjectGameObject.GetComponent<InventoryObject>();
-        AbilityObject instanceAbilityObject = inventoryObjectGameObject.GetComponent<AbilityObject>();
+        // SPAWN MAIN INVENTORY PREFAB AND GET RELEVANT SCRIPTS.
+        GameObject inventoryObjectInstance = Instantiate(_inventoryObjectPrefab, _inventoryObjectStorage);
+        InventoryObject inventoryObject = inventoryObjectInstance.GetComponent<InventoryObject>();
+        AbilityObject abilityObject = inventoryObjectInstance.GetComponent<AbilityObject>();
         
-        // Instantiate HUD/UI objects.
-        GameObject inventoryUIInstance = Instantiate(_inventoryUIPrefab, _inventoryUIContents);
-        InventoryUI invUI = inventoryUIInstance.GetComponent<InventoryUI>();
-        GameObject abilityHUDInstance = Instantiate(_abilityHUDPrefab, _abilityActiveContents);
-        InventoryUI abilityHUD = abilityHUDInstance.GetComponent<InventoryUI>().Setup(_inventoryObjectsSOsDict[itemId].GetName,);
-        
+        // SPAWN UI PREFABS AND SETUP SCRIPTS.
+        // Instantiate PlayerInventoryUIObj and setup.
+        GameObject pInventoryUIObj = Instantiate(_inventoryUIPrefab, _inventoryUIContents);
+        PlayerInventoryUI pInventoryUI = pInventoryUIObj.GetComponent<PlayerInventoryUI>();
+        pInventoryUI.Setup(_inventoryObjectsSOsDict[itemId].GetName, _inventoryObjectsSOsDict[itemId].GetImage);
+        // Instantiate PlayerAbilityHUDObj and setup.
+        GameObject pAbilityHUDObj = Instantiate(_abilityHUDPrefab, _abilityActiveContents);
+        PlayerAbilityHUD pAbilityHUD = pAbilityHUDObj.GetComponent<PlayerAbilityHUD>();
+        pAbilityHUD.Setup(_inventoryObjectsSOsDict[itemId].GetImage);
+
+        // SETUP SCRIPTS OF INVOBJ AND ABILITYOBJ
         // Setup the inv object.
-        instanceInventoryObject.Setup(0, _inventoryObjectsSOsDict[itemId].GetId, inventoryUIInstance.GetComponent<InventoryUI>());
-        
+        inventoryObject.Setup(_inventoryObjectsSOsDict[itemId].GetId, pInventoryUI);
+
         // Setup the ability object.
-        instanceAbilityObject.Setup(_inventoryObjectsSOsDict[itemId].GetIsActivateableBool, _inventoryObjectsSOsDict[itemId].GetRepeatBehaviourBool,
+        abilityObject.Setup(_inventoryObjectsSOsDict[itemId].GetIsActivateableBool, _inventoryObjectsSOsDict[itemId].GetRepeatBehaviourBool,
             _inventoryObjectsSOsDict[itemId].GetActiveTimeFloat, _inventoryObjectsSOsDict[itemId].GetCooldownFloat, _inventoryObjectsSOsDict[itemId].GetRepeatTimeFloat,
-            abilityHUDInstance, inventoryUIInstance.GetComponent<InventoryUI>(), instanceInventoryObject);
+            pAbilityHUDObj, pInventoryUI, inventoryObject);
         
-        return instanceInventoryObject;
+        return inventoryObject;
     }
 }

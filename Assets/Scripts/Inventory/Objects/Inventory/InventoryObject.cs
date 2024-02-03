@@ -11,19 +11,19 @@ public class InventoryObject : MonoBehaviour
     public int InventoryObjectQuantity { get; private set; }
     public string InventoryObjectId { get; private set; }
 
-    private InventoryUI _inventoryUI;
+    private PlayerInventoryUI _pInventoryUI;
 
-    public void Setup(int quantity, string id, InventoryUI inventoryUI)
+    public void Setup(string id, PlayerInventoryUI pInventoryUI)
     {
         // Setup object variables.
-        InventoryObjectQuantity = quantity;
+        InventoryObjectQuantity = 0;
         InventoryObjectId = id;
-        _inventoryUI = inventoryUI;
+        _pInventoryUI = pInventoryUI;
     }
 
     private void UpdateUI()
     {
-        _inventoryUI.UpdateUIQuantity(InventoryObjectQuantity);
+        _pInventoryUI.UpdateUIQuantity(InventoryObjectQuantity);
     }
 
     public void SubtractQuantity(int subtractValue) 
