@@ -16,7 +16,7 @@ public class PlayerInventory : Inventory
     {
         // SPAWN MAIN INVENTORY PREFAB AND GET RELEVANT SCRIPTS.
         GameObject inventoryObjectInstance = Instantiate(_inventoryObjectPrefab, _inventoryObjectStorage);
-        InventoryObject inventoryObject = inventoryObjectInstance.GetComponent<InventoryObject>();
+        PlayerInventoryObject inventoryObject = inventoryObjectInstance.GetComponent<PlayerInventoryObject>();
         AbilityObject abilityObject = inventoryObjectInstance.GetComponent<AbilityObject>();
         
         // SPAWN UI PREFABS AND SETUP SCRIPTS.
