@@ -19,6 +19,8 @@ public class InventoryObjectSO : ScriptableObject
     [SerializeField]
     private float _repeatTime = 0.25f;
     [SerializeField]
+    private AbilityType _abilityType;
+    [SerializeField]
     private string _objectId;
     [SerializeField]
     private string _invenObjName;
@@ -29,13 +31,11 @@ public class InventoryObjectSO : ScriptableObject
     [SerializeField]
     private int _buyPrice;
     [SerializeField]
-    private InventoryObject _inventoryObject;
-    [SerializeField]
-    private AbilityObject _abilityObject;
+    private GameObject _inventoryObjectPrefab;
 
+    public AbilityType GetAbilityType => _abilityType;
     public string GetId => _objectId;
-    public InventoryObject GetInventoryObject => _inventoryObject;
-    public AbilityObject GetAbilityObject => _abilityObject;
+    public GameObject GetInventoryObjectPrefab => _inventoryObjectPrefab;
     public int GetSellPrice => _sellPrice;
     public int GetBuyPrice => _buyPrice;
     public bool GetIsActivateableBool => _isActivateable;

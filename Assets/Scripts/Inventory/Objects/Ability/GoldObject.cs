@@ -2,6 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GoldObject : InventoryObject
+public class GoldObject : AbilityObject
 {
 }

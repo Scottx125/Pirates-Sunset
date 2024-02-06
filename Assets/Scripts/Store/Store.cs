@@ -33,12 +33,12 @@ public class Store : MonoBehaviour
 
     private InventoryManager _playerInventoryManager;
 
-    private ItemData _playerGold;
-    private ItemData _storeGold;
+    private StoreItemData _playerGold;
+    private StoreItemData _storeGold;
     
     // Objects currently displayed on screen in the store.
-    private Dictionary<string, ItemData> _storeItems = new Dictionary<string, ItemData>();
-    private Dictionary<string, ItemData> _playerItems = new Dictionary<string, ItemData>();
+    private Dictionary<string, StoreItemData> _storeItems = new Dictionary<string, StoreItemData>();
+    private Dictionary<string, StoreItemData> _playerItems = new Dictionary<string, StoreItemData>();
 
 
     // Use this for the selected Item, use it to populate UI to show what is currently being traded.
@@ -103,7 +103,7 @@ public class Store : MonoBehaviour
         _storeGold = null;
         _storeItems.Clear();
         _playerItems.Clear();
-        _changedItems.Clear();
+        //_changedItems.Clear();
     }
 
     // Open store method. Handles setting up the store attatched to a collider or button.

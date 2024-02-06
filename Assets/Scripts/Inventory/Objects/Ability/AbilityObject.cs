@@ -21,9 +21,12 @@ public abstract class AbilityObject : MonoBehaviour
 
     // Other references.
     private InventoryObject _inventoryObject;
-
+    private AbilityTracker _abilityTracker;
+    private AbilityType _abilityType;
+    // Pass in ability tracker.
+    // Also set ability Type variable.
     public void Setup(bool isActivateable, bool repeatsBehaviour, float activeTime, float cooldownTime, float repeatTime, 
-        GameObject abilityHUDObj, PlayerInventoryUI pInventoryUI, InventoryObject inventoryObject)
+        GameObject abilityHUDObj, PlayerInventoryUI pInventoryUI, InventoryObject inventoryObject, AbilityTracker abilityTracker, AbilityType abilityType)
     {
         // Setup UI Stuff.
         _abilityHUDObj = abilityHUDObj;
@@ -32,6 +35,7 @@ public abstract class AbilityObject : MonoBehaviour
 
         // Setup references.
         _inventoryObject = inventoryObject;
+        _abilityTracker = abilityTracker;
 
         // Setup Data
         _bAbilityObjectIsActivateable = isActivateable;
@@ -39,6 +43,7 @@ public abstract class AbilityObject : MonoBehaviour
         _abilityObjectActiveTime = activeTime;
         _abilityObjectCooldownTime = cooldownTime;
         _abilityObjectRepeatTime = repeatTime;
+        _abilityType = abilityType;
 
         // Ability is not active so disable.
         _abilityHUDObj.SetActive(false);

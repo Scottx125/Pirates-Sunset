@@ -9,12 +9,10 @@ public abstract class Inventory : MonoBehaviour
     [SerializeField]
     protected Transform _inventoryObjectStorage;
     [SerializeField]
-    protected GameObject _inventoryObjectPrefab;
-    [SerializeField]
     protected List<InventoryObject> _inventory = new List<InventoryObject>();
 
     protected Dictionary<string, InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<string, InventoryObjectSO>();
-    public void Setup(InventoryUIBuilder inventoryUIBuilder = null)
+    public void Setup()
     {
         if (_inventoryObjectStorage == null) Debug.LogError("No inventoryStorage set!");
         // Load IOSO's into the dict so that if we have an object we don't know of we can search for it.
