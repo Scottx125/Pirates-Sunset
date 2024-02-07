@@ -9,7 +9,7 @@ public abstract class Inventory : MonoBehaviour
     [SerializeField]
     protected Transform _inventoryObjectStorage;
     [SerializeField]
-    protected List<InventoryObject> _inventory = new List<InventoryObject>();
+    public List<InventoryObject> InventoryList { get; private set; }
 
     protected Dictionary<string, InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<string, InventoryObjectSO>();
     public void Setup()
@@ -20,16 +20,6 @@ public abstract class Inventory : MonoBehaviour
         _inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetId, item => item);
     }
 
-    // Returns the type and quantity of the objects in the inventory.
-    public List<Tuple<string, int>> GetInventory()
-    {
-        List<Tuple<string, int>> copy = new List<Tuple<string, int>>();
-        foreach (InventoryObject obj in _inventory)
-        {
-            copy.Add(Tuple.Create(obj.InventoryObjectId, obj.InventoryObjectQuantity));
-        }
-        return copy;
-    }
     public void RemoveFromInventory(string itemId, int amountToSubtract)
     {
         InventoryObject existingItem = CheckInventoryForExistingItem(itemId);
@@ -52,7 +42,7 @@ public abstract class Inventory : MonoBehaviour
         {
             // Spawn UI prefabs. Pass itself in the inventory and the ability UI.
             InventoryObject obj = CreateInventoryObject(itemId);
-            _inventory.Add(obj);
+            InventoryList.Add(obj);
             AddToInventoryQuantity(obj, amountToAdd);
         }
         else
@@ -65,7 +55,7 @@ public abstract class Inventory : MonoBehaviour
     private InventoryObject CheckInventoryForExistingItem(string itemId)
     {
         // Get the type of the item if it's in the list.
-        return _inventory.FirstOrDefault(existing => existing.InventoryObjectId == itemId);
+        return InventoryList.FirstOrDefault(existing => existing.InventoryObjectId == itemId);
     }
 
     private void AddToInventoryQuantity(InventoryObject existingItem, int amountToAdd)
@@ -78,7 +68,7 @@ public abstract class Inventory : MonoBehaviour
         existingItem.SubtractQuantity(amountToSubtract);
         if (existingItem.InventoryObjectQuantity <= 0)
         {
-            _inventory.Remove(existingItem);
+            InventoryList.Remove(existingItem);
             Destroy(existingItem.gameObject);
         }
     }

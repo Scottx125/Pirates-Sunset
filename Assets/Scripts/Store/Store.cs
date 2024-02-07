@@ -8,15 +8,18 @@ using UnityEngine.UI;
 
 public class Store : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject _storeItemPrefab;
+
     [SerializeField]
     private InventoryManager _storeInventoryManager;
+    [SerializeField]
+    private List<InventoryObjectSO> _allowedObjectsForTrade;
     // UI STUFF
     [SerializeField]
-    private GameObject _storeContentsSection;
+    private GameObject _storeUIPrefab;
     [SerializeField]
-    private GameObject _playerContentsSection;
+    private Transform _storeContentsSection;
+    [SerializeField]
+    private Transform _playerContentsSection;
     [SerializeField]
     private string _playerGoldId;
     [SerializeField]
@@ -35,16 +38,52 @@ public class Store : MonoBehaviour
 
     private StoreItemData _playerGold;
     private StoreItemData _storeGold;
-    
+
     // Objects currently displayed on screen in the store.
-    private Dictionary<string, StoreItemData> _storeItems = new Dictionary<string, StoreItemData>();
-    private Dictionary<string, StoreItemData> _playerItems = new Dictionary<string, StoreItemData>();
+    private Dictionary<string, InventoryObjectSO> _allowedObjectsDict = new Dictionary<string, InventoryObjectSO>();
+    private Dictionary<string, GameObject> _storeInventoryUIDict = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> _playerStoreInventoryUIDict = new Dictionary<string, GameObject>();
 
 
     // Use this for the selected Item, use it to populate UI to show what is currently being traded.
     private string _selectedItemId;
+    private List<string> _modififedItemsIDs = new List<string>();
 
     private bool _storeOpen = false;
+
+    private void Awake()
+    {
+        // Make search of allowed objects easier.
+        _allowedObjectsDict = _allowedObjectsForTrade.ToDictionary(item => item.GetId, item => item);
+
+        // Create pool of objects for the store to use.
+        for(int i = 0; i < _allowedObjectsForTrade.Count; i++)
+        {
+            // Spawn objects and add them to the correct sections.
+            GameObject playerStoreInventoryUIGameObj = Instantiate(_storeUIPrefab, _playerContentsSection);
+            _playerStoreInventoryUIDict.Add(_allowedObjectsForTrade[i].GetId, playerStoreInventoryUIGameObj);
+            GameObject storeInventoryUIGameObj = Instantiate(_storeUIPrefab, _storeContentsSection);
+            _storeInventoryUIDict.Add(_allowedObjectsForTrade[i].GetId, storeInventoryUIGameObj);
+
+            // Get UI Scripts.
+            StoreInventoryUI playerStoreUIScript = playerStoreInventoryUIGameObj.GetComponent<StoreInventoryUI>();
+            StoreInventoryUI storeUIScript = storeInventoryUIGameObj.GetComponent<StoreInventoryUI>();
+
+            // Setup the item data.
+            StoreItemData itemDataPlayer = new StoreItemData(0, _allowedObjectsForTrade[i].GetId, _allowedObjectsForTrade[i].GetBuyPrice,
+                _allowedObjectsForTrade[i].GetSellPrice, _allowedObjectsForTrade[i].GetName, _allowedObjectsForTrade[i].GetImage, playerStoreUIScript);
+            StoreItemData itemDataStore = new StoreItemData(0, _allowedObjectsForTrade[i].GetId, _allowedObjectsForTrade[i].GetBuyPrice,
+                _allowedObjectsForTrade[i].GetSellPrice, _allowedObjectsForTrade[i].GetName, _allowedObjectsForTrade[i].GetImage, storeUIScript);
+
+            // Setup UI Scripts.
+            playerStoreUIScript.Setup(itemDataPlayer);
+            storeUIScript.Setup(itemDataStore);
+
+            // Disable until needed.
+            playerStoreInventoryUIGameObj.SetActive(false);
+            storeInventoryUIGameObj.SetActive(false);
+        }
+    }
 
     public void OpenStore()
     {
@@ -56,12 +95,12 @@ public class Store : MonoBehaviour
         // Reset Store to a base default
         ResetStore();
         // Get player Inventory
-        GetPlayerInventory();
-        GetStoreInventory();
+        SetupPlayerInventory();
+        SetupStoreInventory();
         // Setup Store UI elements.
     }
 
-    private void GetStoreInventory()
+    private void SetupStoreInventory()
     {
         if (_storeInventoryManager == null)
         {
@@ -71,15 +110,11 @@ public class Store : MonoBehaviour
         else
         {
             // Assemble the store dictionary.
-            //StoreItemData[] temp = _storeInventoryManager.GetInventoryCopy();
-            //for (int i = 0; i < temp.Length; i++)
-            //{
-            //    _storeItems.Add(temp[i].ItemType, temp[i]);
-            //}
+            List<Tuple<string, int>> inventoryData = _storeInventoryManager.GetInventory();
+            SetupInventories(inventoryData, _storeInventoryUIDict);
         }
     }
-
-    private void GetPlayerInventory()
+    private void SetupPlayerInventory()
     {
         if (_playerInventoryManager == null)
         {
@@ -88,21 +123,39 @@ public class Store : MonoBehaviour
         }
         else
         {
-            // Assemble the player dictionary.
-            //StoreItemData[] temp = _playerInventoryManager.GetInventoryCopy();
-            //for (int i = 0; i < temp.Length; i++)
-            //{
-            //    _playerItems.Add(temp[i].ItemType, temp[i]);
-            //}
+            // Assemble the store dictionary.
+            List<Tuple<string, int>> inventoryData = _playerInventoryManager.GetInventory();
+            SetupInventories(inventoryData, _playerStoreInventoryUIDict);
+        }
+    }
+
+    private void SetupInventories(List<Tuple<string, int>> inventoryData, Dictionary<string, GameObject> dict)
+    {
+        foreach (Tuple<string, int> item in inventoryData)
+        {
+            if (_allowedObjectsDict.ContainsKey(item.Item1))
+            {
+                GameObject storeUIObj = dict[item.Item1];
+                storeUIObj.SetActive(true);
+                StoreInventoryUI ui = storeUIObj.GetComponent<StoreInventoryUI>();
+
+                ui.Data.Quantity = item.Item2;
+                ui.UpdateUI();
+            }
         }
     }
 
     private void ResetStore()
     {
-        _playerGold = null;
-        _storeGold = null;
-        _storeItems.Clear();
-        _playerItems.Clear();
+        foreach(GameObject gameObject in _playerStoreInventoryUIDict.Values)
+        {
+            gameObject.SetActive(false);
+        }
+        foreach (GameObject gameObject in _storeInventoryUIDict.Values)
+        {
+            gameObject.SetActive(false);
+        }
+        _selectedItemId = null;
         //_changedItems.Clear();
     }
 

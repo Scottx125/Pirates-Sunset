@@ -7,25 +7,25 @@ using UnityEngine.UI;
 public class StoreInventoryUI : MonoBehaviour
 {
     [SerializeField]
-    protected TMP_Text _inventoryUIName;
+    private TMP_Text _inventoryUIName;
     [SerializeField]
-    protected TMP_Text _inventoryUIQuantity;
+    private TMP_Text _inventoryUIQuantity;
     [SerializeField]
-    protected Image _inventoryUIImage;
+    private Image _inventoryUIImage;
     [SerializeField]
-    protected TMP_Text _inventoryUIBuyPrice;
+    private TMP_Text _inventoryUIBuyPrice;
     [SerializeField]
-    protected TMP_Text _inventoryUISellPrice;
-    public void Setup(string name, int quantity, Sprite mainImage, int buyPrice = 0, int sellPrice = 0)
+    private TMP_Text _inventoryUISellPrice;
+
+    public StoreItemData Data { get; private set; }
+
+    public void Setup(StoreItemData data)
     {
-        _inventoryUIName.text = name;
-        _inventoryUIQuantity.text = quantity.ToString();
-        _inventoryUIImage.sprite = mainImage;
-        _inventoryUIBuyPrice.text = buyPrice.ToString();
-        _inventoryUISellPrice.text = sellPrice.ToString();
+        Data = data;
+        // Other stuff
     }
-    public void UpdateUIQuantity(int quantity)
+    public void UpdateUI()
     {
-        _inventoryUIQuantity.text = quantity.ToString();
+        _inventoryUIQuantity.text = Data.Quantity.ToString();
     }
 }

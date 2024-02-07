@@ -7,13 +7,13 @@ using UnityEngine.UI;
 public class PlayerInventoryUI : MonoBehaviour
 {
     [SerializeField]
-    protected TMP_Text _inventoryUIName;
+    private TMP_Text _inventoryUIName;
     [SerializeField]
-    protected TMP_Text _inventoryUIQuantity;
+    private TMP_Text _inventoryUIQuantity;
     [SerializeField]
-    protected Image _inventoryUIImage;
+    private Image _inventoryUIImage;
     [SerializeField]
-    protected Image _inventoryUICooldown;
+    private Image _inventoryUICooldown;
     public void Setup(string name, Sprite mainImage)
     {
         _inventoryUIName.text = name;

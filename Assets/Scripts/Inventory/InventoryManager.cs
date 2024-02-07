@@ -14,13 +14,22 @@ public class InventoryManager : MonoBehaviour
 
     public void Setup()
     {
-        // Setup inventory
+        _inventory.Setup();
     }
 
+    // Returns the type and quantity of the objects in the inventory.
+    public List<Tuple<string, int>> GetInventory()
+    {
+        List<Tuple<string, int>> copy = new List<Tuple<string, int>>();
+        foreach (InventoryObject obj in _inventory.InventoryList)
+        {
+            copy.Add(Tuple.Create(obj.InventoryObjectId, obj.InventoryObjectQuantity));
+        }
+        return copy;
+    }
 
+    public void AddOrRemoveFromInventory()
+    {
 
-
-
-
-    // This will deal with interactions between the store and the inventory objects. Such as adding/removing. Finding items in the inventory etc.
+    }
 }

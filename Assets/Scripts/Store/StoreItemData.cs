@@ -11,7 +11,8 @@ public class StoreItemData
     public int SellPrice { get; private set; }
     public string Name { get; private set; }
     public Sprite Image { get; private set; }
-    public StoreItemData(int quantity, string itemId, int buyPrice, int sellPrice, string name, Sprite image)
+    public StoreInventoryUI UIScript { get; private set; }
+    public StoreItemData(int quantity, string itemId, int buyPrice, int sellPrice, string name, Sprite image, StoreInventoryUI uiScript)
     {
         Quantity = quantity;
         ItemId = itemId;
@@ -19,5 +20,6 @@ public class StoreItemData
         SellPrice = sellPrice;
         Name = name;
         Image = image;
+        UIScript = uiScript;
     }
 }
