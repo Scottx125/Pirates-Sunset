@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Store : MonoBehaviour
+public class Store : MonoBehaviour, IStoreInventoryUISelected
 {
 
     [SerializeField]
@@ -14,6 +13,10 @@ public class Store : MonoBehaviour
     [SerializeField]
     private List<InventoryObjectSO> _allowedObjectsForTrade;
     // UI STUFF
+    [SerializeField]
+    private GameObject _storeUI;
+    [SerializeField]
+    private Slider _storeSlider;
     [SerializeField]
     private GameObject _storeUIPrefab;
     [SerializeField]
@@ -39,7 +42,7 @@ public class Store : MonoBehaviour
 
 
     private InventoryManager _playerInventoryManager;
-
+    // Gold
     private StoreItemData _playerGold;
     private StoreItemData _storeGold;
 
@@ -52,25 +55,51 @@ public class Store : MonoBehaviour
 
     // Use this for the selected Item, use it to populate UI to show what is currently being traded.
     private string _selectedItemId;
-    private List<string> _modififedItemsIDs = new List<string>();
 
     public void OpenStore()
     {
+        _storeUI.SetActive(true);
         SetupStore();
     }
     public void CloseStore()
     {
         // disable store ui
+        _storeUI.SetActive(false);
     }
     // Use Event for _selectedItemID.
-    public void ConductTemporaryTrade()
+
+    public void OnInventoryUISelected(string id)
     {
-        // Here we will use the selectedItemId and modify the dicts amounts and determine if the trade is possible.
+        if (_selectedItemId != null)
+        {
+            // Restore original items
+            // If a trade was already done, the temp will be changed and this will have no effect.
+            _playerGold.ResetQuantity();
+            _storeGold.ResetQuantity();
+            _storeInventoryUIDict[id].Data.ResetQuantity();
+            _playerStoreInventoryUIDict[id].Data.ResetQuantity();
+        }
+        _selectedItemId = id;
     }
 
-    public void ApplyTrade()
+    public void OnSliderValueChanged(float sliderValue)
     {
+        int value = (int)sliderValue;
+        AttemptTrade(value);
+    }
 
+    public void AttemptTrade(int quantity)
+    {
+        // Send modified item ID and quantity.
+        // Based on the quantity determine if it can be afforded.
+        // If it can, modify the temp costs and object quantity and update the UI.
+        // If it can't modify the gold text to change colour.
+    }
+
+    private void ApplyTrade(int quantity)
+    {
+        // Whatever items are currently being traded are applied.
+        // They are then sent to the users inventory manager.
     }
 
     private void Awake()
@@ -90,18 +119,19 @@ public class Store : MonoBehaviour
             SetupStoreItemPool(i);
         }
     }
-
     private void SetupStoreItemPool(int i)
     {
-        // Spawn objects and add them to the correct sections.
+        // Spawn objects.
         GameObject playerStoreInventoryUIGameObj = Instantiate(_storeUIPrefab, _playerContentsSection);
-        _playerStoreInventoryUIDict.Add(_allowedObjectsForTrade[i].GetId, playerStoreInventoryUIGameObj);
         GameObject storeInventoryUIGameObj = Instantiate(_storeUIPrefab, _storeContentsSection);
-        _storeInventoryUIDict.Add(_allowedObjectsForTrade[i].GetId, storeInventoryUIGameObj);
 
         // Get UI Scripts.
         StoreInventoryUI playerStoreUIScript = playerStoreInventoryUIGameObj.GetComponent<StoreInventoryUI>();
         StoreInventoryUI storeUIScript = storeInventoryUIGameObj.GetComponent<StoreInventoryUI>();
+
+        // Add them to the correct dicts.
+        _playerStoreInventoryUIDict.Add(_allowedObjectsForTrade[i].GetId, playerStoreUIScript);
+        _storeInventoryUIDict.Add(_allowedObjectsForTrade[i].GetId, storeUIScript);
 
         // Setup the item data.
         StoreItemData itemDataPlayer = new StoreItemData(0, _allowedObjectsForTrade[i].GetId, _allowedObjectsForTrade[i].GetBuyPrice,
@@ -110,8 +140,8 @@ public class Store : MonoBehaviour
             _allowedObjectsForTrade[i].GetSellPrice, _allowedObjectsForTrade[i].GetName, _allowedObjectsForTrade[i].GetImage, storeUIScript);
 
         // Setup UI Scripts.
-        playerStoreUIScript.Setup(itemDataPlayer);
-        storeUIScript.Setup(itemDataStore);
+        playerStoreUIScript.Setup(itemDataPlayer, this);
+        storeUIScript.Setup(itemDataStore, this);
 
         // Disable until needed.
         playerStoreInventoryUIGameObj.SetActive(false);
@@ -120,15 +150,17 @@ public class Store : MonoBehaviour
     // Same as item pool except is specific for gold.
     private void SetupGold()
     {
-        // Spawn objects and add them to the correct sections.
+        // Spawn objects.
         GameObject playerStoreGoldUIGameObj = Instantiate(_storeUIPrefab, _playerGoldContentsSection);
-        _playerStoreInventoryUIDict.Add(_goldId, playerStoreGoldUIGameObj);
         GameObject storeGoldUIGameObj = Instantiate(_storeUIPrefab, _storeGoldContentSection);
-        _storeInventoryUIDict.Add(_goldId, storeGoldUIGameObj);
 
         // Get UI Scripts.
         StoreInventoryUI playerStoreGoldUIScript = playerStoreGoldUIGameObj.GetComponent<StoreInventoryUI>();
         StoreInventoryUI storeGoldUIScript = storeGoldUIGameObj.GetComponent<StoreInventoryUI>();
+
+        // Add to the correct dicts.
+        _playerStoreInventoryUIDict.Add(_goldId, playerStoreGoldUIScript);
+        _storeInventoryUIDict.Add(_goldId, storeGoldUIScript);
 
         // Setup the item data.
         StoreItemData itemDataPlayer = new StoreItemData(0, _goldId, _allowedObjectsDict[_goldId].GetBuyPrice,
@@ -137,14 +169,13 @@ public class Store : MonoBehaviour
             _allowedObjectsDict[_goldId].GetSellPrice, _allowedObjectsDict[_goldId].GetName, _allowedObjectsDict[_goldId].GetImage, storeGoldUIScript);
 
         // Setup UI Scripts.
-        playerStoreGoldUIScript.Setup(itemDataPlayer);
-        storeGoldUIScript.Setup(itemDataStore);
+        playerStoreGoldUIScript.Setup(itemDataPlayer, this);
+        storeGoldUIScript.Setup(itemDataStore, this);
 
         // Cache the store and player gold data scripts.
         _playerGold = playerStoreGoldUIScript.Data;
         _storeGold = storeGoldUIScript.Data;
     }
-
     private void SetupStore()
     {
         // Activate Store UI
@@ -154,7 +185,6 @@ public class Store : MonoBehaviour
         SetupPlayerInventory();
         SetupStoreInventory();
     }
-
     private void SetupStoreInventory()
     {
         if (_storeInventoryManager == null)
@@ -183,32 +213,31 @@ public class Store : MonoBehaviour
             SetupInventories(inventoryData, _playerStoreInventoryUIDict);
         }
     }
-
-    private void SetupInventories(List<Tuple<string, int>> inventoryData, Dictionary<string, GameObject> dict)
+    private void SetupInventories(List<Tuple<string, int>> inventoryData, Dictionary<string, StoreInventoryUI> dict)
     {
         foreach (Tuple<string, int> item in inventoryData)
         {
             if (_allowedObjectsDict.ContainsKey(item.Item1))
             {
-                GameObject storeUIObj = dict[item.Item1];
-                storeUIObj.SetActive(true);
-                StoreInventoryUI ui = storeUIObj.GetComponent<StoreInventoryUI>();
-
-                ui.Data.Quantity = item.Item2;
+                // If the object is in the dict.
+                // aquire it and set it up.
+                StoreInventoryUI ui = dict[item.Item1];
+                ui.gameObject.SetActive(true);
+                ui.Data.TempQuantity = item.Item2;
+                ui.Data.ApplyQuantity();
                 ui.UpdateUI();
             }
         }
     }
-
     private void ResetStore()
     {
-        foreach(GameObject gameObject in _playerStoreInventoryUIDict.Values)
+        foreach(StoreInventoryUI ui in _playerStoreInventoryUIDict.Values)
         {
-            gameObject.SetActive(false);
+            ui.gameObject.SetActive(false);
         }
-        foreach (GameObject gameObject in _storeInventoryUIDict.Values)
+        foreach (StoreInventoryUI ui in _storeInventoryUIDict.Values)
         {
-            gameObject.SetActive(false);
+            ui.gameObject.SetActive(false);
         }
         _selectedItemId = null;
         //_changedItems.Clear();

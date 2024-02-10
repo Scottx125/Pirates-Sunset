@@ -19,13 +19,20 @@ public class StoreInventoryUI : MonoBehaviour
 
     public StoreItemData Data { get; private set; }
 
-    public void Setup(StoreItemData data)
+    private IStoreInventoryUISelected _store;
+
+    public void Setup(StoreItemData data, IStoreInventoryUISelected store)
     {
         Data = data;
-        // Other stuff
+        _store = store;
+    }
+
+    public void OnSelect()
+    {
+        _store.OnInventoryUISelected(Data.ItemId);
     }
     public void UpdateUI()
     {
-        _inventoryUIQuantity.text = Data.Quantity.ToString();
+        _inventoryUIQuantity.text = Data.TempQuantity.ToString();
     }
 }
