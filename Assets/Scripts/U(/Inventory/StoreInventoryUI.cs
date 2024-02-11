@@ -25,6 +25,13 @@ public class StoreInventoryUI : MonoBehaviour
     {
         Data = data;
         _store = store;
+
+        if (_inventoryUIName != null) _inventoryUIName.text = data.Name;
+        if (_inventoryUIImage != null) _inventoryUIImage.sprite = data.Image;
+        if (_inventoryUIQuantity != null) _inventoryUIQuantity.text = data.TempQuantity.ToString();
+        if (_inventoryUIBuyPrice != null) _inventoryUIBuyPrice.text = data.BuyPrice.ToString();
+        if (_inventoryUISellPrice != null) _inventoryUISellPrice.text = data.SellPrice.ToString();
+
     }
 
     public void OnSelect()

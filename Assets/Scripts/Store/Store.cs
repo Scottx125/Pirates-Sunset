@@ -5,18 +5,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Store : MonoBehaviour, IStoreInventoryUISelected
+public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdate
 {
 
     [SerializeField]
     private InventoryManager _storeInventoryManager;
     [SerializeField]
     private List<InventoryObjectSO> _allowedObjectsForTrade;
+
     // UI STUFF
     [SerializeField]
     private GameObject _storeUI;
-    [SerializeField]
-    private Slider _storeSlider;
     [SerializeField]
     private GameObject _storeUIPrefab;
     [SerializeField]
@@ -32,19 +31,15 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected
     [SerializeField]
     private string _goldId;
     [SerializeField]
-    private TextMeshProUGUI _playerGoldTextComponenet;
-    [SerializeField]
-    private TextMeshProUGUI _storeGoldTextComponenet;
-    [SerializeField]
-    private Image _playerGoldComponenet;
-    [SerializeField]
-    private Image _storeGoldComponenet;
+    private TMP_Text _storeCostText;
 
-
+    // LOCAL CACHED DATA.
     private InventoryManager _playerInventoryManager;
     // Gold
-    private StoreItemData _playerGold;
-    private StoreItemData _storeGold;
+    private StoreInventoryUI _playerGold;
+    private StoreInventoryUI _storeGold;
+    // UI
+    private StoreSlider _storeSlider;
 
     // Objects currently displayed on screen in the store.
     private Dictionary<string, InventoryObjectSO> _allowedObjectsDict = new Dictionary<string, InventoryObjectSO>();
@@ -56,6 +51,30 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected
     // Use this for the selected Item, use it to populate UI to show what is currently being traded.
     private string _selectedItemId;
 
+    private void Awake()
+    {
+        // Make search of allowed objects easier.
+        _allowedObjectsDict = _allowedObjectsForTrade.ToDictionary(item => item.GetId, item => item);
+
+        // Create pool of objects for the store to use.
+        for (int i = 0; i < _allowedObjectsForTrade.Count; i++)
+        {
+            // Check for gold.
+            if (_allowedObjectsForTrade[i].GetId == _goldId)
+            {
+                SetupGold();
+                continue;
+            }
+            SetupStoreItemPool(i);
+        }
+        // Cache local variables.
+        if (_storeUI != null)
+        {
+            _storeSlider = _storeUI.GetComponent<StoreSlider>();
+            _storeSlider.Setup(this);
+        }
+    }
+
     public void OpenStore()
     {
         _storeUI.SetActive(true);
@@ -66,59 +85,63 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected
         // disable store ui
         _storeUI.SetActive(false);
     }
-    // Use Event for _selectedItemID.
 
     public void OnInventoryUISelected(string id)
     {
-        if (_selectedItemId != null)
-        {
-            // Restore original items
-            // If a trade was already done, the temp will be changed and this will have no effect.
-            _playerGold.ResetQuantity();
-            _storeGold.ResetQuantity();
-            _storeInventoryUIDict[id].Data.ResetQuantity();
-            _playerStoreInventoryUIDict[id].Data.ResetQuantity();
-        }
+        if (id == _selectedItemId) return;
+
+        ResetPreviouslySelectedItems(id);
+        SetupNewSelectedItems(id);
+    }
+
+    private void SetupNewSelectedItems(string id)
+    {
         _selectedItemId = id;
+
+        _playerGold.UpdateUI();
+        _storeGold.UpdateUI();
+        _storeSlider.MaxMinSliderValues(_playerStoreInventoryUIDict[id].Data.Quantity, _storeInventoryUIDict[id].Data.Quantity); 
     }
 
-    public void OnSliderValueChanged(float sliderValue)
+    private void ResetPreviouslySelectedItems(string id)
     {
-        int value = (int)sliderValue;
-        AttemptTrade(value);
+        // Restore original items
+        // If a trade was already done, the temp will be changed and this will have no effect.
+        _playerGold.Data.ResetQuantity();
+        _playerGold.UpdateUI();
+        _storeGold.Data.ResetQuantity();
+        _storeGold.UpdateUI();
+        _storeInventoryUIDict[id].Data.ResetQuantity();
+        _storeInventoryUIDict[id].UpdateUI();
+        _playerStoreInventoryUIDict[id].Data.ResetQuantity();
+        _playerStoreInventoryUIDict[id].UpdateUI();
+        _storeSlider.MaxMinSliderValues(0, 0);
     }
 
-    public void AttemptTrade(int quantity)
+    public void StoreSliderUpdateUI(int amount)
     {
-        // Send modified item ID and quantity.
-        // Based on the quantity determine if it can be afforded.
-        // If it can, modify the temp costs and object quantity and update the UI.
-        // If it can't modify the gold text to change colour.
+        // Used current selected ID.
+        // This will be clamped to between max buy/sell amount.
+        // As the slider changes, the player gold and store gold will change.
+
+        // Cache variables.
+        StoreItemData playerItem = _playerStoreInventoryUIDict[_selectedItemId].Data;
+        StoreItemData storeItem = _storeInventoryUIDict[_selectedItemId].Data;
+        // Reset quantity.
+        playerItem.ResetQuantity();
+        storeItem.ResetQuantity();
+        // Add new quantity.
+        playerItem.TempQuantity += amount;
+        storeItem.TempQuantity += amount;
     }
 
     private void ApplyTrade(int quantity)
     {
         // Whatever items are currently being traded are applied.
         // They are then sent to the users inventory manager.
+        ResetPreviouslySelectedItems(_selectedItemId);
     }
 
-    private void Awake()
-    {
-        // Make search of allowed objects easier.
-        _allowedObjectsDict = _allowedObjectsForTrade.ToDictionary(item => item.GetId, item => item);
-
-        // Create pool of objects for the store to use.
-        for(int i = 0; i < _allowedObjectsForTrade.Count; i++)
-        {
-            // Check for gold.
-            if (_allowedObjectsForTrade[i].GetId == _goldId)
-            {
-                SetupGold();
-                continue;
-            }
-            SetupStoreItemPool(i);
-        }
-    }
     private void SetupStoreItemPool(int i)
     {
         // Spawn objects.
@@ -173,8 +196,8 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected
         storeGoldUIScript.Setup(itemDataStore, this);
 
         // Cache the store and player gold data scripts.
-        _playerGold = playerStoreGoldUIScript.Data;
-        _storeGold = storeGoldUIScript.Data;
+        _playerGold = playerStoreGoldUIScript;
+        _storeGold = storeGoldUIScript;
     }
     private void SetupStore()
     {
