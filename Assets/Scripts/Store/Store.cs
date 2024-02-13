@@ -30,8 +30,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     private Transform _playerGoldContentsSection;
     [SerializeField]
     private string _goldId;
-    [SerializeField]
-    private TMP_Text _storeCostText;
 
     // LOCAL CACHED DATA.
     private InventoryManager _playerInventoryManager;
@@ -100,7 +98,11 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
 
         _playerGold.UpdateUI();
         _storeGold.UpdateUI();
-        _storeSlider.MaxMinSliderValues(_playerStoreInventoryUIDict[id].Data.Quantity, _storeInventoryUIDict[id].Data.Quantity); 
+
+        // Based on the players gold/store gold we need to determine the max that can be bought or sold.
+        // Calculate maxsellable = Mathf.Floor(playergold / (playeritem.quantity * cost));
+        _storeSlider.MaxMinSliderValues(, ); 
+        
     }
 
     private void ResetPreviouslySelectedItems(string id)
@@ -124,15 +126,24 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         // This will be clamped to between max buy/sell amount.
         // As the slider changes, the player gold and store gold will change.
 
+        if (amount == 0) return;
+
         // Cache variables.
         StoreItemData playerItem = _playerStoreInventoryUIDict[_selectedItemId].Data;
         StoreItemData storeItem = _storeInventoryUIDict[_selectedItemId].Data;
         // Reset quantity.
         playerItem.ResetQuantity();
         storeItem.ResetQuantity();
+        _playerGold.Data.ResetQuantity();
+        _storeGold.Data.ResetQuantity();
         // Add new quantity.
-        playerItem.TempQuantity += amount;
-        storeItem.TempQuantity += amount;
+        storeItem.TempQuantity = storeItem.Quantity + (-1 * amount);
+        playerItem.TempQuantity = playerItem.Quantity + (-1 * -amount);
+        // Update gold
+        int price = amount < 0 ? _allowedObjectsDict[_selectedItemId].GetSellPrice : _allowedObjectsDict[_selectedItemId].GetBuyPrice;
+        int cost = price * Math.Abs(amount);
+        _storeGold.Data.TempQuantity = _storeGold.Data.Quantity + (Math.Sign(-1 * amount) * cost);
+        _playerGold.Data.TempQuantity = _playerGold.Data.Quantity + (Math.Sign(-1 * -amount) * cost);
     }
 
     private void ApplyTrade(int quantity)

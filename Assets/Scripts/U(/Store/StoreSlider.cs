@@ -15,10 +15,10 @@ public class StoreSlider : MonoBehaviour
         _slider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); });
     }
 
-    public void MaxMinSliderValues(int playerAmount, int storeAmount)
+    public void MaxMinSliderValues(int maxSellable, int maxBuyable)
     {
-        _slider.maxValue = 0 + playerAmount;
-        _slider.minValue = 0 - storeAmount;
+        _slider.maxValue = 0 + maxBuyable;
+        _slider.minValue = 0 - maxSellable;
         _slider.value = 0;
     }
 
