@@ -88,27 +88,40 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     {
         if (id == _selectedItemId) return;
 
-        ResetPreviouslySelectedItems(id);
-        SetupNewSelectedItems(id);
+        ResetPreviouslySelectedItem(id);
+        SetupSelectedItem(id);
     }
 
-    private void SetupNewSelectedItems(string id)
+    private void SetupSelectedItem(string id)
     {
+        // Ensure new selection is cached.
         _selectedItemId = id;
 
+        // Cache local variables.
+        StoreItemData playerItemData = _playerStoreInventoryUIDict[_selectedItemId].Data;
+        StoreItemData storeItemData = _storeInventoryUIDict[_selectedItemId].Data;
+        int sellPrice = _allowedObjectsDict[id].GetSellPrice;
+        int buyPrice = _allowedObjectsDict[id].GetBuyPrice;
+
+        // Reset UI.
         _playerGold.UpdateUI();
         _storeGold.UpdateUI();
 
-        // Based on the players gold/store gold we need to determine the max that can be bought or sold.
-        // Calculate maxsellable = Mathf.Floor(playergold / (playeritem.quantity * cost));
-        _storeSlider.MaxMinSliderValues(, ); 
+        // Determine how much we can buy/sell with the current gold amount and prices.
+        // Then determine if the theoretical maximum is greater or smaller than the item quantity.
+        int maxSellable = (int)Mathf.Floor(_storeGold.Data.Quantity / sellPrice);
+        maxSellable = maxSellable > playerItemData.Quantity ? playerItemData.Quantity : maxSellable;
+        int maxBuyable = (int)Mathf.Floor(_playerGold.Data.Quantity / buyPrice);
+        maxBuyable = maxBuyable > storeItemData.Quantity ? storeItemData.Quantity : maxBuyable;
+
+        // Setup slider.
+        _storeSlider.MaxMinSliderValues(maxSellable, maxBuyable);
         
     }
 
-    private void ResetPreviouslySelectedItems(string id)
+    private void ResetPreviouslySelectedItem(string id)
     {
-        // Restore original items
-        // If a trade was already done, the temp will be changed and this will have no effect.
+        // Simple UI referesh. Resets data to it's correct value and updates the UI.
         _playerGold.Data.ResetQuantity();
         _playerGold.UpdateUI();
         _storeGold.Data.ResetQuantity();
@@ -146,11 +159,22 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _playerGold.Data.TempQuantity = _playerGold.Data.Quantity + (Math.Sign(-1 * -amount) * cost);
     }
 
-    private void ApplyTrade(int quantity)
+    public void ApplyTrade()
     {
         // Whatever items are currently being traded are applied.
+        StoreItemData playerItem = _playerStoreInventoryUIDict[_selectedItemId].Data;
+        StoreItemData storeItem = _storeInventoryUIDict[_selectedItemId].Data;
+
+        playerItem.ApplyQuantity();
+        storeItem.ApplyQuantity();
+        _playerGold.Data.ApplyQuantity();
+        _storeGold.Data.ApplyQuantity();
+
         // They are then sent to the users inventory manager.
-        ResetPreviouslySelectedItems(_selectedItemId);
+
+        // Reset and then reload currently selected items to reflect changes.
+        ResetPreviouslySelectedItem(_selectedItemId);
+        SetupSelectedItem(_selectedItemId);
     }
 
     private void SetupStoreItemPool(int i)

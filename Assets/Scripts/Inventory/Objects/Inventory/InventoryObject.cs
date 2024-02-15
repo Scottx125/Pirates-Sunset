@@ -10,7 +10,6 @@ public abstract class InventoryObject : MonoBehaviour
 {
     public int InventoryObjectQuantity { get; protected set; }
     public string InventoryObjectId { get; protected set; }
+    public abstract void SetQuantity(int addValue);
 
-    public abstract void SubtractQuantity(int subtractValue);
-    public abstract void AddQuantity(int addValue);
 }

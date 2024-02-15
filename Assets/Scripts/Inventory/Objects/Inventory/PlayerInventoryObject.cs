@@ -19,15 +19,18 @@ public class PlayerInventoryObject : InventoryObject
         _pInventoryUI.UpdateUIQuantity(InventoryObjectQuantity);
     }
 
-    public override void AddQuantity(int addValue)
+    public override void SetQuantity(int quantity)
     {
-        InventoryObjectQuantity += addValue;
+        InventoryObjectQuantity = quantity;
         UpdateUI();
     }
 
-    public override void SubtractQuantity(int subtractValue)
+    private void OnDisable()
     {
-        InventoryObjectQuantity -= subtractValue;
-        UpdateUI();
+        _pInventoryUI.gameObject.SetActive(false);
+    }
+    private void OnEnable()
+    {
+        _pInventoryUI.gameObject.SetActive(true);
     }
 }

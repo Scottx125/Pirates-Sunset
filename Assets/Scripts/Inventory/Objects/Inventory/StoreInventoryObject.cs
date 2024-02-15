@@ -11,13 +11,8 @@ public class StoreInventoryObject : InventoryObject
         InventoryObjectId = id;
     }
 
-    public override void AddQuantity(int addValue)
+    public override void SetQuantity(int quantity)
     {
-        InventoryObjectQuantity += addValue;
-    }
-
-    public override void SubtractQuantity(int subtractValue)
-    {
-        InventoryObjectQuantity -= subtractValue;
+        InventoryObjectQuantity = quantity;
     }
 }

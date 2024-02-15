@@ -124,6 +124,6 @@ public abstract class AbilityObject : MonoBehaviour
 
     protected void ConsumedQuantity(int i)
     {
-        _inventoryObject.SubtractQuantity(i);
+        _inventoryObject.SetQuantity(_inventoryObject.InventoryObjectQuantity - i);
     }
 }
