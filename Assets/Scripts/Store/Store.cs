@@ -72,7 +72,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
             _storeSlider.Setup(this);
         }
     }
-
     public void OpenStore()
     {
         _storeUI.SetActive(true);
@@ -83,7 +82,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         // disable store ui
         _storeUI.SetActive(false);
     }
-
     public void OnInventoryUISelected(string id)
     {
         if (id == _selectedItemId) return;
@@ -91,7 +89,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         ResetPreviouslySelectedItem(id);
         SetupSelectedItem(id);
     }
-
     private void SetupSelectedItem(string id)
     {
         // Ensure new selection is cached.
@@ -118,7 +115,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _storeSlider.MaxMinSliderValues(maxSellable, maxBuyable);
         
     }
-
     private void ResetPreviouslySelectedItem(string id)
     {
         // Simple UI referesh. Resets data to it's correct value and updates the UI.
@@ -132,7 +128,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _playerStoreInventoryUIDict[id].UpdateUI();
         _storeSlider.MaxMinSliderValues(0, 0);
     }
-
     public void StoreSliderUpdateUI(int amount)
     {
         // Used current selected ID.
@@ -158,7 +153,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _storeGold.Data.TempQuantity = _storeGold.Data.Quantity + (Math.Sign(-1 * amount) * cost);
         _playerGold.Data.TempQuantity = _playerGold.Data.Quantity + (Math.Sign(-1 * -amount) * cost);
     }
-
     public void ApplyTrade()
     {
         // Whatever items are currently being traded are applied.
@@ -170,7 +164,11 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _playerGold.Data.ApplyQuantity();
         _storeGold.Data.ApplyQuantity();
 
-        // They are then sent to the users inventory manager.
+        // Update via the main inventory via the manager.
+        _playerInventoryManager.AddOrRemoveFromInventory(_selectedItemId, playerItem.Quantity);
+        _playerInventoryManager.AddOrRemoveFromInventory(_goldId, _playerGold.Data.Quantity);
+        _storeInventoryManager.AddOrRemoveFromInventory(_selectedItemId, storeItem.Quantity);
+        _storeInventoryManager.AddOrRemoveFromInventory(_goldId, _storeGold.Data.Quantity);
 
         // Reset and then reload currently selected items to reflect changes.
         ResetPreviouslySelectedItem(_selectedItemId);
@@ -200,10 +198,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         // Setup UI Scripts.
         playerStoreUIScript.Setup(itemDataPlayer, this);
         storeUIScript.Setup(itemDataStore, this);
-
-        // Disable until needed.
-        playerStoreInventoryUIGameObj.SetActive(false);
-        storeInventoryUIGameObj.SetActive(false);
     }
     // Same as item pool except is specific for gold.
     private void SetupGold()
@@ -280,7 +274,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
                 // If the object is in the dict.
                 // aquire it and set it up.
                 StoreInventoryUI ui = dict[item.Item1];
-                ui.gameObject.SetActive(true);
                 ui.Data.TempQuantity = item.Item2;
                 ui.Data.ApplyQuantity();
                 ui.UpdateUI();
@@ -289,16 +282,20 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     }
     private void ResetStore()
     {
+        // Reset everyhting to zero.
         foreach(StoreInventoryUI ui in _playerStoreInventoryUIDict.Values)
         {
-            ui.gameObject.SetActive(false);
+            ui.Data.TempQuantity = 0;
+            ui.Data.ApplyQuantity();
+            ui.UpdateUI();
         }
         foreach (StoreInventoryUI ui in _storeInventoryUIDict.Values)
         {
-            ui.gameObject.SetActive(false);
+            ui.Data.TempQuantity = 0;
+            ui.Data.ApplyQuantity();
+            ui.UpdateUI();
         }
         _selectedItemId = null;
-        //_changedItems.Clear();
     }
 
     // Open store method. Handles setting up the store attatched to a collider or button.

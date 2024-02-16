@@ -17,7 +17,7 @@ public class InventoryManager : MonoBehaviour
         _inventory.Setup();
     }
 
-    // Returns the type and quantity of the objects in the inventory.
+    // Returns the Id and Quantity of the objects in the inventory.
     public List<Tuple<string, int>> GetInventory()
     {
         List<Tuple<string, int>> copy = new List<Tuple<string, int>>();
@@ -28,8 +28,8 @@ public class InventoryManager : MonoBehaviour
         return copy;
     }
 
-    public void AddOrRemoveFromInventory()
+    public void AddOrRemoveFromInventory(string id, int quantity)
     {
-
+        _inventory.UpdateInventoryQuantity(id, quantity);
     }
 }

@@ -31,7 +31,6 @@ public class StoreInventoryUI : MonoBehaviour
         if (_inventoryUIQuantity != null) _inventoryUIQuantity.text = data.TempQuantity.ToString();
         if (_inventoryUIBuyPrice != null) _inventoryUIBuyPrice.text = data.BuyPrice.ToString();
         if (_inventoryUISellPrice != null) _inventoryUISellPrice.text = data.SellPrice.ToString();
-
     }
 
     public void OnSelect()
