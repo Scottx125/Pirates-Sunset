@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerInventory : Inventory
 {
     [SerializeField]
+    protected Transform _inventoryObjectStorage;
+    [SerializeField]
     private Transform _inventoryUIContents;
     [SerializeField]
     private Transform _abilityActiveContents;
@@ -17,6 +19,7 @@ public class PlayerInventory : Inventory
 
     private void Start()
     {
+        if (_inventoryObjectStorage == null) Debug.LogError("No inventoryStorage set!");
         _abilityTracker = GetComponent<AbilityTracker>();
         if (_abilityTracker == null) Debug.LogError("Missing AbilityTracker in Inventory!");
     }

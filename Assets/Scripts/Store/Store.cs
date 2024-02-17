@@ -29,11 +29,12 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     [SerializeField]
     private Transform _playerGoldContentsSection;
     [SerializeField]
-    private string _goldId;
+    private InventoryObjectSO _goldData;
 
     // LOCAL CACHED DATA.
     private InventoryManager _playerInventoryManager;
     // Gold
+    private string _goldId;
     private StoreInventoryUI _playerGold;
     private StoreInventoryUI _storeGold;
     // UI
@@ -53,6 +54,10 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     {
         // Make search of allowed objects easier.
         _allowedObjectsDict = _allowedObjectsForTrade.ToDictionary(item => item.GetId, item => item);
+
+        // Ensure we have a reference to gold.
+        if (_goldData == null) Debug.LogError("No Gold data set!");
+        _goldId = _goldData.GetId;
 
         // Create pool of objects for the store to use.
         for (int i = 0; i < _allowedObjectsForTrade.Count; i++)

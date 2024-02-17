@@ -9,18 +9,17 @@ public abstract class Inventory : MonoBehaviour
 {
     public List<InventoryObject> InventoryList { get; private set; }
 
-    [SerializeField]
-    protected Transform _inventoryObjectStorage;
-
     protected Dictionary<string, InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<string, InventoryObjectSO>();
 
     [SerializeField]
+    private InventoryObjectSO _goldData;
+
     private string _goldId;
     private InventoryObject _gold;
     public void Setup()
     {
-        if (_inventoryObjectStorage == null) Debug.LogError("No inventoryStorage set!");
-        if (_goldId == null) Debug.LogError("No Gold Id Set!");
+        if (_goldData == null) Debug.LogError("No Gold data set!");
+        _goldId = _goldData.GetId;
         // Load IOSO's into the dict so that if we have an object we don't know of we can search for it.
         InventoryObjectSO[] inventoryObjectSOsArray = Resources.LoadAll<InventoryObjectSO>("ScriptableObjects/Inventory");
         _inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetId, item => item);
