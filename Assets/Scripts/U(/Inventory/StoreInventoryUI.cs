@@ -13,15 +13,13 @@ public class StoreInventoryUI : MonoBehaviour
     [SerializeField]
     private Image _inventoryUIImage;
     [SerializeField]
-    private TMP_Text _inventoryUIBuyPrice;
-    [SerializeField]
-    private TMP_Text _inventoryUISellPrice;
+    private TMP_Text _inventoryUIPrice;
 
     public StoreItemData Data { get; private set; }
 
     private IStoreInventoryUISelected _store;
 
-    public void Setup(StoreItemData data, IStoreInventoryUISelected store)
+    public void Setup(StoreItemData data, int price, IStoreInventoryUISelected store)
     {
         Data = data;
         _store = store;
@@ -29,8 +27,7 @@ public class StoreInventoryUI : MonoBehaviour
         if (_inventoryUIName != null) _inventoryUIName.text = data.Name;
         if (_inventoryUIImage != null) _inventoryUIImage.sprite = data.Image;
         if (_inventoryUIQuantity != null) _inventoryUIQuantity.text = data.TempQuantity.ToString();
-        if (_inventoryUIBuyPrice != null) _inventoryUIBuyPrice.text = data.BuyPrice.ToString();
-        if (_inventoryUISellPrice != null) _inventoryUISellPrice.text = data.SellPrice.ToString();
+        if (_inventoryUIPrice != null) _inventoryUIPrice.text = price.ToString();
     }
 
     public void OnSelect()

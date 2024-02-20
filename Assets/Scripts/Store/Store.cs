@@ -195,14 +195,14 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _storeInventoryUIDict.Add(_allowedObjectsForTrade[i].GetId, storeUIScript);
 
         // Setup the item data.
-        StoreItemData itemDataPlayer = new StoreItemData(0, _allowedObjectsForTrade[i].GetId, _allowedObjectsForTrade[i].GetBuyPrice,
-            _allowedObjectsForTrade[i].GetSellPrice, _allowedObjectsForTrade[i].GetName, _allowedObjectsForTrade[i].GetImage, playerStoreUIScript);
-        StoreItemData itemDataStore = new StoreItemData(0, _allowedObjectsForTrade[i].GetId, _allowedObjectsForTrade[i].GetBuyPrice,
-            _allowedObjectsForTrade[i].GetSellPrice, _allowedObjectsForTrade[i].GetName, _allowedObjectsForTrade[i].GetImage, storeUIScript);
+        StoreItemData itemDataPlayer = new StoreItemData(0, _allowedObjectsForTrade[i].GetId,
+            _allowedObjectsForTrade[i].GetName, _allowedObjectsForTrade[i].GetImage, playerStoreUIScript);
+        StoreItemData itemDataStore = new StoreItemData(0, _allowedObjectsForTrade[i].GetId,
+            _allowedObjectsForTrade[i].GetName, _allowedObjectsForTrade[i].GetImage, storeUIScript);
 
         // Setup UI Scripts.
-        playerStoreUIScript.Setup(itemDataPlayer, this);
-        storeUIScript.Setup(itemDataStore, this);
+        playerStoreUIScript.Setup(itemDataPlayer, _allowedObjectsForTrade[i].GetSellPrice, this);
+        storeUIScript.Setup(itemDataStore, _allowedObjectsForTrade[i].GetBuyPrice, this);
     }
     // Same as item pool except is specific for gold.
     private void SetupGold()
@@ -220,14 +220,14 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _storeInventoryUIDict.Add(_goldId, storeGoldUIScript);
 
         // Setup the item data.
-        StoreItemData itemDataPlayer = new StoreItemData(0, _goldId, _allowedObjectsDict[_goldId].GetBuyPrice,
-            _allowedObjectsDict[_goldId].GetSellPrice, _allowedObjectsDict[_goldId].GetName, _allowedObjectsDict[_goldId].GetImage, playerStoreGoldUIScript);
-        StoreItemData itemDataStore = new StoreItemData(0, _goldId, _allowedObjectsDict[_goldId].GetBuyPrice,
-            _allowedObjectsDict[_goldId].GetSellPrice, _allowedObjectsDict[_goldId].GetName, _allowedObjectsDict[_goldId].GetImage, storeGoldUIScript);
+        StoreItemData itemDataPlayer = new StoreItemData(0, _goldId, _allowedObjectsDict[_goldId].GetName, 
+            _allowedObjectsDict[_goldId].GetImage, playerStoreGoldUIScript);
+        StoreItemData itemDataStore = new StoreItemData(0, _goldId, _allowedObjectsDict[_goldId].GetName, 
+            _allowedObjectsDict[_goldId].GetImage, storeGoldUIScript);
 
         // Setup UI Scripts.
-        playerStoreGoldUIScript.Setup(itemDataPlayer, this);
-        storeGoldUIScript.Setup(itemDataStore, this);
+        playerStoreGoldUIScript.Setup(itemDataPlayer, _allowedObjectsDict[_goldId].GetSellPrice, this);
+        storeGoldUIScript.Setup(itemDataStore, _allowedObjectsDict[_goldId].GetBuyPrice, this);
 
         // Cache the store and player gold data scripts.
         _playerGold = playerStoreGoldUIScript;
