@@ -21,7 +21,7 @@ public class InventoryManager : MonoBehaviour
     public List<Tuple<string, int>> GetInventory()
     {
         List<Tuple<string, int>> copy = new List<Tuple<string, int>>();
-        foreach (InventoryObject obj in _inventory.InventoryList)
+        foreach (InventoryObject obj in _inventory.GetInventoryList)
         {
             copy.Add(Tuple.Create(obj.InventoryObjectId, obj.InventoryObjectQuantity));
         }

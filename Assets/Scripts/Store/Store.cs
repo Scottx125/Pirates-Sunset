@@ -11,13 +11,17 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     [SerializeField]
     private InventoryManager _storeInventoryManager;
     [SerializeField]
+    private InventoryManager _playerInventoryManager;
+    [SerializeField]
     private List<InventoryObjectSO> _allowedObjectsForTrade;
 
     // UI STUFF
     [SerializeField]
-    private GameObject _storeUI;
+    private StoreSlider _storeSlider;
     [SerializeField]
     private GameObject _storeUIPrefab;
+    [SerializeField]
+    private GameObject _storeUIGoldPrefab;
     [SerializeField]
     private Transform _storeContentsSection;
     [SerializeField]
@@ -32,13 +36,11 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     private InventoryObjectSO _goldData;
 
     // LOCAL CACHED DATA.
-    private InventoryManager _playerInventoryManager;
     // Gold
     private string _goldId;
     private StoreInventoryUI _playerGold;
     private StoreInventoryUI _storeGold;
-    // UI
-    private StoreSlider _storeSlider;
+
 
     // Objects currently displayed on screen in the store.
     private Dictionary<string, InventoryObjectSO> _allowedObjectsDict = new Dictionary<string, InventoryObjectSO>();
@@ -56,8 +58,20 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _allowedObjectsDict = _allowedObjectsForTrade.ToDictionary(item => item.GetId, item => item);
 
         // Ensure we have a reference to gold.
-        if (_goldData == null) Debug.LogError("No Gold data set!");
+        if (_goldData == null)
+        {
+            Debug.LogError("No Gold data set!");
+            return;
+        }
         _goldId = _goldData.GetId;
+
+        // Cache local variables.
+        if (_storeSlider == null)
+        {
+            Debug.LogError("No StoreSlider set!");
+            return;
+        }
+        _storeSlider.Setup(this);
 
         // Create pool of objects for the store to use.
         for (int i = 0; i < _allowedObjectsForTrade.Count; i++)
@@ -70,22 +84,15 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
             }
             SetupStoreItemPool(i);
         }
-        // Cache local variables.
-        if (_storeUI != null)
-        {
-            _storeSlider = _storeUI.GetComponent<StoreSlider>();
-            _storeSlider.Setup(this);
-        }
     }
     public void OpenStore()
     {
-        _storeUI.SetActive(true);
         SetupStore();
     }
     public void CloseStore()
     {
         // disable store ui
-        _storeUI.SetActive(false);
+        gameObject.SetActive(false);
     }
     public void OnInventoryUISelected(string id)
     {
@@ -96,6 +103,7 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     }
     private void SetupSelectedItem(string id)
     {
+
         // Ensure new selection is cached.
         _selectedItemId = id;
 
@@ -119,6 +127,8 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         // Setup slider.
         _storeSlider.MaxMinSliderValues(maxSellable, maxBuyable);
         
+        //NEED TO IMPLEMENT SETUP OF SELECTED TITLE AND IMAGE.
+        // AND RESET THEM.
     }
     private void ResetPreviouslySelectedItem(string id)
     {
@@ -208,8 +218,8 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     private void SetupGold()
     {
         // Spawn objects.
-        GameObject playerStoreGoldUIGameObj = Instantiate(_storeUIPrefab, _playerGoldContentsSection);
-        GameObject storeGoldUIGameObj = Instantiate(_storeUIPrefab, _storeGoldContentSection);
+        GameObject playerStoreGoldUIGameObj = Instantiate(_storeUIGoldPrefab, _playerGoldContentsSection);
+        GameObject storeGoldUIGameObj = Instantiate(_storeUIGoldPrefab, _storeGoldContentSection);
 
         // Get UI Scripts.
         StoreInventoryUI playerStoreGoldUIScript = playerStoreGoldUIGameObj.GetComponent<StoreInventoryUI>();
@@ -322,22 +332,12 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
     // If it has enough gold for the quantity purchased, it will remove the gold.
     // And add the quantity.
 
-    private void OnTriggerEnter(Collider other)
+    private void OnEnable()
     {
-        if (other.GetComponent<PlayerManager>())
-        {
-            if (_playerInventoryManager == null)
-            {
-                _playerInventoryManager = other.GetComponent<InventoryManager>();
-            }
-            OpenStore();
-        }
+        OpenStore();
     }
-    private void OnTriggerExit(Collider other)
+    private void OnDisable()
     {
-        if (other.GetComponent<PlayerManager>())
-        {
-            CloseStore();
-        }
+        CloseStore();
     }
 }

@@ -3,16 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public abstract class Inventory : MonoBehaviour
 {
-    public List<InventoryObject> InventoryList { get; private set; }
+    public List<InventoryObject> GetInventoryList => _inventoryList;
 
     protected Dictionary<string, InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<string, InventoryObjectSO>();
 
     [SerializeField]
     private InventoryObjectSO _goldData;
+    [SerializeField]
+    private List<InventoryObject> _inventoryList = new List<InventoryObject>();
 
     private string _goldId;
     private InventoryObject _gold;
@@ -35,7 +36,7 @@ public abstract class Inventory : MonoBehaviour
         {
             // Spawn UI prefabs. Pass itself in the inventory and the ability UI.
             InventoryObject obj = CreateInventoryObject(itemId);
-            InventoryList.Add(obj);
+            _inventoryList.Add(obj);
             UpdateInventoryObjectQuantity(obj, newQuantity);
         }
         else
@@ -44,6 +45,7 @@ public abstract class Inventory : MonoBehaviour
             UpdateInventoryObjectQuantity(existingItem, newQuantity);
         }
     }
+
     private void UpdateInventoryObjectQuantity(InventoryObject existingItem, int newQuantity)
     {
         // Gold is the only object we never disable. As it's needed when going into the store.
@@ -81,7 +83,7 @@ public abstract class Inventory : MonoBehaviour
     private InventoryObject CheckInventoryForExistingItem(string itemId)
     {
         // Get the type of the item if it's in the list.
-        return InventoryList.FirstOrDefault(existing => existing.InventoryObjectId == itemId);
+        return _inventoryList.FirstOrDefault(existing => existing.InventoryObjectId == itemId);
     }
 
 }

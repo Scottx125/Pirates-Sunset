@@ -1,11 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
-using Unity.Android.Types;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.UI;
+
 public abstract class InventoryObject : MonoBehaviour
 {
     public int InventoryObjectQuantity { get; protected set; }
