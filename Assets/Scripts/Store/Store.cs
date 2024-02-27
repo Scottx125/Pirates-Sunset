@@ -17,6 +17,14 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
 
     // UI STUFF
     [SerializeField]
+    private Image _selectedObjectImage;
+    [SerializeField]
+    private TMP_Text _selectedObjectText;
+    [SerializeField]
+    private TMP_Text _selectedObjectStoreQuantity;
+    [SerializeField]
+    private TMP_Text _selectedObjectPlayerQuantity;
+    [SerializeField]
     private StoreSlider _storeSlider;
     [SerializeField]
     private GameObject _storeUIPrefab;
@@ -57,21 +65,13 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         // Make search of allowed objects easier.
         _allowedObjectsDict = _allowedObjectsForTrade.ToDictionary(item => item.GetId, item => item);
 
-        // Ensure we have a reference to gold.
-        if (_goldData == null)
-        {
-            Debug.LogError("No Gold data set!");
-            return;
-        }
-        _goldId = _goldData.GetId;
 
         // Cache local variables.
-        if (_storeSlider == null)
+        if (CacheLocalVariables() == false)
         {
-            Debug.LogError("No StoreSlider set!");
+            Debug.LogError("Store Awake method failed due to an issue with caching local variables!");
             return;
         }
-        _storeSlider.Setup(this);
 
         // Create pool of objects for the store to use.
         for (int i = 0; i < _allowedObjectsForTrade.Count; i++)
@@ -84,6 +84,32 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
             }
             SetupStoreItemPool(i);
         }
+    }
+    private bool CacheLocalVariables()
+    {
+        if (_goldData == null)
+        {
+            Debug.LogError("No Gold data set!");
+            return false;
+        }
+        _goldId = _goldData.GetId;
+        if (_storeSlider == null)
+        {
+            Debug.LogError("No StoreSlider set!");
+            return false;
+        }
+        _storeSlider.Setup(this);
+        if (_selectedObjectImage == null)
+        {
+            Debug.LogError("No SelectedObjectImage set!");
+            return false;
+        }
+        if (_selectedObjectText == null)
+        {
+            Debug.LogError("No SelectedObjectText set!");
+            return false;
+        }
+        return true;
     }
     public void OpenStore()
     {
@@ -117,6 +143,15 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _playerGold.UpdateUI();
         _storeGold.UpdateUI();
 
+        // Set Image and Show.
+        _selectedObjectImage.sprite = _allowedObjectsDict[_selectedItemId].GetImage;
+        _selectedObjectImage.color = Color.white;
+
+        // Set text
+        _selectedObjectText.text = _allowedObjectsDict[_selectedItemId].GetName;
+        _selectedObjectPlayerQuantity.text = playerItemData.TempQuantity.ToString();
+        _selectedObjectStoreQuantity.text = storeItemData.TempQuantity.ToString();
+
         // Determine how much we can buy/sell with the current gold amount and prices.
         // Then determine if the theoretical maximum is greater or smaller than the item quantity.
         int maxSellable = (int)Mathf.Floor(_storeGold.Data.Quantity / sellPrice);
@@ -137,11 +172,15 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _playerGold.UpdateUI();
         _storeGold.Data.ResetQuantity();
         _storeGold.UpdateUI();
+        _selectedObjectImage.color = Color.clear;
+        _selectedObjectText.text = "None";
+        _selectedObjectPlayerQuantity.text = "0";
+        _selectedObjectStoreQuantity.text = "0";
         _storeInventoryUIDict[id].Data.ResetQuantity();
         _storeInventoryUIDict[id].UpdateUI();
         _playerStoreInventoryUIDict[id].Data.ResetQuantity();
         _playerStoreInventoryUIDict[id].UpdateUI();
-        _storeSlider.MaxMinSliderValues(0, 0);
+        _storeSlider.MaxMinSliderValues(1, 1);
     }
     public void StoreSliderUpdateUI(int amount)
     {
@@ -152,21 +191,27 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         if (amount == 0) return;
 
         // Cache variables.
-        StoreItemData playerItem = _playerStoreInventoryUIDict[_selectedItemId].Data;
-        StoreItemData storeItem = _storeInventoryUIDict[_selectedItemId].Data;
+        StoreItemData playerItemData = _playerStoreInventoryUIDict[_selectedItemId].Data;
+        StoreItemData storeItemData = _storeInventoryUIDict[_selectedItemId].Data;
         // Reset quantity.
-        playerItem.ResetQuantity();
-        storeItem.ResetQuantity();
+        playerItemData.ResetQuantity();
+        storeItemData.ResetQuantity();
         _playerGold.Data.ResetQuantity();
         _storeGold.Data.ResetQuantity();
         // Add new quantity.
-        storeItem.TempQuantity = storeItem.Quantity + (-1 * amount);
-        playerItem.TempQuantity = playerItem.Quantity + (-1 * -amount);
+        storeItemData.TempQuantity = storeItemData.Quantity + (-1 * amount);
+        playerItemData.TempQuantity = playerItemData.Quantity + (-1 * -amount);
         // Update gold
         int price = amount < 0 ? _allowedObjectsDict[_selectedItemId].GetSellPrice : _allowedObjectsDict[_selectedItemId].GetBuyPrice;
         int cost = price * Math.Abs(amount);
         _storeGold.Data.TempQuantity = _storeGold.Data.Quantity + (Math.Sign(-1 * amount) * cost);
         _playerGold.Data.TempQuantity = _playerGold.Data.Quantity + (Math.Sign(-1 * -amount) * cost);
+
+        // Update UI
+        _selectedObjectPlayerQuantity.text = playerItemData.TempQuantity.ToString();
+        _selectedObjectStoreQuantity.text = storeItemData.TempQuantity.ToString();
+        _playerGold.UpdateUI();
+        _storeGold.UpdateUI();
     }
     public void ApplyTrade()
     {
