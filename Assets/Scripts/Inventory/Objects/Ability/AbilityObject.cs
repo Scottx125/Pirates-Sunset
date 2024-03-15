@@ -53,7 +53,7 @@ public abstract class AbilityObject : MonoBehaviour
         // Ensure object is activateable and is not currently active.
         if (_bAbilityObjectIsActivateable == false) return;
         if (bIsActive == true) return;
-        if (_inventoryObject.InventoryObjectQuantity <= 0) return;
+        if (_inventoryObject.GetInventoryObjectQuantity <= 0) return;
         // Begin coroutine.
         StartCoroutine(InitiateBehaviour());
     }
@@ -124,6 +124,6 @@ public abstract class AbilityObject : MonoBehaviour
 
     protected void ConsumedQuantity(int i)
     {
-        _inventoryObject.SetQuantity(_inventoryObject.InventoryObjectQuantity - i);
+        _inventoryObject.SetQuantity(_inventoryObject.GetInventoryObjectQuantity - i);
     }
 }

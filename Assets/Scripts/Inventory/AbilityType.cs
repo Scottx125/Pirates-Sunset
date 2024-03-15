@@ -5,5 +5,6 @@ public enum AbilityType
     Attack_Chainshot,
     Attack_Grapeshot,
     Repair,
-    Statbuff
+    Statbuff,
+    None
 }

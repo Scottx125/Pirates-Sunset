@@ -9,19 +9,19 @@ public class PlayerInventoryObject : InventoryObject
     public void Setup(string id, PlayerInventoryUI pInventoryUI)
     {
         // Setup object variables.
-        InventoryObjectQuantity = 0;
         InventoryObjectId = id;
         _pInventoryUI = pInventoryUI;
+        UpdateUI();
     }
 
     private void UpdateUI()
     {
-        _pInventoryUI.UpdateUIQuantity(InventoryObjectQuantity);
+        _pInventoryUI.UpdateUIQuantity(GetInventoryObjectQuantity);
     }
 
     public override void SetQuantity(int quantity)
     {
-        InventoryObjectQuantity = quantity;
+        _inventoryObjectQuantity = quantity;
         UpdateUI();
     }
 

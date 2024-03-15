@@ -32,10 +32,13 @@ public class InventoryObjectSO : ScriptableObject
     private int _buyPrice;
     [SerializeField]
     private GameObject _inventoryObjectPrefab;
+    [SerializeField]
+    private GameObject _storeInventoryObjectPrefab;
 
     public AbilityType GetAbilityType => _abilityType;
     public string GetId => _objectId;
     public GameObject GetInventoryObjectPrefab => _inventoryObjectPrefab;
+    public GameObject GetStoreInventoryObjectPrefab => _storeInventoryObjectPrefab;
     public int GetSellPrice => _sellPrice;
     public int GetBuyPrice => _buyPrice;
     public bool GetIsActivateableBool => _isActivateable;
