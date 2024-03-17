@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerInventoryObject : InventoryObject
 {
+    [SerializeField]
     private PlayerInventoryUI _pInventoryUI;
 
     public void Setup(string id, PlayerInventoryUI pInventoryUI)
@@ -27,10 +28,17 @@ public class PlayerInventoryObject : InventoryObject
 
     private void OnDisable()
     {
-        _pInventoryUI.gameObject.SetActive(false);
+        if (_pInventoryUI != null)
+        {
+            _pInventoryUI.gameObject.SetActive(false);
+        }
+        
     }
     private void OnEnable()
     {
-        _pInventoryUI.gameObject.SetActive(true);
+        if (_pInventoryUI != null)
+        {
+            _pInventoryUI.gameObject.SetActive(true);
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public abstract class Inventory : MonoBehaviour
 {
@@ -11,20 +12,35 @@ public abstract class Inventory : MonoBehaviour
     protected Dictionary<string, InventoryObjectSO> _inventoryObjectsSOsDict = new Dictionary<string, InventoryObjectSO>();
 
     [SerializeField]
-    private InventoryObjectSO _goldData;
+    private string _goldId;
     [SerializeField]
+    private List<InitialInventoryItemAndQuantity> _initialInventory = new List<InitialInventoryItemAndQuantity>();
+
     private List<InventoryObject> _inventoryList = new List<InventoryObject>();
 
-    private string _goldId;
     private InventoryObject _gold;
+
     public void Setup()
     {
-        if (_goldData == null) Debug.LogError("No Gold data set!");
-        _goldId = _goldData.GetId;
+        if (_goldId == null) Debug.LogError("No Gold data set!");
         // Load IOSO's into the dict so that if we have an object we don't know of we can search for it.
-        InventoryObjectSO[] inventoryObjectSOsArray = Resources.LoadAll<InventoryObjectSO>("ScriptableObjects/Inventory");
+        InventoryObjectSO[] inventoryObjectSOsArray = Resources.LoadAll<InventoryObjectSO>("Inventory/");
         _inventoryObjectsSOsDict = inventoryObjectSOsArray.ToDictionary(item => item.GetId, item => item);
-        _gold = CheckInventoryForExistingItem(_goldId);
+        LoadInitialObjects();
+    }
+
+    private void LoadInitialObjects()
+    {
+        foreach (InitialInventoryItemAndQuantity obj in _initialInventory)
+        {
+            string id = obj.GetID();
+            int quantity = obj.GetQuantity();
+            UpdateInventoryQuantity(id, quantity);
+            if ( id == _goldId)
+            {
+                _gold = CheckInventoryForExistingItem(id);
+            }
+        }
     }
 
     public void UpdateInventoryQuantity(string itemId, int newQuantity)
@@ -37,27 +53,13 @@ public abstract class Inventory : MonoBehaviour
             // Spawn UI prefabs. Pass itself in the inventory and the ability UI.
             InventoryObject obj = CreateInventoryObject(itemId);
             _inventoryList.Add(obj);
-            UpdateInventoryObjectQuantity(obj, newQuantity);
+            SetQuantity(obj, newQuantity);
         }
         else
         {
             // If it is in the inventory.
-            UpdateInventoryObjectQuantity(existingItem, newQuantity);
-        }
-    }
-
-    private void UpdateInventoryObjectQuantity(InventoryObject existingItem, int newQuantity)
-    {
-        // Gold is the only object we never disable. As it's needed when going into the store.
-        if (existingItem == _gold)
-        {
             SetQuantity(existingItem, newQuantity);
-            return;
         }
-        // If we're setting the quantity to 0, keep in list but disable the object.
-        SetQuantityZero(existingItem, newQuantity);
-        SetQuantity(existingItem, newQuantity);
-
     }
 
     private static void SetQuantity(InventoryObject existingItem, int newQuantity)
@@ -66,16 +68,13 @@ public abstract class Inventory : MonoBehaviour
         {
             existingItem.gameObject.SetActive(true);
             existingItem.SetQuantity(newQuantity);
-        }
-    }
-
-    private static void SetQuantityZero(InventoryObject existingItem, int newQuantity)
-    {
+        } else
         if (newQuantity == 0)
         {
             existingItem.SetQuantity(newQuantity);
             existingItem.gameObject.SetActive(false);
         }
+        
     }
 
     protected abstract InventoryObject CreateInventoryObject(string itemId);

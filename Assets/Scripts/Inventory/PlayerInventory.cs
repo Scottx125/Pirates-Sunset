@@ -21,7 +21,7 @@ public class PlayerInventory : Inventory
     {
         if (_inventoryObjectStorage == null) Debug.LogError("No inventoryStorage set!");
         _abilityTracker = GetComponent<AbilityTracker>();
-        if (_abilityTracker == null) Debug.LogError("Missing AbilityTracker in Inventory!");
+        //if (_abilityTracker == null) Debug.LogError("Missing AbilityTracker in Inventory!");
     }
 
     protected override InventoryObject CreateInventoryObject(string itemId)
@@ -39,18 +39,18 @@ public class PlayerInventory : Inventory
         PlayerInventoryUI pInventoryUI = pInventoryUIObj.GetComponent<PlayerInventoryUI>();
         pInventoryUI.Setup(data.GetName, data.GetImage);
         // Instantiate PlayerAbilityHUDObj and setup.
-        GameObject pAbilityHUDObj = Instantiate(_abilityHUDPrefab, _abilityActiveContents);
-        PlayerAbilityHUD pAbilityHUD = pAbilityHUDObj.GetComponent<PlayerAbilityHUD>();
-        pAbilityHUD.Setup(data.GetImage);
+        //GameObject pAbilityHUDObj = Instantiate(_abilityHUDPrefab, _abilityActiveContents);
+        //PlayerAbilityHUD pAbilityHUD = pAbilityHUDObj.GetComponent<PlayerAbilityHUD>();
+        //pAbilityHUD.Setup(data.GetImage);
 
         // SETUP SCRIPTS OF INVOBJ AND ABILITYOBJ
         // Setup the inv object.
         inventoryObject.Setup(data.GetId, pInventoryUI);
 
         // Setup the ability object.
-        abilityObject.Setup(data.GetIsActivateableBool, data.GetRepeatBehaviourBool,
-            data.GetActiveTimeFloat, data.GetCooldownFloat, data.GetRepeatTimeFloat,
-            pAbilityHUDObj, pInventoryUI, inventoryObject, _abilityTracker, data.GetAbilityType);
+        //abilityObject.Setup(data.GetIsActivateableBool, data.GetRepeatBehaviourBool,
+        //    data.GetActiveTimeFloat, data.GetCooldownFloat, data.GetRepeatTimeFloat,
+        //    pAbilityHUDObj, pInventoryUI, inventoryObject, _abilityTracker, data.GetAbilityType);
         
         return inventoryObject;
     }

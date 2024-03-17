@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class AbilityObject : MonoBehaviour
 {
@@ -32,6 +33,11 @@ public abstract class AbilityObject : MonoBehaviour
         _abilityHUDObj = abilityHUDObj;
         _pAbilityHUD = _abilityHUDObj.GetComponent<PlayerAbilityHUD>();
         _pInventoryUI = pInventoryUI;
+
+        // Setup linking of button to ability.
+        Button setupButton = _pInventoryUI.gameObject.GetComponent<Button>();
+        setupButton.onClick.AddListener(delegate { CheckAndActivateBehaviour(); });
+
 
         // Setup references.
         _inventoryObject = inventoryObject;
