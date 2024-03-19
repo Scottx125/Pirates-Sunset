@@ -278,9 +278,9 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _storeInventoryUIDict.Add(_goldId, storeGoldUIScript);
 
         // Setup the item data.
-        StoreItemData itemDataPlayer = new StoreItemData(0, _goldId, _allowedObjectsDict[_goldId].GetName, 
+        StoreItemData itemDataPlayer = new StoreItemData(0, _goldId, "Player " + _allowedObjectsDict[_goldId].GetName, 
             _allowedObjectsDict[_goldId].GetImage, playerStoreGoldUIScript);
-        StoreItemData itemDataStore = new StoreItemData(0, _goldId, _allowedObjectsDict[_goldId].GetName, 
+        StoreItemData itemDataStore = new StoreItemData(0, _goldId, "Store " + _allowedObjectsDict[_goldId].GetName, 
             _allowedObjectsDict[_goldId].GetImage, storeGoldUIScript);
 
         // Setup UI Scripts.

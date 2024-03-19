@@ -12,7 +12,7 @@ public class InventoryManager : MonoBehaviour
 
     // Will simply hold all the aspects for the inventory system.
 
-    public void Setup()
+    public void Start()
     {
         _inventory.Setup();
     }
