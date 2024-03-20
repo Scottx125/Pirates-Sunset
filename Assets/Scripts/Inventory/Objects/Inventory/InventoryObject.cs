@@ -6,6 +6,5 @@ public abstract class InventoryObject : MonoBehaviour
     public abstract void SetQuantity(int addValue);
     public int GetInventoryObjectQuantity => _inventoryObjectQuantity;
 
-    [SerializeField]
     protected int _inventoryObjectQuantity;
 }

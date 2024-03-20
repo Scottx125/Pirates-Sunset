@@ -443,7 +443,9 @@ MonoBehaviour:
   _goldId: a51d03ae-5186-428c-898b-38138b49fb6c
   _initialInventory:
   - _id: a51d03ae-5186-428c-898b-38138b49fb6c
-    _quantity: 5000
+    _quantity: 3000
+  - _id: 6cbdef16-16a7-47d7-95be-9e8f185f0007
+    _quantity: 5
   _storeInventoryObjectStorage: {fileID: 1665270714}
 --- !u!114 &58767509
 MonoBehaviour:
@@ -474,6 +476,7 @@ MonoBehaviour:
   _playerInventoryManager: {fileID: 415233918}
   _allowedObjectsForTrade:
   - {fileID: 11400000, guid: 6397c21b0d318b0468b8b615f8ed11f9, type: 2}
+  - {fileID: 11400000, guid: 57d2f30ba522fd44a9141a713a0a8faf, type: 2}
   _selectedObjectImage: {fileID: 1800907238}
   _selectedObjectText: {fileID: 522779186}
   _selectedObjectStoreQuantity: {fileID: 480270258}
@@ -7411,7 +7414,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000000037071604, y: -0.0000000018238181, z: -7.1130856e-17, w: 1}
+  m_LocalRotation: {x: -0.000000037071604, y: 0.0000000018238181, z: 7.1130856e-17, w: 1}
   m_LocalPosition: {x: 606.3, y: 5, z: 146.11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -20607,11 +20610,11 @@ PrefabInstance:
       objectReference: {fileID: 1538197052}
     - target: {fileID: 4297755269925661833, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -9.11909e-10
+      value: 9.11909e-10
       objectReference: {fileID: 0}
     - target: {fileID: 4297755269925661833, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -3.1172073e-17
+      value: 3.1172073e-17
       objectReference: {fileID: 0}
     - target: {fileID: 4672455441190091806, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: _base
@@ -20775,11 +20778,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504919976806997559, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000022481213
+      value: 0.000000022481224
       objectReference: {fileID: 0}
     - target: {fileID: 7504919976806997559, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000009312022
+      value: 0.000000009312028
       objectReference: {fileID: 0}
     - target: {fileID: 7828789430619985302, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_Camera

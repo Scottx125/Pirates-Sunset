@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f924d797428f39d4689e3e3e30678d3d, type: 3}
+  m_Name: RepairKit
+  m_EditorClassIdentifier: 
+  _isActivateable: 1
+  _repeatBehaviour: 0
+  _activeTime: 1
+  _cooldown: 1
+  _repeatTime: 0.25
+  _abilityType: 3
+  _objectId: 6cbdef16-16a7-47d7-95be-9e8f185f0007
+  _invenObjName: Repair Kit
+  _invenObjSprite: {fileID: 21300040, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
+  _sellPrice: 200
+  _buyPrice: 400
+  _inventoryObjectPrefab: {fileID: 4426092284371769773, guid: ae254fb3de2f76747b0da75711b948a0, type: 3}
+  _storeInventoryObjectPrefab: {fileID: 4426092284371769773, guid: 24e4690b150982145a1744c6ec63675b, type: 3}

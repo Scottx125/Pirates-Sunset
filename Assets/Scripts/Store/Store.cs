@@ -163,7 +163,7 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _storeSlider.MaxMinSliderValues(maxSellable, maxBuyable);
         
         //NEED TO IMPLEMENT SETUP OF SELECTED TITLE AND IMAGE.
-        // AND RESET THEM.
+        //AND RESET THEM.
     }
     private void ResetPreviouslySelectedItem(string id)
     {
@@ -180,7 +180,7 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _storeInventoryUIDict[id].UpdateUI();
         _playerStoreInventoryUIDict[id].Data.ResetQuantity();
         _playerStoreInventoryUIDict[id].UpdateUI();
-        _storeSlider.MaxMinSliderValues(1, 1);
+        _storeSlider.MaxMinSliderValues(0, 0);
     }
     public void StoreSliderUpdateUI(int amount)
     {
@@ -205,8 +205,8 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         // Update gold
         int price = amount < 0 ? _allowedObjectsDict[_selectedItemId].GetSellPrice : _allowedObjectsDict[_selectedItemId].GetBuyPrice;
         int cost = price * Math.Abs(amount);
-        _storeGold.Data.TempQuantity = _storeGold.Data.Quantity + (Math.Sign(-1 * amount) * cost);
-        _playerGold.Data.TempQuantity = _playerGold.Data.Quantity + (Math.Sign(-1 * -amount) * cost);
+        _storeGold.Data.TempQuantity = _storeGold.Data.Quantity + (Math.Sign(amount) * cost);
+        _playerGold.Data.TempQuantity = _playerGold.Data.Quantity + (Math.Sign(-1 * amount) * cost);
 
         // Update UI
         _selectedObjectPlayerQuantity.text = playerItemData.TempQuantity.ToString();
@@ -237,7 +237,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         ResetPreviouslySelectedItem(_selectedItemId);
         SetupSelectedItem(_selectedItemId);
     }
-
     private void SetupStoreItemPool(int i)
     {
         // Spawn objects.
