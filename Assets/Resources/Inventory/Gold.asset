@@ -18,7 +18,7 @@ MonoBehaviour:
   _cooldown: 1
   _repeatTime: 0.25
   _abilityType: 5
-  _objectId: a51d03ae-5186-428c-898b-38138b49fb6c
+  _objectId: db2c579d-72c7-49b7-bc62-d9b617be7d22
   _invenObjName: Gold
   _invenObjSprite: {fileID: 21300042, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
   _sellPrice: 0

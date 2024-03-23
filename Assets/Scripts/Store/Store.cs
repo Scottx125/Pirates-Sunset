@@ -188,9 +188,6 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         // This will be clamped to between max buy/sell amount.
         // As the slider changes, the player gold and store gold will change.
 
-        if (amount == 0) return;
-        if (_selectedItemId == null) return;
-
         // Cache variables.
         StoreItemData playerItemData = _playerStoreInventoryUIDict[_selectedItemId].Data;
         StoreItemData storeItemData = _storeInventoryUIDict[_selectedItemId].Data;

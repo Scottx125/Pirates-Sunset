@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f924d797428f39d4689e3e3e30678d3d, type: 3}
+  m_Name: SuperiorRepairKit
+  m_EditorClassIdentifier: 
+  _isActivateable: 1
+  _repeatBehaviour: 0
+  _activeTime: 1
+  _cooldown: 1
+  _repeatTime: 0.25
+  _abilityType: 3
+  _objectId: abc3e89e-2ac7-4f6a-9228-db04dfbcf793
+  _invenObjName: Superior Repair Kit
+  _invenObjSprite: {fileID: 21300052, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
+  _sellPrice: 400
+  _buyPrice: 800
+  _inventoryObjectPrefab: {fileID: 4426092284371769773, guid: 92ce837c21123ae46ae15b498bdb848b, type: 3}
+  _storeInventoryObjectPrefab: {fileID: 4426092284371769773, guid: 91485b9a957ee0c4db5bf7e8b943bee1, type: 3}

@@ -5,11 +5,11 @@ using UnityEngine;
 [Serializable]
 public struct InitialInventoryItemAndQuantity
 {
-    public string GetID() => _id;
+    public string GetID() => _object.GetId;
     public int GetQuantity() => _quantity;
 
     [SerializeField]
-    private string _id;
+    private InventoryObjectSO _object;
     [SerializeField]
     private int _quantity;
 }

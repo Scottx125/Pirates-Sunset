@@ -440,11 +440,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 641324b900302e64aa4f5a6550841daf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _goldId: a51d03ae-5186-428c-898b-38138b49fb6c
+  _goldInventoryObjectSO: {fileID: 11400000, guid: 6397c21b0d318b0468b8b615f8ed11f9, type: 2}
   _initialInventory:
-  - _id: a51d03ae-5186-428c-898b-38138b49fb6c
+  - _object: {fileID: 11400000, guid: 6397c21b0d318b0468b8b615f8ed11f9, type: 2}
     _quantity: 3000
-  - _id: 6cbdef16-16a7-47d7-95be-9e8f185f0007
+  - _object: {fileID: 11400000, guid: 57d2f30ba522fd44a9141a713a0a8faf, type: 2}
     _quantity: 5
   _storeInventoryObjectStorage: {fileID: 1665270714}
 --- !u!114 &58767509
@@ -477,6 +477,7 @@ MonoBehaviour:
   _allowedObjectsForTrade:
   - {fileID: 11400000, guid: 6397c21b0d318b0468b8b615f8ed11f9, type: 2}
   - {fileID: 11400000, guid: 57d2f30ba522fd44a9141a713a0a8faf, type: 2}
+  - {fileID: 11400000, guid: f2c56de67c28e7145983b849d91bcd08, type: 2}
   _selectedObjectImage: {fileID: 1800907238}
   _selectedObjectText: {fileID: 522779186}
   _selectedObjectStoreQuantity: {fileID: 480270258}
@@ -6713,10 +6714,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d697e0dd5525504f9df16096efb7c33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _goldId: a51d03ae-5186-428c-898b-38138b49fb6c
+  _goldInventoryObjectSO: {fileID: 11400000, guid: 6397c21b0d318b0468b8b615f8ed11f9, type: 2}
   _initialInventory:
-  - _id: a51d03ae-5186-428c-898b-38138b49fb6c
+  - _object: {fileID: 11400000, guid: 6397c21b0d318b0468b8b615f8ed11f9, type: 2}
     _quantity: 5000
+  - _object: {fileID: 11400000, guid: f2c56de67c28e7145983b849d91bcd08, type: 2}
+    _quantity: 5
   _inventoryObjectStorage: {fileID: 827543672}
   _inventoryUIContents: {fileID: 1850816965}
   _abilityActiveContents: {fileID: 0}
@@ -20518,11 +20521,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000032012835
+      value: -0.000000032012828
       objectReference: {fileID: 0}
     - target: {fileID: 1899481360522259755, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000021341886
+      value: -0.000000021341883
       objectReference: {fileID: 0}
     - target: {fileID: 2887295656366202762, guid: 36b4316bb3cfc804c9d847d2e0b0095f, type: 3}
       propertyPath: m_Name
