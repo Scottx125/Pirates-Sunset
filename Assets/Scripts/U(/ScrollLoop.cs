@@ -61,6 +61,7 @@ public class ScrollLoop : MonoBehaviour
     void StopLooping()
     {
         isLooping = false;
+        scrollbar.value = 0f;
     }
 
     void CalculateScrollSpeed()
