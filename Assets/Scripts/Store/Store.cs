@@ -163,6 +163,7 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _storeSlider.MaxMinSliderValues(maxSellable, maxBuyable);
         
         //NEED TO IMPLEMENT SETUP OF SELECTED TITLE AND IMAGE.
+
         //AND RESET THEM.
     }
     private void ResetPreviouslySelectedItem(string id)
