@@ -5,7 +5,7 @@ using UnityEngine;
 public class StoreTrigger : MonoBehaviour
 {
     [SerializeField]
-    Store _store;
+    GameObject _store;
 
     BoxCollider _boxCollider;
 
@@ -16,17 +16,17 @@ public class StoreTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Pirates")
         {
-            _store.enabled = true;
+            _store.SetActive(true);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == "Player" && _store.enabled == true)
+        if (other.tag == "Pirates" && _store.activeSelf == true)
         {
-            _store.enabled = false;
+            _store.SetActive(false);
         }
     }
 }
