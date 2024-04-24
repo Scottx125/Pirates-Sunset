@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -166,7 +167,7 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
 
         //AND RESET THEM.
     }
-    private void ResetPreviouslySelectedItem(string id)
+    private void ResetPreviouslySelectedItem(string id = null)
     {
         // Simple UI referesh. Resets data to it's correct value and updates the UI.
         _playerGold.Data.ResetQuantity();
@@ -177,10 +178,13 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
         _selectedObjectText.text = "None";
         _selectedObjectPlayerQuantity.text = "0";
         _selectedObjectStoreQuantity.text = "0";
-        _storeInventoryUIDict[id].Data.ResetQuantity();
-        _storeInventoryUIDict[id].UpdateUI();
-        _playerStoreInventoryUIDict[id].Data.ResetQuantity();
-        _playerStoreInventoryUIDict[id].UpdateUI();
+        if (id != null)
+        {
+            _storeInventoryUIDict[id].Data.ResetQuantity();
+            _storeInventoryUIDict[id].UpdateUI();
+            _playerStoreInventoryUIDict[id].Data.ResetQuantity();
+            _playerStoreInventoryUIDict[id].UpdateUI();
+        }
         _storeSlider.MaxMinSliderValues(0, 0);
     }
     public void StoreSliderUpdateUI(int amount)
@@ -355,7 +359,7 @@ public class Store : MonoBehaviour, IStoreInventoryUISelected, IStoreSliderUpdat
             ui.Data.ApplyQuantity();
             ui.UpdateUI();
         }
-        _selectedItemId = null;
+        ResetPreviouslySelectedItem();
     }
 
     // Open store method. Handles setting up the store attatched to a collider or button.
