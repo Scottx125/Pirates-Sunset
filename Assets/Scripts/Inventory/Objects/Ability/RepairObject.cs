@@ -10,11 +10,11 @@ public class RepairObject : AbilityObject
     [SerializeField]
     IHeal[] _healableComponenets;
 
-    private void Awake()
+    private void Start()
     {
         if (_healableComponenets == null)
         {
-            _healableComponenets = GetComponents<HealthComponent>();
+            _healableComponenets = GetComponentsInParent<HealthComponent>();
         }
     }
     protected override void ObjectBehaviour()

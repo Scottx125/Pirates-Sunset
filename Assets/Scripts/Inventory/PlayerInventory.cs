@@ -38,19 +38,25 @@ public class PlayerInventory : Inventory
         GameObject pInventoryUIObj = Instantiate(_inventoryUIPrefab, _inventoryUIContents);
         PlayerInventoryUI pInventoryUI = pInventoryUIObj.GetComponent<PlayerInventoryUI>();
         pInventoryUI.Setup(data.GetName, data.GetImage);
+
+        GameObject pAbilityHUDObj = null;
         // Instantiate PlayerAbilityHUDObj and setup.
-        //GameObject pAbilityHUDObj = Instantiate(_abilityHUDPrefab, _abilityActiveContents);
-        //PlayerAbilityHUD pAbilityHUD = pAbilityHUDObj.GetComponent<PlayerAbilityHUD>();
-        //pAbilityHUD.Setup(data.GetImage);
+        if (_abilityActiveContents != null && _abilityHUDPrefab != null)
+        {
+            pAbilityHUDObj = Instantiate(_abilityHUDPrefab, _abilityActiveContents);
+            PlayerAbilityHUD pAbilityHUD = pAbilityHUDObj.GetComponent<PlayerAbilityHUD>();
+            pAbilityHUD.Setup(data.GetImage);
+        }
+
 
         // SETUP SCRIPTS OF INVOBJ AND ABILITYOBJ
         // Setup the inv object.
         inventoryObject.Setup(data.GetId, pInventoryUI);
 
         // Setup the ability object.
-        //abilityObject.Setup(data.GetIsActivateableBool, data.GetRepeatBehaviourBool,
-        //    data.GetActiveTimeFloat, data.GetCooldownFloat, data.GetRepeatTimeFloat,
-        //    pAbilityHUDObj, pInventoryUI, inventoryObject, _abilityTracker, data.GetAbilityType);
+        abilityObject.Setup(data.GetIsActivateableBool, data.GetRepeatBehaviourBool,
+            data.GetActiveTimeFloat, data.GetCooldownFloat, data.GetRepeatTimeFloat,
+            pInventoryUI, inventoryObject, data.GetAbilityType, pAbilityHUDObj, _abilityTracker);
         
         return inventoryObject;
     }

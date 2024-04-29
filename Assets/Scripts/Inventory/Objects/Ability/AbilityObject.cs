@@ -27,12 +27,18 @@ public abstract class AbilityObject : MonoBehaviour
     // Pass in ability tracker.
     // Also set ability Type variable.
     public void Setup(bool isActivateable, bool repeatsBehaviour, float activeTime, float cooldownTime, float repeatTime, 
-        GameObject abilityHUDObj, PlayerInventoryUI pInventoryUI, InventoryObject inventoryObject, AbilityTracker abilityTracker, AbilityType abilityType)
+        PlayerInventoryUI pInventoryUI, InventoryObject inventoryObject, AbilityType abilityType, GameObject abilityHUDObj = null, AbilityTracker abilityTracker = null)
     {
         // Setup UI Stuff.
-        _abilityHUDObj = abilityHUDObj;
-        _pAbilityHUD = _abilityHUDObj.GetComponent<PlayerAbilityHUD>();
+        if (_abilityHUDObj != null)
+        {
+            _abilityHUDObj = abilityHUDObj;
+            _pAbilityHUD = _abilityHUDObj.GetComponent<PlayerAbilityHUD>();
+            // Ability is not active so disable hud obj.
+            _abilityHUDObj.SetActive(false);
+        }
         _pInventoryUI = pInventoryUI;
+
 
         // Setup linking of button to ability.
         Button setupButton = _pInventoryUI.gameObject.GetComponent<Button>();
@@ -51,8 +57,7 @@ public abstract class AbilityObject : MonoBehaviour
         _abilityObjectRepeatTime = repeatTime;
         _abilityType = abilityType;
 
-        // Ability is not active so disable.
-        _abilityHUDObj.SetActive(false);
+
     }
     public void CheckAndActivateBehaviour()
     {
@@ -91,29 +96,37 @@ public abstract class AbilityObject : MonoBehaviour
     private IEnumerator RepeatBehaviours()
     {
         float duration = Time.time + _abilityObjectActiveTime;
-        _abilityHUDObj.SetActive(true);
-        StartCoroutine(_pAbilityHUD.UILerpFill(duration, _abilityObjectActiveTime));
+        CheckIfAbilityHudIsNull(true ,duration);
         // Repeat behaviours.
         while (Time.time < duration)
         {
             ObjectBehaviour();
             yield return new WaitForSeconds(_abilityObjectRepeatTime);
         }
-        _abilityHUDObj.SetActive(false);
+        CheckIfAbilityHudIsNull(false);
     }
+
+    private void CheckIfAbilityHudIsNull(bool bActivityState, float duration = 0f)
+    {
+        if (_abilityHUDObj != null)
+        {
+            _abilityHUDObj.SetActive(bActivityState);
+            if (duration > 0f) StartCoroutine(_pAbilityHUD.UILerpFill(duration, _abilityObjectActiveTime));
+        }
+    }
+
     private IEnumerator DurationBehaviours()
     {
         // Objects that are duration behaviours will be a toggle like system. Activating and then deactivating when called twice.
         float duration = Time.time + _abilityObjectActiveTime;
         // Toggle on
-        _abilityHUDObj.SetActive(true);
+        CheckIfAbilityHudIsNull(true, duration);
         ObjectBehaviour();
-        StartCoroutine(_pAbilityHUD.UILerpFill(duration, _abilityObjectActiveTime));
         // Wait
         yield return new WaitForSeconds(_abilityObjectActiveTime);
         // Toggle off
         ObjectBehaviour();
-        _abilityHUDObj.SetActive(false);
+        CheckIfAbilityHudIsNull(false);
     }
     private IEnumerator Cooldown()
     {
