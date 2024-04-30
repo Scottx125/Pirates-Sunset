@@ -9,17 +9,20 @@ public class PlayerAbilityHUD : MonoBehaviour
     protected Image _inventoryUIImage;
     [SerializeField]
     protected Image _inventoryUICooldown;
+
     public void Setup(Sprite mainImage)
     {
         _inventoryUIImage.sprite = mainImage;
     }
-    public IEnumerator UILerpFill(float duration, float abilityLength)
+    public IEnumerator UILerpFill(float abilityActiveTime)
     {
-        while (Time.time < duration)
+        float duration = Time.time + abilityActiveTime;
+        while (Time.time <= duration)
         {
             float timeRemaining = duration - Time.time;
-            _inventoryUICooldown.fillAmount = Mathf.Lerp(1, 0, timeRemaining / abilityLength);
+            _inventoryUICooldown.fillAmount = Mathf.Lerp(1, 0, timeRemaining / abilityActiveTime);
             yield return null;
         }
+        _inventoryUICooldown.fillAmount = 0f;
     }
 }

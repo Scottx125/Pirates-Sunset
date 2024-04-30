@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isActivateable: 1
   _repeatBehaviour: 0
-  _activeTime: 1
+  _activeTime: 0
   _cooldown: 1
   _repeatTime: 0.25
   _abilityType: 3

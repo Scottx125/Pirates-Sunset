@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public abstract class AbilityObject : MonoBehaviour
 {
     // Track if the ability is active.    
-    private bool bIsActive = false;
+    protected bool bIsActive = false;
 
     // Ability Data
     private bool _bAbilityObjectIsActivateable;
@@ -29,10 +29,10 @@ public abstract class AbilityObject : MonoBehaviour
     public void Setup(bool isActivateable, bool repeatsBehaviour, float activeTime, float cooldownTime, float repeatTime, 
         PlayerInventoryUI pInventoryUI, InventoryObject inventoryObject, AbilityType abilityType, GameObject abilityHUDObj = null, AbilityTracker abilityTracker = null)
     {
+        _abilityHUDObj = abilityHUDObj;
         // Setup UI Stuff.
         if (_abilityHUDObj != null)
         {
-            _abilityHUDObj = abilityHUDObj;
             _pAbilityHUD = _abilityHUDObj.GetComponent<PlayerAbilityHUD>();
             // Ability is not active so disable hud obj.
             _abilityHUDObj.SetActive(false);
@@ -70,70 +70,81 @@ public abstract class AbilityObject : MonoBehaviour
     }
     private IEnumerator InitiateBehaviour()
     {
-        // Stops a new coroutine being fired and sets up variables.
         bIsActive = true;
+        ConsumedQuantity(1);
+        // Stops a new coroutine being fired and sets up variables.
         // Handles repeat behaviours.
         if (_bAbilityObjectRepeatsBehaviour == true)
         {
-            yield return StartCoroutine(RepeatBehaviours());
+            StartCoroutine(RepeatBehaviours());
         }
         else
         {
             // For duration behaviours only.
             if (_bAbilityObjectRepeatsBehaviour == false && _abilityObjectActiveTime > 0f)
             {
-                yield return StartCoroutine(DurationBehaviours());
+                StartCoroutine(DurationBehaviours());
+            } 
+            else
+            {
+                // Single-Fire behaviours.
+                ObjectBehaviour();
+                yield return StartCoroutine(Cooldown(0, _abilityObjectCooldownTime));
+                bIsActive = false;
             }
-            // Single-Fire behaviours.
-            ObjectBehaviour();
         }
-
-        yield return StartCoroutine(Cooldown());
-
-        bIsActive = false;
+        yield return null;
     }
 
     private IEnumerator RepeatBehaviours()
     {
+        StartCoroutine(Cooldown(_abilityObjectActiveTime, _abilityObjectCooldownTime));
         float duration = Time.time + _abilityObjectActiveTime;
-        CheckIfAbilityHudIsNull(true ,duration);
+        CheckAndEnableAbilityTrackerHUD();
         // Repeat behaviours.
         while (Time.time < duration)
         {
             ObjectBehaviour();
             yield return new WaitForSeconds(_abilityObjectRepeatTime);
         }
-        CheckIfAbilityHudIsNull(false);
+        CheckAndEnableAbilityTrackerHUD();
+        yield return new WaitForSeconds(_abilityObjectCooldownTime);
+        bIsActive = false;
     }
 
-    private void CheckIfAbilityHudIsNull(bool bActivityState, float duration = 0f)
+    private void CheckAndEnableAbilityTrackerHUD()
     {
-        if (_abilityHUDObj != null)
+        if (_abilityHUDObj != null && _abilityHUDObj.activeInHierarchy == false)
         {
-            _abilityHUDObj.SetActive(bActivityState);
-            if (duration > 0f) StartCoroutine(_pAbilityHUD.UILerpFill(duration, _abilityObjectActiveTime));
+            _abilityHUDObj.SetActive(true);
+            if (_abilityObjectActiveTime > 0f) StartCoroutine(_pAbilityHUD.UILerpFill(_abilityObjectActiveTime));
+        } else if (_abilityHUDObj != null && _abilityHUDObj.activeInHierarchy == true)
+        {
+            _abilityHUDObj.SetActive(false);
         }
     }
 
     private IEnumerator DurationBehaviours()
     {
         // Objects that are duration behaviours will be a toggle like system. Activating and then deactivating when called twice.
-        float duration = Time.time + _abilityObjectActiveTime;
+        StartCoroutine(Cooldown(_abilityObjectActiveTime, _abilityObjectCooldownTime));
         // Toggle on
-        CheckIfAbilityHudIsNull(true, duration);
+        CheckAndEnableAbilityTrackerHUD();
         ObjectBehaviour();
         // Wait
         yield return new WaitForSeconds(_abilityObjectActiveTime);
         // Toggle off
         ObjectBehaviour();
-        CheckIfAbilityHudIsNull(false);
+        CheckAndEnableAbilityTrackerHUD();
+        yield return new WaitForSeconds(_abilityObjectCooldownTime);
+        bIsActive = false;
     }
-    private IEnumerator Cooldown()
+    private IEnumerator Cooldown(float activeTime = 0f, float abilityCooldownTime = 0f)
     {
         // Waits for the cooldown to expire and then exits, fully resetting the behaviour.
-        float duration = Time.time + _abilityObjectCooldownTime;
-        StartCoroutine(_pInventoryUI.UILerpFill(duration, _abilityObjectActiveTime));
-        yield return new WaitForSeconds(_abilityObjectCooldownTime);
+        float duration = _abilityObjectCooldownTime + activeTime;
+        StartCoroutine(_pInventoryUI.UILerpFill(duration));
+        yield return new WaitForSeconds(duration);
     }
 
     protected virtual void ObjectBehaviour()

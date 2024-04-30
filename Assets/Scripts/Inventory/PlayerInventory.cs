@@ -41,7 +41,7 @@ public class PlayerInventory : Inventory
 
         GameObject pAbilityHUDObj = null;
         // Instantiate PlayerAbilityHUDObj and setup.
-        if (_abilityActiveContents != null && _abilityHUDPrefab != null)
+        if (_abilityActiveContents != null && _abilityHUDPrefab != null && data.GetIsActivateableBool)
         {
             pAbilityHUDObj = Instantiate(_abilityHUDPrefab, _abilityActiveContents);
             PlayerAbilityHUD pAbilityHUD = pAbilityHUDObj.GetComponent<PlayerAbilityHUD>();

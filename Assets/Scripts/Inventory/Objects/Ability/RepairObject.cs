@@ -19,7 +19,6 @@ public class RepairObject : AbilityObject
     }
     protected override void ObjectBehaviour()
     {
-        ConsumedQuantity(1);
         foreach (IHeal healableComponent in _healableComponenets)
         {
             healableComponent.Heal(amountToHeal);

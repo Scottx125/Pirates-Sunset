@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: SuperiorRepairKit
   m_EditorClassIdentifier: 
   _isActivateable: 1
-  _repeatBehaviour: 0
-  _activeTime: 1
-  _cooldown: 1
-  _repeatTime: 0.25
+  _repeatBehaviour: 1
+  _activeTime: 5
+  _cooldown: 2
+  _repeatTime: 1
   _abilityType: 3
   _objectId: abc3e89e-2ac7-4f6a-9228-db04dfbcf793
   _invenObjName: Superior Repair Kit
